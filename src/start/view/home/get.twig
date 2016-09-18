@@ -24,7 +24,7 @@
         {% for fragment in fragments %}
             <div class="fragment" style="border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px">
                 <div><span style="color: #cccccc">Для кого:</span> {{ fragment.user.username }}</div>
-                <div><span style="color: #cccccc">Ссылка:</span> <a href="{{ fragment.uri }}" target="_blank">{{ fragment.uri }}</a></div>
+                <div><span style="color: #cccccc">Задача:</span> {{ fragment.title }}</div>
                 <div><span style="color: #cccccc">Создано:</span> {{ fragment.createdAt('d.m.Y H:i:s') }}</div>
             </div>
         {% endfor %}
