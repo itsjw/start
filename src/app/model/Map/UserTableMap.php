@@ -177,6 +177,13 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Fragment', '\\App\\Model\\Fragment', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, 'Fragments', false);
         $this->addRelation('UserRole', '\\App\\Model\\UserRole', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (

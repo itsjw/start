@@ -5,5 +5,8 @@
         <column name="user_id" type="integer"/>
         <column name="uri" type="longvarchar"/>
         <behavior name="timestampable" />
+        <foreign-key foreignTable="_user" phpName="User">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
     </table>
 </database>

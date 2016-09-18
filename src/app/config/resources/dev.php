@@ -14,7 +14,7 @@ return [
 
     'propel' => [
         'project' => 'start',
-        'dsn' => 'pgsql:host=localhost;dbname=start',
+        'dsn' => 'pgsql:host=localhost;port=5433;dbname=start',
         'db_user' => 'postgres',
         'db_password' => 'root',
         'config_dir' => __DIR__ . '/../propel/' . ENV,

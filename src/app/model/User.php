@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Model\Base\User as BaseUser;
+use Perfumer\Component\Auth\UserHelpers;
 
 /**
  * Skeleton subclass for representing a row from the '_user' table.
@@ -16,5 +17,5 @@ use App\Model\Base\User as BaseUser;
  */
 class User extends BaseUser
 {
-
+    use UserHelpers;
 }
