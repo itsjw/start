@@ -4,11 +4,11 @@ return [
     'propel' => [
         'database' => [
             'connections' => [
-                'start' => [
+                'example' => [
                     'adapter' => 'pgsql',
-                    'dsn' => 'pgsql:host=localhost;port=5432;dbname=start',
+                    'dsn' => 'pgsql:host=localhost;port=5432;dbname=example',
                     'user' => 'postgres',
-                    'password' => 'root',
+                    'password' => 'postgres',
                     'settings' => [
                         'charset' => 'utf8',
                         'queries' => [
@@ -20,12 +20,12 @@ return [
             ]
         ],
         'runtime' => [
-            'defaultConnection' => 'start',
-            'connections' => ['start']
+            'defaultConnection' => 'example',
+            'connections' => ['example']
         ],
         'generator' => [
-            'defaultConnection' => 'start',
-            'connections' => ['start']
+            'defaultConnection' => 'example',
+            'connections' => ['example']
         ]
     ]
 ];

@@ -28,7 +28,11 @@
             "App\\Command\\": "src/app/command/",
             "App\\Controller\\": "src/app/controller/",
             "App\\Model\\": "src/app/model/",
-            "App\\Service\\": "src/app/service/"
+            "App\\Service\\": "src/app/service/",
+            "Start\\Bundle\\": "src/start/bundle/",
+            "Start\\Command\\": "src/start/command/",
+            "Start\\Controller\\": "src/start/controller/",
+            "Start\\Service\\": "src/start/service/"
         }
     },
     "config": {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="start" defaultIdMethod="native" namespace="App\Model">
+<database name="example" defaultIdMethod="native" namespace="App\Model">
     <!-- Perfumer default model schemas -->
     <table name="_application" phpName="Application">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
