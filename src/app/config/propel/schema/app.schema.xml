@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="start" defaultIdMethod="native" namespace="App\Model">
-    <!-- Describe your application tables here -->
-    <!-- Describe your application tables here -->
+    <table name="fragment" phpName="Fragment">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="user_id" type="integer"/>
+        <column name="uri" type="longvarchar"/>
+        <behavior name="timestampable" />
+    </table>
 </database>
