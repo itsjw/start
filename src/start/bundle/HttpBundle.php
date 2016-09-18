@@ -7,6 +7,7 @@ class HttpBundle extends BaseBundle
     public function getAliases()
     {
         return [
+            'auth' => 'auth',
             'router' => 'start.http_router',
             'request' => 'start.http_request',
             'view' => 'start.view',

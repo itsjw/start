@@ -1,6 +1,26 @@
 <?php
 
 return [
+    'auth' => [
+        'shared' => true,
+        'class' => 'Perfumer\\Component\\Auth\\Authorization\\DatabaseAuthorization',
+        'arguments' => ['#session', '#auth.token.cookie_handler', [
+            'model' => '\\App\\Model\\User',
+            'username_field' => 'username',
+            'acl' => true,
+            'application' => false,
+            'update_gap' => 1800
+        ]]
+    ],
+
+    'auth.token.cookie_handler' => [
+        'shared' => true,
+        'class' => 'Perfumer\\Component\\Session\\TokenHandler\\CookieHandler',
+        'arguments' => ['#cookie', [
+            'lifetime' => 7 * 86400
+        ]]
+    ],
+    
     'start.http_router' => [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\Router\\Http\\DefaultRouter',

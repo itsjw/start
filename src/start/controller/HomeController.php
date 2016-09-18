@@ -9,8 +9,13 @@ class HomeController extends TemplateController
 {
     public function get()
     {
+        if (!$this->getAuth()->isLogged()) {
+            $this->pageNotFoundException();
+        }
+
         $fragments = FragmentQuery::create()
             ->joinWith('User')
+            ->filterByUser($this->getUser())
             ->orderByCreatedAt()
             ->limit(50)
             ->find();
