@@ -1,6 +1,6 @@
 {
-    "name": "perfumer/perfumer",
-    "description": "Set of assets for Perfumer Framework empty project",
     "dependencies": {
+        "requirejs-text": "2.0.15",
+        "require-css": "0.1.8"
     }
 }

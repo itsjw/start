@@ -1,1 +1,24 @@
-Hello, world!
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title>Start</title>
+    <script src="http://static.start.dev/start/js/requirejs.min.js"></script>
+    <script>
+        requirejs.config({
+            paths: {
+                "text" : "http://static.start.dev/start/vendor/requirejs-text/text",
+                "css" : "http://static.start.dev/start/vendor/require-css/css.min"
+            }
+        });
+
+        requirejs(['http://static.start.dev/start/js/start.js'], function (Start) {
+            Start.run();
+        });
+    </script>
+</head>
+
+<body>
+</body>
+</html>
