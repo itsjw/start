@@ -1,0 +1,37 @@
+{
+    "name": "perfumer/perfumer",
+    "type": "library",
+    "description": "Perfumer Framework",
+    "homepage": "https://github.com/perfumer/perfumer",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ilyas Makashev",
+            "email": "mehmatovec@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "perfumer/framework": "dev-master",
+        "propel/propel": "2.0.0-alpha5",
+        "pwfisher/command-line-php": "dev-master",
+        "symfony/console": "~2",
+        "symfony/http-foundation": "~2",
+        "symfony/translation": "~2",
+        "symfony/validator": "~2",
+        "tedivm/stash": "~0.13.0",
+        "twig/twig": "~1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Bundle\\": "src/app/bundle/",
+            "App\\Command\\": "src/app/command/",
+            "App\\Controller\\": "src/app/controller/",
+            "App\\Model\\": "src/app/model/",
+            "App\\Service\\": "src/app/service/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    }
+}

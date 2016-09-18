@@ -1,0 +1,7 @@
+.idea
+.sass-cache
+/nbproject
+/tmp/cache/*
+/tmp/logs/*
+/tmp/twig/*
+/vendor/*

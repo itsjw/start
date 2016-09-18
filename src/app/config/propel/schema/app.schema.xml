@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="example" defaultIdMethod="native" namespace="App\Model">
+    <!-- Describe your application tables here -->
+    <!-- Describe your application tables here -->
+</database>

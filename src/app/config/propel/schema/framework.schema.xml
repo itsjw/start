@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="example" defaultIdMethod="native" namespace="App\Model">
+    <!-- Perfumer default model schemas -->
+    <table name="_application" phpName="Application">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255" required="true"/>
+        <column name="token" type="varchar" size="255" required="true"/>
+    </table>
+
+    <table name="_role" phpName="Role">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255" required="true"/>
+        <column name="permission" type="varchar" size="255"/>
+    </table>
+
+    <table name="_resource" phpName="Resource">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255" required="true"/>
+        <column name="value" type="longvarchar" required="true"/>
+        <unique>
+            <unique-column name="name"/>
+        </unique>
+    </table>
+
+    <table name="_session" phpName="Session">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="token" type="varchar" size="255" required="true"/>
+        <column name="model_id" type="integer"/>
+        <column name="model_name" type="varchar" size="255"/>
+        <column name="expired_at" type="timestamp"/>
+        <column name="application_id" type="integer"/>
+        <foreign-key foreignTable="_application" phpName="Application">
+            <reference local="application_id" foreign="id"/>
+        </foreign-key>
+        <unique>
+            <unique-column name="token"/>
+        </unique>
+        <index>
+            <index-column name="model_id"/>
+            <index-column name="model_name"/>
+        </index>
+        <index>
+            <index-column name="expired_at"/>
+        </index>
+        <behavior name="timestampable">
+            <parameter name="disable_updated_at" value="true" />
+        </behavior>
+    </table>
+
+    <table name="_user" phpName="User">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="username" type="varchar" size="255" required="true"/>
+        <column name="password" type="varchar" size="255"/>
+        <column name="is_admin" type="boolean" required="true" defaultValue="false"/>
+        <column name="is_disabled" type="boolean" required="true" defaultValue="false"/>
+        <column name="banned_till" type="timestamp"/>
+        <unique>
+            <unique-column name="username"/>
+        </unique>
+        <behavior name="timestampable" />
+    </table>
+
+    <table name="_user_role" isCrossRef="true">
+        <column name="user_id" type="integer" primaryKey="true"/>
+        <column name="role_id" type="integer" primaryKey="true"/>
+        <foreign-key foreignTable="_user" onDelete="CASCADE">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="_role" onDelete="CASCADE">
+            <reference local="role_id" foreign="id"/>
+        </foreign-key>
+    </table>
+    <!-- Perfumer default model schemas -->
+</database>
