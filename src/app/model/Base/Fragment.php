@@ -77,16 +77,16 @@ abstract class Fragment implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the uri field.
+     * The value for the tile field.
      * @var        string
      */
-    protected $uri;
+    protected $tile;
 
     /**
-     * The value for the title field.
+     * The value for the data field.
      * @var        string
      */
-    protected $title;
+    protected $data;
 
     /**
      * The value for the created_at field.
@@ -351,23 +351,23 @@ abstract class Fragment implements ActiveRecordInterface
     }
 
     /**
-     * Get the [uri] column value.
+     * Get the [tile] column value.
      *
      * @return string
      */
-    public function getUri()
+    public function getTile()
     {
-        return $this->uri;
+        return $this->tile;
     }
 
     /**
-     * Get the [title] column value.
+     * Get the [data] column value.
      *
      * @return string
      */
-    public function getTitle()
+    public function getData()
     {
-        return $this->title;
+        return $this->data;
     }
 
     /**
@@ -455,44 +455,44 @@ abstract class Fragment implements ActiveRecordInterface
     } // setUserId()
 
     /**
-     * Set the value of [uri] column.
+     * Set the value of [tile] column.
      *
      * @param string $v new value
      * @return $this|\App\Model\Fragment The current object (for fluent API support)
      */
-    public function setUri($v)
+    public function setTile($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->uri !== $v) {
-            $this->uri = $v;
-            $this->modifiedColumns[FragmentTableMap::COL_URI] = true;
+        if ($this->tile !== $v) {
+            $this->tile = $v;
+            $this->modifiedColumns[FragmentTableMap::COL_TILE] = true;
         }
 
         return $this;
-    } // setUri()
+    } // setTile()
 
     /**
-     * Set the value of [title] column.
+     * Set the value of [data] column.
      *
      * @param string $v new value
      * @return $this|\App\Model\Fragment The current object (for fluent API support)
      */
-    public function setTitle($v)
+    public function setData($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->title !== $v) {
-            $this->title = $v;
-            $this->modifiedColumns[FragmentTableMap::COL_TITLE] = true;
+        if ($this->data !== $v) {
+            $this->data = $v;
+            $this->modifiedColumns[FragmentTableMap::COL_DATA] = true;
         }
 
         return $this;
-    } // setTitle()
+    } // setData()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -576,11 +576,11 @@ abstract class Fragment implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : FragmentTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FragmentTableMap::translateFieldName('Uri', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->uri = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : FragmentTableMap::translateFieldName('Tile', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tile = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : FragmentTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->title = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : FragmentTableMap::translateFieldName('Data', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->data = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : FragmentTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
@@ -835,11 +835,11 @@ abstract class Fragment implements ActiveRecordInterface
         if ($this->isColumnModified(FragmentTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(FragmentTableMap::COL_URI)) {
-            $modifiedColumns[':p' . $index++]  = 'uri';
+        if ($this->isColumnModified(FragmentTableMap::COL_TILE)) {
+            $modifiedColumns[':p' . $index++]  = 'tile';
         }
-        if ($this->isColumnModified(FragmentTableMap::COL_TITLE)) {
-            $modifiedColumns[':p' . $index++]  = 'title';
+        if ($this->isColumnModified(FragmentTableMap::COL_DATA)) {
+            $modifiedColumns[':p' . $index++]  = 'data';
         }
         if ($this->isColumnModified(FragmentTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -864,11 +864,11 @@ abstract class Fragment implements ActiveRecordInterface
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'uri':
-                        $stmt->bindValue($identifier, $this->uri, PDO::PARAM_STR);
+                    case 'tile':
+                        $stmt->bindValue($identifier, $this->tile, PDO::PARAM_STR);
                         break;
-                    case 'title':
-                        $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
+                    case 'data':
+                        $stmt->bindValue($identifier, $this->data, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -938,10 +938,10 @@ abstract class Fragment implements ActiveRecordInterface
                 return $this->getUserId();
                 break;
             case 2:
-                return $this->getUri();
+                return $this->getTile();
                 break;
             case 3:
-                return $this->getTitle();
+                return $this->getData();
                 break;
             case 4:
                 return $this->getCreatedAt();
@@ -981,8 +981,8 @@ abstract class Fragment implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
-            $keys[2] => $this->getUri(),
-            $keys[3] => $this->getTitle(),
+            $keys[2] => $this->getTile(),
+            $keys[3] => $this->getData(),
             $keys[4] => $this->getCreatedAt(),
             $keys[5] => $this->getUpdatedAt(),
         );
@@ -1062,10 +1062,10 @@ abstract class Fragment implements ActiveRecordInterface
                 $this->setUserId($value);
                 break;
             case 2:
-                $this->setUri($value);
+                $this->setTile($value);
                 break;
             case 3:
-                $this->setTitle($value);
+                $this->setData($value);
                 break;
             case 4:
                 $this->setCreatedAt($value);
@@ -1106,10 +1106,10 @@ abstract class Fragment implements ActiveRecordInterface
             $this->setUserId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setUri($arr[$keys[2]]);
+            $this->setTile($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setTitle($arr[$keys[3]]);
+            $this->setData($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setCreatedAt($arr[$keys[4]]);
@@ -1164,11 +1164,11 @@ abstract class Fragment implements ActiveRecordInterface
         if ($this->isColumnModified(FragmentTableMap::COL_USER_ID)) {
             $criteria->add(FragmentTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(FragmentTableMap::COL_URI)) {
-            $criteria->add(FragmentTableMap::COL_URI, $this->uri);
+        if ($this->isColumnModified(FragmentTableMap::COL_TILE)) {
+            $criteria->add(FragmentTableMap::COL_TILE, $this->tile);
         }
-        if ($this->isColumnModified(FragmentTableMap::COL_TITLE)) {
-            $criteria->add(FragmentTableMap::COL_TITLE, $this->title);
+        if ($this->isColumnModified(FragmentTableMap::COL_DATA)) {
+            $criteria->add(FragmentTableMap::COL_DATA, $this->data);
         }
         if ($this->isColumnModified(FragmentTableMap::COL_CREATED_AT)) {
             $criteria->add(FragmentTableMap::COL_CREATED_AT, $this->created_at);
@@ -1263,8 +1263,8 @@ abstract class Fragment implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setUserId($this->getUserId());
-        $copyObj->setUri($this->getUri());
-        $copyObj->setTitle($this->getTitle());
+        $copyObj->setTile($this->getTile());
+        $copyObj->setData($this->getData());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1358,8 +1358,8 @@ abstract class Fragment implements ActiveRecordInterface
         }
         $this->id = null;
         $this->user_id = null;
-        $this->uri = null;
-        $this->title = null;
+        $this->tile = null;
+        $this->data = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

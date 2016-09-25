@@ -3,8 +3,8 @@
     <table name="fragment" phpName="Fragment">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
-        <column name="uri" type="longvarchar"/>
-        <column name="title" type="longvarchar"/>
+        <column name="tile" type="varchar"/>
+        <column name="data" type="longvarchar"/>
         <behavior name="timestampable" />
         <foreign-key foreignTable="_user" phpName="User">
             <reference local="user_id" foreign="id"/>
