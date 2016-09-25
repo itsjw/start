@@ -20,7 +20,8 @@
         "symfony/translation": "~2",
         "symfony/validator": "~2",
         "tedivm/stash": "~0.13.0",
-        "twig/twig": "~1"
+        "twig/twig": "~1",
+        "erusev/parsedown": "1.6.0"
     },
     "autoload": {
         "psr-4": {

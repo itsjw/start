@@ -1,5 +1,5 @@
 define([], function () {
-    var page = "<h4>{{ title }}</h4><p>{{ text }}</p><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>";
+    var page = `<div>{{ text|raw }}</div><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>`;
 
     document.getElementById('wrapper').innerHTML = page;
 });
