@@ -16,12 +16,15 @@ class FragmentController extends PlainController
 
         $fragment = FragmentQuery::create()->findPk($id);
 
+        $data = $fragment->getData() === null ? [] : unserialize($fragment->getData());
+        $data['created_at'] = $fragment->getCreatedAt();
+
         switch ($fragment->getTile()) {
             case 'text':
-                $this->forward('_tile/text', 'amd', ['Text', 'text']);
+                $this->forward('_tile/text', 'amd', $data);
                 break;
             case 'markdown':
-                $this->forward('_tile/markdown', 'amd', ['Markdown', 'text']);
+                $this->forward('_tile/markdown', 'amd', $data);
                 break;
         }
     }

@@ -1,3 +1,5 @@
 define([], function () {
-    document.getElementById('wrapper').innerHTML = '<h4>{{ title }}</h4><p>{{ text }}</p>';
+    var page = "<h4>{{ title }}</h4><p>{{ text }}</p><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>";
+
+    document.getElementById('wrapper').innerHTML = page;
 });

@@ -6,11 +6,12 @@ use Perfumer\Framework\Controller\TemplateController;
 
 class MarkdownController extends TemplateController
 {
-    public function amd($title, $text)
+    public function amd($title, $text, $created_at)
     {
         $this->getView()->addVars([
             'title' => $title,
-            'text' => $text
+            'text' => $text,
+            'created_at' => $created_at,
         ]);
     }
 }
