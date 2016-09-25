@@ -3,10 +3,10 @@
 return [
     'tiles' => [
         'text' => [
-            'uri' => '/_tile/text/amd'
+            'uri' => '/_tile/text'
         ],
         'markdown' => [
-            'uri' => '/_tile/markdown/amd'
+            'uri' => '/_tile/markdown'
         ]
     ]
 ];

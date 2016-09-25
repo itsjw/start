@@ -6,7 +6,7 @@ define(['require'], function (require) {
             for (var i = 0; i < fragments.length; i++) {
                 (function (i) {
                     fragments[i].addEventListener('click', function () {
-                        start.setFragment(fragments[i].dataset.uri);
+                        start.setFragment(fragments[i].dataset.id);
                     }, false);
                 })(i);
             }
@@ -16,8 +16,8 @@ define(['require'], function (require) {
         };
         Start.prototype.setFeed = function () {
         };
-        Start.prototype.setFragment = function (uri) {
-            require([uri + '?' + (new Date()).getTime()], function () { });
+        Start.prototype.setFragment = function (id) {
+            require(['/fragment/' + id + '?' + (new Date()).getTime()], function () { });
         };
         return Start;
     }());

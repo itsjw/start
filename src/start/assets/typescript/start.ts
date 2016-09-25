@@ -7,7 +7,7 @@ define(['require'], function (require) {
             for (var i = 0; i < fragments.length; i++) {
                 (function(i) {
                     fragments[i].addEventListener('click', function () {
-                        start.setFragment(fragments[i].dataset.uri);
+                        start.setFragment(fragments[i].dataset.id);
                     }, false);
                 })(i)
             }
@@ -21,8 +21,8 @@ define(['require'], function (require) {
 
         }
 
-        public setFragment(uri: string) {
-            require([uri + '?' + (new Date()).getTime()], function() {});
+        public setFragment(id: number) {
+            require(['/fragment/' + id + '?' + (new Date()).getTime()], function() {});
         }
     }
 
