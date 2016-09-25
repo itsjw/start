@@ -29,6 +29,7 @@ abstract class BaseBundle extends AbstractBundle
         return [
             __DIR__ . '/../config/resources/shared.php',
             __DIR__ . '/../config/resources/' . ENV . '.php',
+            __DIR__ . '/../config/resources/tiles.php',
         ];
     }
 }

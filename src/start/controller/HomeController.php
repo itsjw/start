@@ -13,12 +13,18 @@ class HomeController extends TemplateController
             $this->pageNotFoundException();
         }
 
+        $tiles = $this->getContainer()->getResource('tiles');
+
         $fragments = FragmentQuery::create()
             ->joinWith('User')
             ->filterByUser($this->getUser())
             ->orderByCreatedAt()
             ->limit(50)
             ->find();
+
+        foreach ($fragments as $fragment) {
+            $fragment->setVirtualColumn('uri', $tiles[$fragment->getTile()]['uri']);
+        }
 
         $this->getView()->addVar('fragments', $fragments);
     }

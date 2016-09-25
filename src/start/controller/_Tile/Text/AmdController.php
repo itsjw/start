@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Controller\_Fragment\Text;
+namespace Start\Controller\_Tile\Text;
 
 use Perfumer\Framework\Controller\TemplateController;
 

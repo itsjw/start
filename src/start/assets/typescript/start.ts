@@ -5,12 +5,11 @@ define(['require'], function (require) {
             var fragments = document.getElementsByClassName('fragment');
 
             for (var i = 0; i < fragments.length; i++) {
-                var fragment = fragments[i];
-                var uri = fragment.dataset.uri;
-
-                fragment.addEventListener('click', function() {
-                    start.setFragment(uri);
-                }, false);
+                (function(i) {
+                    fragments[i].addEventListener('click', function () {
+                        start.setFragment(fragments[i].dataset.uri);
+                    }, false);
+                })(i)
             }
         }
 
@@ -23,7 +22,7 @@ define(['require'], function (require) {
         }
 
         public setFragment(uri: string) {
-            require([uri + '?'], function() {});
+            require([uri + '?' + (new Date()).getTime()], function() {});
         }
     }
 

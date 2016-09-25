@@ -4,11 +4,11 @@ define(['require'], function (require) {
             var start = this;
             var fragments = document.getElementsByClassName('fragment');
             for (var i = 0; i < fragments.length; i++) {
-                var fragment = fragments[i];
-                var uri = fragment.dataset.uri;
-                fragment.addEventListener('click', function () {
-                    start.setFragment(uri);
-                }, false);
+                (function (i) {
+                    fragments[i].addEventListener('click', function () {
+                        start.setFragment(fragments[i].dataset.uri);
+                    }, false);
+                })(i);
             }
         }
         Start.prototype.run = function () {
@@ -17,7 +17,7 @@ define(['require'], function (require) {
         Start.prototype.setFeed = function () {
         };
         Start.prototype.setFragment = function (uri) {
-            require([uri + '?'], function () { });
+            require([uri + '?' + (new Date()).getTime()], function () { });
         };
         return Start;
     }());

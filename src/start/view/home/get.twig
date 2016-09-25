@@ -26,9 +26,8 @@
 <div id="main" style="width: 1200px; margin: 0 auto">
     <div id="fragments" style="width: 600px; float: left">
         {% for fragment in fragments %}
-            <div class="fragment" data-uri="/_fragment/text/amd">
+            <div class="fragment" data-uri="{{ fragment.getVirtualColumn('uri') }}">
                 <div><span style="color: #cccccc">Для кого:</span> {{ fragment.user.username }}</div>
-                <div><span style="color: #cccccc">Задача:</span> {{ fragment.title }}</div>
                 <div><span style="color: #cccccc">Создано:</span> {{ fragment.createdAt('d.m.Y H:i:s') }}</div>
             </div>
         {% endfor %}
