@@ -23,6 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragmentQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildFragmentQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildFragmentQuery orderByTile($order = Criteria::ASC) Order by the tile column
+ * @method     ChildFragmentQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildFragmentQuery orderByData($order = Criteria::ASC) Order by the data column
  * @method     ChildFragmentQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildFragmentQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -30,6 +31,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragmentQuery groupById() Group by the id column
  * @method     ChildFragmentQuery groupByUserId() Group by the user_id column
  * @method     ChildFragmentQuery groupByTile() Group by the tile column
+ * @method     ChildFragmentQuery groupByTitle() Group by the title column
  * @method     ChildFragmentQuery groupByData() Group by the data column
  * @method     ChildFragmentQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildFragmentQuery groupByUpdatedAt() Group by the updated_at column
@@ -50,6 +52,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragment findOneById(int $id) Return the first ChildFragment filtered by the id column
  * @method     ChildFragment findOneByUserId(int $user_id) Return the first ChildFragment filtered by the user_id column
  * @method     ChildFragment findOneByTile(string $tile) Return the first ChildFragment filtered by the tile column
+ * @method     ChildFragment findOneByTitle(string $title) Return the first ChildFragment filtered by the title column
  * @method     ChildFragment findOneByData(string $data) Return the first ChildFragment filtered by the data column
  * @method     ChildFragment findOneByCreatedAt(string $created_at) Return the first ChildFragment filtered by the created_at column
  * @method     ChildFragment findOneByUpdatedAt(string $updated_at) Return the first ChildFragment filtered by the updated_at column *
@@ -60,6 +63,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragment requireOneById(int $id) Return the first ChildFragment filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByUserId(int $user_id) Return the first ChildFragment filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByTile(string $tile) Return the first ChildFragment filtered by the tile column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFragment requireOneByTitle(string $title) Return the first ChildFragment filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByData(string $data) Return the first ChildFragment filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByCreatedAt(string $created_at) Return the first ChildFragment filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByUpdatedAt(string $updated_at) Return the first ChildFragment filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -68,6 +72,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragment[]|ObjectCollection findById(int $id) Return ChildFragment objects filtered by the id column
  * @method     ChildFragment[]|ObjectCollection findByUserId(int $user_id) Return ChildFragment objects filtered by the user_id column
  * @method     ChildFragment[]|ObjectCollection findByTile(string $tile) Return ChildFragment objects filtered by the tile column
+ * @method     ChildFragment[]|ObjectCollection findByTitle(string $title) Return ChildFragment objects filtered by the title column
  * @method     ChildFragment[]|ObjectCollection findByData(string $data) Return ChildFragment objects filtered by the data column
  * @method     ChildFragment[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildFragment objects filtered by the created_at column
  * @method     ChildFragment[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildFragment objects filtered by the updated_at column
@@ -163,7 +168,7 @@ abstract class FragmentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, tile, data, created_at, updated_at FROM fragment WHERE id = :p0';
+        $sql = 'SELECT id, user_id, tile, title, data, created_at, updated_at FROM fragment WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -364,6 +369,35 @@ abstract class FragmentQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(FragmentTableMap::COL_TILE, $tile, $comparison);
+    }
+
+    /**
+     * Filter the query on the title column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
+     * $query->filterByTitle('%fooValue%'); // WHERE title LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $title The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFragmentQuery The current query, for fluid interface
+     */
+    public function filterByTitle($title = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($title)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $title)) {
+                $title = str_replace('*', '%', $title);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(FragmentTableMap::COL_TITLE, $title, $comparison);
     }
 
     /**

@@ -59,7 +59,7 @@ class FragmentTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 7;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class FragmentTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 7;
 
     /**
      * the column name for the id field
@@ -85,6 +85,11 @@ class FragmentTableMap extends TableMap
      * the column name for the tile field
      */
     const COL_TILE = 'fragment.tile';
+
+    /**
+     * the column name for the title field
+     */
+    const COL_TITLE = 'fragment.title';
 
     /**
      * the column name for the data field
@@ -113,11 +118,11 @@ class FragmentTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Tile', 'Data', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'tile', 'data', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(FragmentTableMap::COL_ID, FragmentTableMap::COL_USER_ID, FragmentTableMap::COL_TILE, FragmentTableMap::COL_DATA, FragmentTableMap::COL_CREATED_AT, FragmentTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'tile', 'data', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Tile', 'Title', 'Data', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'tile', 'title', 'data', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(FragmentTableMap::COL_ID, FragmentTableMap::COL_USER_ID, FragmentTableMap::COL_TILE, FragmentTableMap::COL_TITLE, FragmentTableMap::COL_DATA, FragmentTableMap::COL_CREATED_AT, FragmentTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'tile', 'title', 'data', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -127,11 +132,11 @@ class FragmentTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Tile' => 2, 'Data' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'tile' => 2, 'data' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
-        self::TYPE_COLNAME       => array(FragmentTableMap::COL_ID => 0, FragmentTableMap::COL_USER_ID => 1, FragmentTableMap::COL_TILE => 2, FragmentTableMap::COL_DATA => 3, FragmentTableMap::COL_CREATED_AT => 4, FragmentTableMap::COL_UPDATED_AT => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'tile' => 2, 'data' => 3, 'created_at' => 4, 'updated_at' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Tile' => 2, 'Title' => 3, 'Data' => 4, 'CreatedAt' => 5, 'UpdatedAt' => 6, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'tile' => 2, 'title' => 3, 'data' => 4, 'createdAt' => 5, 'updatedAt' => 6, ),
+        self::TYPE_COLNAME       => array(FragmentTableMap::COL_ID => 0, FragmentTableMap::COL_USER_ID => 1, FragmentTableMap::COL_TILE => 2, FragmentTableMap::COL_TITLE => 3, FragmentTableMap::COL_DATA => 4, FragmentTableMap::COL_CREATED_AT => 5, FragmentTableMap::COL_UPDATED_AT => 6, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'tile' => 2, 'title' => 3, 'data' => 4, 'created_at' => 5, 'updated_at' => 6, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -155,6 +160,7 @@ class FragmentTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
         $this->addColumn('tile', 'Tile', 'VARCHAR', false, null, null);
+        $this->addColumn('title', 'Title', 'LONGVARCHAR', false, null, null);
         $this->addColumn('data', 'Data', 'LONGVARCHAR', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
@@ -331,6 +337,7 @@ class FragmentTableMap extends TableMap
             $criteria->addSelectColumn(FragmentTableMap::COL_ID);
             $criteria->addSelectColumn(FragmentTableMap::COL_USER_ID);
             $criteria->addSelectColumn(FragmentTableMap::COL_TILE);
+            $criteria->addSelectColumn(FragmentTableMap::COL_TITLE);
             $criteria->addSelectColumn(FragmentTableMap::COL_DATA);
             $criteria->addSelectColumn(FragmentTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(FragmentTableMap::COL_UPDATED_AT);
@@ -338,6 +345,7 @@ class FragmentTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.tile');
+            $criteria->addSelectColumn($alias . '.title');
             $criteria->addSelectColumn($alias . '.data');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');

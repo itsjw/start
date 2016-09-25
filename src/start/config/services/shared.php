@@ -20,7 +20,7 @@ return [
             'lifetime' => 7 * 86400
         ]]
     ],
-    
+
     'start.http_router' => [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\Router\\Http\\DefaultRouter',

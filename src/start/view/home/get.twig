@@ -28,6 +28,7 @@
         {% for fragment in fragments %}
             <div class="fragment" data-id="{{ fragment.id }}">
                 <div><span style="color: #cccccc">Для кого:</span> {{ fragment.user.username }}</div>
+                <div><span style="color: #cccccc">Описание:</span> {{ fragment.title }}</div>
                 <div><span style="color: #cccccc">Создано:</span> {{ fragment.createdAt('d.m.Y H:i:s') }}</div>
             </div>
         {% endfor %}
