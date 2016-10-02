@@ -18,6 +18,7 @@ class FragmentController extends PlainController
 
         $data = $fragment->getData() === null ? [] : unserialize($fragment->getData());
         $data['created_at'] = $fragment->getCreatedAt();
+        $data['id'] = $id;
 
         switch ($fragment->getTile()) {
             case 'text':
