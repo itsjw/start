@@ -1,5 +1,5 @@
-define([], function () {
-    var page = "<h4>{{ title }}</h4><p>{{ text }}</p><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>";
+define(['start'], function (Start) {
+    var html = "<h4>{{ title }}</h4><p>{{ text }}</p><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>";
 
-    document.getElementById('fragment{{ id }}').innerHTML = page;
+    Start.addFragment('{{ id }}', html);
 });

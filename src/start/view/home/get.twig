@@ -9,11 +9,12 @@
         requirejs.config({
             paths: {
                 "text" : "http://static.start.dev/start/vendor/requirejs-text/text",
-                "css" : "http://static.start.dev/start/vendor/require-css/css.min"
+                "css" : "http://static.start.dev/start/vendor/require-css/css.min",
+                "start" : "http://static.start.dev/start/js/start"
             }
         });
 
-        requirejs(['http://static.start.dev/start/js/start.js'], function (Start) {
+        requirejs(['start'], function (Start) {
             Start.run();
         });
     </script>
