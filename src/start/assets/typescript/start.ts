@@ -1,13 +1,16 @@
 define(['require'], function (require) {
     class Start {
+        private fragments: Array;
+
         constructor() {
+            this.fragments = [];
         }
 
         public run() {
-            this.loadFeed();
+            this.loadStickers();
         }
 
-        public loadFeed() {
+        public loadStickers() {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('GET', '/fragments', true);
@@ -19,25 +22,23 @@ define(['require'], function (require) {
 
                     for (var i = 0; i < fragments.length; i++) {
                         (function(i) {
-                            var fragment = fragments[i];
-                            var html = `<div id="task` + fragment.id + `" class="task" data-id="` + fragment.id + `">
-                                <div><span style="color: #cccccc">Для кого:</span> ` + fragment.name + `</div>
-                                <div><span style="color: #cccccc">Описание:</span> ` + fragment.title + `</div>
-                            </div>`;
-
-                            document.getElementById("tasks").innerHTML += html;
+                            var fragment = new Fragment(fragments[i].id, fragments[i].name, fragments[i].title);
+                            start.fragments.push(fragment);
+                            start.addSticker(fragment);
                         })(i)
                     }
 
-                    var tasks = document.getElementsByClassName('task');
+                    var stickers = document.getElementsByClassName('sticker');
 
-                    for (var i = 0; i < tasks.length; i++) {
+                    for (var i = 0; i < stickers.length; i++) {
                         (function(i) {
-                            tasks[i].addEventListener('click', function () {
-                                start.setFragment(tasks[i].dataset.id);
+                            stickers[i].addEventListener('click', function () {
+                                start.addWorkspace(stickers[i].dataset.id);
                             }, false);
                         })(i)
                     }
+
+                    start.addWorkspace(fragments[0].id);
                 } else {
                 }
             };
@@ -54,8 +55,8 @@ define(['require'], function (require) {
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
-                    document.getElementById("wrapper").removeChild(document.getElementById("fragment" + id));
-                    document.getElementById("tasks").removeChild(document.getElementById("task" + id));
+                    document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
+                    document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
                 } else {
                 }
             };
@@ -66,34 +67,47 @@ define(['require'], function (require) {
             request.send();
         }
 
-        public addFragment(id: number, html: string) {
-            document.getElementById('fragment' + id).innerHTML = html;
+        public addSticker(fragment: Fragment) {
+            document.getElementById("stickers").innerHTML += `<div id="sticker` + fragment.id + `" class="sticker" data-id="` + fragment.id + `">
+                <div><span style="color: #cccccc">Для кого:</span> ` + fragment.name + `</div>
+                <div><span style="color: #cccccc">Описание:</span> ` + fragment.title + `</div>
+            </div>`;
         }
 
-        public setFragment(id: number) {
-            var fragment = document.getElementById("fragment" + id);
+        public addFragment(id: number, html: string) {
+            document.getElementById('workspace' + id).innerHTML = html;
+        }
+
+        public addWorkspace(id: number) {
+            var fragment = document.getElementById("workspace" + id);
 
             if (fragment == null) {
-                document.getElementById("wrapper").innerHTML += '<div id="fragment' + id + '" class="fragment"></div>';
+                document.getElementById("workspaces").innerHTML += '<div id="workspace' + id + '" class="workspace"></div>';
             }
 
-            var fragments = document.getElementsByClassName('fragment');
+            var workspaces = document.getElementsByClassName('workspace');
 
-            for (var i = 0; i < fragments.length; i++) {
+            for (var i = 0; i < workspaces.length; i++) {
                 (function(i) {
-                    fragments[i].style.display = "none";
+                    workspaces[i].style.display = "none";
                 })(i)
             }
 
-            document.getElementById("fragment" + id).style.display = "block";
+            document.getElementById("workspace" + id).style.display = "block";
 
             require(['/fragment/' + id], function() {});
         }
     }
 
     class Fragment {
-        public getUri() {
-            return '';
+        id: number;
+        name: string;
+        title: string;
+
+        constructor(id: number, name: string, title: string) {
+            this.id = id;
+            this.name = name;
+            this.title = title;
         }
     }
 
