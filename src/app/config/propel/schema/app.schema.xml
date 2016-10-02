@@ -6,6 +6,7 @@
         <column name="tile" type="varchar"/>
         <column name="title" type="longvarchar"/>
         <column name="data" type="longvarchar"/>
+        <column name="closed_at" type="timestamp"/>
         <behavior name="timestampable" />
         <foreign-key foreignTable="_user" phpName="User">
             <reference local="user_id" foreign="id"/>

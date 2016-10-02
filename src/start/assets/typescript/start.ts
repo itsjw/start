@@ -2,15 +2,19 @@ define(['require'], function (require) {
     class Start {
         constructor() {
             var start = this;
-            var fragments = document.getElementsByClassName('fragment');
+            var tasks = document.getElementsByClassName('task');
 
-            for (var i = 0; i < fragments.length; i++) {
+            for (var i = 0; i < tasks.length; i++) {
                 (function(i) {
-                    fragments[i].addEventListener('click', function () {
-                        start.setFragment(fragments[i].dataset.id);
+                    tasks[i].addEventListener('click', function () {
+                        start.setFragment(tasks[i].dataset.id);
                     }, false);
                 })(i)
             }
+
+            setTimeout(function() {
+                start.closeFragment(4);
+            }, 10000);
         }
 
         public run() {
@@ -21,22 +25,40 @@ define(['require'], function (require) {
 
         }
 
-        public setFragment(id: number) {
-            var wrapper = document.getElementById(id.toString());
+        public closeFragment(id: number) {
+            var request = new XMLHttpRequest();
+            request.open('POST', '/fragment/' + id, true);
 
-            if (wrapper == null) {
-                document.getElementById("wrapper").innerHTML += '<div id="' + id + '" class="wrapper"></div>';
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    document.getElementById("wrapper").removeChild(document.getElementById("fragment" + id));
+                    document.getElementById("tasks").removeChild(document.getElementById("task" + id));
+                } else {
+                }
+            };
+
+            request.onerror = function() {
+            };
+
+            request.send();
+        }
+
+        public setFragment(id: number) {
+            var fragment = document.getElementById("fragment" + id);
+
+            if (fragment == null) {
+                document.getElementById("wrapper").innerHTML += '<div id="fragment' + id + '" class="fragment"></div>';
             }
 
-            var wrappers = document.getElementsByClassName('wrapper');
+            var fragments = document.getElementsByClassName('fragment');
 
-            for (var i = 0; i < wrappers.length; i++) {
+            for (var i = 0; i < fragments.length; i++) {
                 (function(i) {
-                    wrappers[i].style.display = "none";
+                    fragments[i].style.display = "none";
                 })(i)
             }
 
-            document.getElementById(id.toString()).style.display = "block";
+            document.getElementById("fragment" + id).style.display = "block";
 
             require(['/fragment/' + id], function() {});
         }

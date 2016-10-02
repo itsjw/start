@@ -25,6 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragmentQuery orderByTile($order = Criteria::ASC) Order by the tile column
  * @method     ChildFragmentQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildFragmentQuery orderByData($order = Criteria::ASC) Order by the data column
+ * @method     ChildFragmentQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
  * @method     ChildFragmentQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildFragmentQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -33,6 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragmentQuery groupByTile() Group by the tile column
  * @method     ChildFragmentQuery groupByTitle() Group by the title column
  * @method     ChildFragmentQuery groupByData() Group by the data column
+ * @method     ChildFragmentQuery groupByClosedAt() Group by the closed_at column
  * @method     ChildFragmentQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildFragmentQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -54,6 +56,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragment findOneByTile(string $tile) Return the first ChildFragment filtered by the tile column
  * @method     ChildFragment findOneByTitle(string $title) Return the first ChildFragment filtered by the title column
  * @method     ChildFragment findOneByData(string $data) Return the first ChildFragment filtered by the data column
+ * @method     ChildFragment findOneByClosedAt(string $closed_at) Return the first ChildFragment filtered by the closed_at column
  * @method     ChildFragment findOneByCreatedAt(string $created_at) Return the first ChildFragment filtered by the created_at column
  * @method     ChildFragment findOneByUpdatedAt(string $updated_at) Return the first ChildFragment filtered by the updated_at column *
 
@@ -65,6 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragment requireOneByTile(string $tile) Return the first ChildFragment filtered by the tile column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByTitle(string $title) Return the first ChildFragment filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByData(string $data) Return the first ChildFragment filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildFragment requireOneByClosedAt(string $closed_at) Return the first ChildFragment filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByCreatedAt(string $created_at) Return the first ChildFragment filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildFragment requireOneByUpdatedAt(string $updated_at) Return the first ChildFragment filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -74,6 +78,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildFragment[]|ObjectCollection findByTile(string $tile) Return ChildFragment objects filtered by the tile column
  * @method     ChildFragment[]|ObjectCollection findByTitle(string $title) Return ChildFragment objects filtered by the title column
  * @method     ChildFragment[]|ObjectCollection findByData(string $data) Return ChildFragment objects filtered by the data column
+ * @method     ChildFragment[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildFragment objects filtered by the closed_at column
  * @method     ChildFragment[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildFragment objects filtered by the created_at column
  * @method     ChildFragment[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildFragment objects filtered by the updated_at column
  * @method     ChildFragment[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -168,7 +173,7 @@ abstract class FragmentQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, tile, title, data, created_at, updated_at FROM fragment WHERE id = :p0';
+        $sql = 'SELECT id, user_id, tile, title, data, closed_at, created_at, updated_at FROM fragment WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -427,6 +432,49 @@ abstract class FragmentQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(FragmentTableMap::COL_DATA, $data, $comparison);
+    }
+
+    /**
+     * Filter the query on the closed_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByClosedAt('2011-03-14'); // WHERE closed_at = '2011-03-14'
+     * $query->filterByClosedAt('now'); // WHERE closed_at = '2011-03-14'
+     * $query->filterByClosedAt(array('max' => 'yesterday')); // WHERE closed_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $closedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildFragmentQuery The current query, for fluid interface
+     */
+    public function filterByClosedAt($closedAt = null, $comparison = null)
+    {
+        if (is_array($closedAt)) {
+            $useMinMax = false;
+            if (isset($closedAt['min'])) {
+                $this->addUsingAlias(FragmentTableMap::COL_CLOSED_AT, $closedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($closedAt['max'])) {
+                $this->addUsingAlias(FragmentTableMap::COL_CLOSED_AT, $closedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(FragmentTableMap::COL_CLOSED_AT, $closedAt, $comparison);
     }
 
     /**

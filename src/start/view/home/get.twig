@@ -18,15 +18,15 @@
         });
     </script>
     <style>
-        .fragment { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
+        .task { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
     </style>
 </head>
 
 <body>
 <div id="main" style="width: 1200px; margin: 0 auto">
-    <div id="fragments" style="width: 600px; float: left">
+    <div id="tasks" style="width: 600px; float: left">
         {% for fragment in fragments %}
-            <div class="fragment" data-id="{{ fragment.id }}">
+            <div id="task{{ fragment.id }}" class="task" data-id="{{ fragment.id }}">
                 <div><span style="color: #cccccc">Для кого:</span> {{ fragment.user.username }}</div>
                 <div><span style="color: #cccccc">Описание:</span> {{ fragment.title }}</div>
                 <div><span style="color: #cccccc">Создано:</span> {{ fragment.createdAt('d.m.Y H:i:s') }}</div>
@@ -34,7 +34,7 @@
         {% endfor %}
     </div>
 
-    <div id="task" style="width: 600px; float: right">
+    <div id="fragments" style="width: 600px; float: right">
         <div id="wrapper" style="padding: 0 10px">
         </div>
     </div>

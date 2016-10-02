@@ -1,5 +1,5 @@
 define([], function () {
     var page = `<div>{{ text|raw }}</div><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>`;
 
-    document.getElementById('{{ id }}').innerHTML = page;
+    document.getElementById('fragment{{ id }}').innerHTML = page;
 });

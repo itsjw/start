@@ -17,6 +17,7 @@ class HomeController extends TemplateController
         $fragments = FragmentQuery::create()
             ->joinWith('User')
             ->filterByUser($this->getUser())
+            ->filterByClosedAt(null, Criteria::ISNULL)
             ->orderByCreatedAt(Criteria::DESC)
             ->limit(50)
             ->find();

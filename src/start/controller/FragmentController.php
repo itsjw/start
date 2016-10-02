@@ -29,4 +29,16 @@ class FragmentController extends PlainController
                 break;
         }
     }
+
+    public function post()
+    {
+        $id = (int) $this->i();
+
+        $fragment = FragmentQuery::create()->findPk($id);
+
+        if ($fragment) {
+            $fragment->setClosedAt(new \DateTime());
+            $fragment->save();
+        }
+    }
 }
