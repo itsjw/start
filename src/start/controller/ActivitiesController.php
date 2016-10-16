@@ -18,6 +18,7 @@ class ActivitiesController extends ViewController
             ->joinWith('User')
             ->filterByUser($this->getUser())
             ->filterByClosedAt(null, Criteria::ISNULL)
+            ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
             ->orderByCreatedAt(Criteria::DESC)
             ->find();
 
