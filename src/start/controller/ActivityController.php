@@ -2,11 +2,11 @@
 
 namespace Start\Controller;
 
-use App\Model\FragmentQuery;
+use App\Model\ActivityQuery;
 use Perfumer\Framework\Controller\PlainController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 
-class FragmentController extends PlainController
+class ActivityController extends PlainController
 {
     use DefaultRouterControllerHelpers;
 
@@ -14,17 +14,17 @@ class FragmentController extends PlainController
     {
         $id = (int) $this->i();
 
-        $fragment = FragmentQuery::create()->findPk($id);
+        $activity = ActivityQuery::create()->findPk($id);
 
-        $data = $fragment->getData() === null ? [] : unserialize($fragment->getData());
-        $data['created_at'] = $fragment->getCreatedAt();
+        $data = $activity->getData() === null ? [] : unserialize($activity->getData());
+        $data['created_at'] = $activity->getCreatedAt();
         $data['id'] = $id;
 
-        switch ($fragment->getTile()) {
-            case 'text':
+        switch ($activity->getCode()) {
+            case 10:
                 $this->forward('_tile/text', 'amd', $data);
                 break;
-            case 'markdown':
+            case 20:
                 $this->forward('_tile/markdown', 'amd', $data);
                 break;
         }
@@ -34,11 +34,11 @@ class FragmentController extends PlainController
     {
         $id = (int) $this->i();
 
-        $fragment = FragmentQuery::create()->findPk($id);
+        $activity = ActivityQuery::create()->findPk($id);
 
-        if ($fragment) {
-            $fragment->setClosedAt(new \DateTime());
-            $fragment->save();
+        if ($activity) {
+            $activity->setClosedAt(new \DateTime());
+            $activity->save();
         }
     }
 }

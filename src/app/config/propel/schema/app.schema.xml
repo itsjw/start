@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="start" defaultIdMethod="native" namespace="App\Model">
-    <table name="fragment" phpName="Fragment">
+    <table name="activity" phpName="Activity">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
-        <column name="tile" type="varchar"/>
+        <column name="code" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="data" type="longvarchar"/>
         <column name="closed_at" type="timestamp"/>

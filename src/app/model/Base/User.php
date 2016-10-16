@@ -5,8 +5,8 @@ namespace App\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use App\Model\Fragment as ChildFragment;
-use App\Model\FragmentQuery as ChildFragmentQuery;
+use App\Model\Activity as ChildActivity;
+use App\Model\ActivityQuery as ChildActivityQuery;
 use App\Model\Role as ChildRole;
 use App\Model\RoleQuery as ChildRoleQuery;
 use App\Model\User as ChildUser;
@@ -120,10 +120,10 @@ abstract class User implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ObjectCollection|ChildFragment[] Collection to store aggregation of ChildFragment objects.
+     * @var        ObjectCollection|ChildActivity[] Collection to store aggregation of ChildActivity objects.
      */
-    protected $collFragments;
-    protected $collFragmentsPartial;
+    protected $collActivities;
+    protected $collActivitiesPartial;
 
     /**
      * @var        ObjectCollection|ChildUserRole[] Collection to store aggregation of ChildUserRole objects.
@@ -157,9 +157,9 @@ abstract class User implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|ChildFragment[]
+     * @var ObjectCollection|ChildActivity[]
      */
-    protected $fragmentsScheduledForDeletion = null;
+    protected $activitiesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -840,7 +840,7 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collFragments = null;
+            $this->collActivities = null;
 
             $this->collUserRoles = null;
 
@@ -996,18 +996,18 @@ abstract class User implements ActiveRecordInterface
             }
 
 
-            if ($this->fragmentsScheduledForDeletion !== null) {
-                if (!$this->fragmentsScheduledForDeletion->isEmpty()) {
-                    foreach ($this->fragmentsScheduledForDeletion as $fragment) {
+            if ($this->activitiesScheduledForDeletion !== null) {
+                if (!$this->activitiesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->activitiesScheduledForDeletion as $activity) {
                         // need to save related object because we set the relation to null
-                        $fragment->save($con);
+                        $activity->save($con);
                     }
-                    $this->fragmentsScheduledForDeletion = null;
+                    $this->activitiesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collFragments !== null) {
-                foreach ($this->collFragments as $referrerFK) {
+            if ($this->collActivities !== null) {
+                foreach ($this->collActivities as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1269,20 +1269,20 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collFragments) {
+            if (null !== $this->collActivities) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'fragments';
+                        $key = 'activities';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'fragments';
+                        $key = 'activities';
                         break;
                     default:
-                        $key = 'Fragments';
+                        $key = 'Activities';
                 }
 
-                $result[$key] = $this->collFragments->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collActivities->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collUserRoles) {
 
@@ -1571,9 +1571,9 @@ abstract class User implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getFragments() as $relObj) {
+            foreach ($this->getActivities() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addFragment($relObj->copy($deepCopy));
+                    $copyObj->addActivity($relObj->copy($deepCopy));
                 }
             }
 
@@ -1624,8 +1624,8 @@ abstract class User implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('Fragment' == $relationName) {
-            return $this->initFragments();
+        if ('Activity' == $relationName) {
+            return $this->initActivities();
         }
         if ('UserRole' == $relationName) {
             return $this->initUserRoles();
@@ -1633,31 +1633,31 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collFragments collection
+     * Clears out the collActivities collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addFragments()
+     * @see        addActivities()
      */
-    public function clearFragments()
+    public function clearActivities()
     {
-        $this->collFragments = null; // important to set this to NULL since that means it is uninitialized
+        $this->collActivities = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collFragments collection loaded partially.
+     * Reset is the collActivities collection loaded partially.
      */
-    public function resetPartialFragments($v = true)
+    public function resetPartialActivities($v = true)
     {
-        $this->collFragmentsPartial = $v;
+        $this->collActivitiesPartial = $v;
     }
 
     /**
-     * Initializes the collFragments collection.
+     * Initializes the collActivities collection.
      *
-     * By default this just sets the collFragments collection to an empty array (like clearcollFragments());
+     * By default this just sets the collActivities collection to an empty array (like clearcollActivities());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1666,17 +1666,17 @@ abstract class User implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initFragments($overrideExisting = true)
+    public function initActivities($overrideExisting = true)
     {
-        if (null !== $this->collFragments && !$overrideExisting) {
+        if (null !== $this->collActivities && !$overrideExisting) {
             return;
         }
-        $this->collFragments = new ObjectCollection();
-        $this->collFragments->setModel('\App\Model\Fragment');
+        $this->collActivities = new ObjectCollection();
+        $this->collActivities->setModel('\App\Model\Activity');
     }
 
     /**
-     * Gets an array of ChildFragment objects which contain a foreign key that references this object.
+     * Gets an array of ChildActivity objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1686,108 +1686,108 @@ abstract class User implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|ChildFragment[] List of ChildFragment objects
+     * @return ObjectCollection|ChildActivity[] List of ChildActivity objects
      * @throws PropelException
      */
-    public function getFragments(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getActivities(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collFragmentsPartial && !$this->isNew();
-        if (null === $this->collFragments || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collFragments) {
+        $partial = $this->collActivitiesPartial && !$this->isNew();
+        if (null === $this->collActivities || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActivities) {
                 // return empty collection
-                $this->initFragments();
+                $this->initActivities();
             } else {
-                $collFragments = ChildFragmentQuery::create(null, $criteria)
+                $collActivities = ChildActivityQuery::create(null, $criteria)
                     ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collFragmentsPartial && count($collFragments)) {
-                        $this->initFragments(false);
+                    if (false !== $this->collActivitiesPartial && count($collActivities)) {
+                        $this->initActivities(false);
 
-                        foreach ($collFragments as $obj) {
-                            if (false == $this->collFragments->contains($obj)) {
-                                $this->collFragments->append($obj);
+                        foreach ($collActivities as $obj) {
+                            if (false == $this->collActivities->contains($obj)) {
+                                $this->collActivities->append($obj);
                             }
                         }
 
-                        $this->collFragmentsPartial = true;
+                        $this->collActivitiesPartial = true;
                     }
 
-                    return $collFragments;
+                    return $collActivities;
                 }
 
-                if ($partial && $this->collFragments) {
-                    foreach ($this->collFragments as $obj) {
+                if ($partial && $this->collActivities) {
+                    foreach ($this->collActivities as $obj) {
                         if ($obj->isNew()) {
-                            $collFragments[] = $obj;
+                            $collActivities[] = $obj;
                         }
                     }
                 }
 
-                $this->collFragments = $collFragments;
-                $this->collFragmentsPartial = false;
+                $this->collActivities = $collActivities;
+                $this->collActivitiesPartial = false;
             }
         }
 
-        return $this->collFragments;
+        return $this->collActivities;
     }
 
     /**
-     * Sets a collection of ChildFragment objects related by a one-to-many relationship
+     * Sets a collection of ChildActivity objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $fragments A Propel collection.
+     * @param      Collection $activities A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function setFragments(Collection $fragments, ConnectionInterface $con = null)
+    public function setActivities(Collection $activities, ConnectionInterface $con = null)
     {
-        /** @var ChildFragment[] $fragmentsToDelete */
-        $fragmentsToDelete = $this->getFragments(new Criteria(), $con)->diff($fragments);
+        /** @var ChildActivity[] $activitiesToDelete */
+        $activitiesToDelete = $this->getActivities(new Criteria(), $con)->diff($activities);
 
 
-        $this->fragmentsScheduledForDeletion = $fragmentsToDelete;
+        $this->activitiesScheduledForDeletion = $activitiesToDelete;
 
-        foreach ($fragmentsToDelete as $fragmentRemoved) {
-            $fragmentRemoved->setUser(null);
+        foreach ($activitiesToDelete as $activityRemoved) {
+            $activityRemoved->setUser(null);
         }
 
-        $this->collFragments = null;
-        foreach ($fragments as $fragment) {
-            $this->addFragment($fragment);
+        $this->collActivities = null;
+        foreach ($activities as $activity) {
+            $this->addActivity($activity);
         }
 
-        $this->collFragments = $fragments;
-        $this->collFragmentsPartial = false;
+        $this->collActivities = $activities;
+        $this->collActivitiesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related Fragment objects.
+     * Returns the number of related Activity objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related Fragment objects.
+     * @return int             Count of related Activity objects.
      * @throws PropelException
      */
-    public function countFragments(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countActivities(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collFragmentsPartial && !$this->isNew();
-        if (null === $this->collFragments || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collFragments) {
+        $partial = $this->collActivitiesPartial && !$this->isNew();
+        if (null === $this->collActivities || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActivities) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getFragments());
+                return count($this->getActivities());
             }
 
-            $query = ChildFragmentQuery::create(null, $criteria);
+            $query = ChildActivityQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1797,54 +1797,54 @@ abstract class User implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collFragments);
+        return count($this->collActivities);
     }
 
     /**
-     * Method called to associate a ChildFragment object to this object
-     * through the ChildFragment foreign key attribute.
+     * Method called to associate a ChildActivity object to this object
+     * through the ChildActivity foreign key attribute.
      *
-     * @param  ChildFragment $l ChildFragment
+     * @param  ChildActivity $l ChildActivity
      * @return $this|\App\Model\User The current object (for fluent API support)
      */
-    public function addFragment(ChildFragment $l)
+    public function addActivity(ChildActivity $l)
     {
-        if ($this->collFragments === null) {
-            $this->initFragments();
-            $this->collFragmentsPartial = true;
+        if ($this->collActivities === null) {
+            $this->initActivities();
+            $this->collActivitiesPartial = true;
         }
 
-        if (!$this->collFragments->contains($l)) {
-            $this->doAddFragment($l);
+        if (!$this->collActivities->contains($l)) {
+            $this->doAddActivity($l);
         }
 
         return $this;
     }
 
     /**
-     * @param ChildFragment $fragment The ChildFragment object to add.
+     * @param ChildActivity $activity The ChildActivity object to add.
      */
-    protected function doAddFragment(ChildFragment $fragment)
+    protected function doAddActivity(ChildActivity $activity)
     {
-        $this->collFragments[]= $fragment;
-        $fragment->setUser($this);
+        $this->collActivities[]= $activity;
+        $activity->setUser($this);
     }
 
     /**
-     * @param  ChildFragment $fragment The ChildFragment object to remove.
+     * @param  ChildActivity $activity The ChildActivity object to remove.
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function removeFragment(ChildFragment $fragment)
+    public function removeActivity(ChildActivity $activity)
     {
-        if ($this->getFragments()->contains($fragment)) {
-            $pos = $this->collFragments->search($fragment);
-            $this->collFragments->remove($pos);
-            if (null === $this->fragmentsScheduledForDeletion) {
-                $this->fragmentsScheduledForDeletion = clone $this->collFragments;
-                $this->fragmentsScheduledForDeletion->clear();
+        if ($this->getActivities()->contains($activity)) {
+            $pos = $this->collActivities->search($activity);
+            $this->collActivities->remove($pos);
+            if (null === $this->activitiesScheduledForDeletion) {
+                $this->activitiesScheduledForDeletion = clone $this->collActivities;
+                $this->activitiesScheduledForDeletion->clear();
             }
-            $this->fragmentsScheduledForDeletion[]= $fragment;
-            $fragment->setUser(null);
+            $this->activitiesScheduledForDeletion[]= $activity;
+            $activity->setUser(null);
         }
 
         return $this;
@@ -2372,8 +2372,8 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collFragments) {
-                foreach ($this->collFragments as $o) {
+            if ($this->collActivities) {
+                foreach ($this->collActivities as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -2389,7 +2389,7 @@ abstract class User implements ActiveRecordInterface
             }
         } // if ($deep)
 
-        $this->collFragments = null;
+        $this->collActivities = null;
         $this->collUserRoles = null;
         $this->collRoles = null;
     }

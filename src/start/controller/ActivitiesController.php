@@ -2,19 +2,19 @@
 
 namespace Start\Controller;
 
-use App\Model\FragmentQuery;
+use App\Model\ActivityQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
 use Propel\Runtime\ActiveQuery\Criteria;
 
-class FragmentsController extends ViewController
+class ActivitiesController extends ViewController
 {
     use StatusViewControllerHelpers;
 
     public function get()
     {
-        $fragments = FragmentQuery::create()
+        $activities = ActivityQuery::create()
             ->joinWith('User')
             ->filterByUser($this->getUser())
             ->filterByClosedAt(null, Criteria::ISNULL)
@@ -23,11 +23,11 @@ class FragmentsController extends ViewController
 
         $content = [];
 
-        foreach ($fragments as $fragment) {
+        foreach ($activities as $activity) {
             $content[] = [
-                'id' => $fragment->getId(),
-                'name' => $fragment->getUser()->getUsername(),
-                'title' => $fragment->getTitle()
+                'id' => $activity->getId(),
+                'name' => $activity->getUser()->getUsername(),
+                'title' => $activity->getTitle()
             ];
         }
 

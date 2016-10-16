@@ -42,15 +42,15 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildUserQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildUserQuery leftJoinFragment($relationAlias = null) Adds a LEFT JOIN clause to the query using the Fragment relation
- * @method     ChildUserQuery rightJoinFragment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Fragment relation
- * @method     ChildUserQuery innerJoinFragment($relationAlias = null) Adds a INNER JOIN clause to the query using the Fragment relation
+ * @method     ChildUserQuery leftJoinActivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the Activity relation
+ * @method     ChildUserQuery rightJoinActivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Activity relation
+ * @method     ChildUserQuery innerJoinActivity($relationAlias = null) Adds a INNER JOIN clause to the query using the Activity relation
  *
  * @method     ChildUserQuery leftJoinUserRole($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserRole relation
  * @method     ChildUserQuery rightJoinUserRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserRole relation
  * @method     ChildUserQuery innerJoinUserRole($relationAlias = null) Adds a INNER JOIN clause to the query using the UserRole relation
  *
- * @method     \App\Model\FragmentQuery|\App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \App\Model\ActivityQuery|\App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -550,40 +550,40 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \App\Model\Fragment object
+     * Filter the query by a related \App\Model\Activity object
      *
-     * @param \App\Model\Fragment|ObjectCollection $fragment the related object to use as filter
+     * @param \App\Model\Activity|ObjectCollection $activity the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByFragment($fragment, $comparison = null)
+    public function filterByActivity($activity, $comparison = null)
     {
-        if ($fragment instanceof \App\Model\Fragment) {
+        if ($activity instanceof \App\Model\Activity) {
             return $this
-                ->addUsingAlias(UserTableMap::COL_ID, $fragment->getUserId(), $comparison);
-        } elseif ($fragment instanceof ObjectCollection) {
+                ->addUsingAlias(UserTableMap::COL_ID, $activity->getUserId(), $comparison);
+        } elseif ($activity instanceof ObjectCollection) {
             return $this
-                ->useFragmentQuery()
-                ->filterByPrimaryKeys($fragment->getPrimaryKeys())
+                ->useActivityQuery()
+                ->filterByPrimaryKeys($activity->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByFragment() only accepts arguments of type \App\Model\Fragment or Collection');
+            throw new PropelException('filterByActivity() only accepts arguments of type \App\Model\Activity or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Fragment relation
+     * Adds a JOIN clause to the query using the Activity relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function joinFragment($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinActivity($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Fragment');
+        $relationMap = $tableMap->getRelation('Activity');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -598,14 +598,14 @@ abstract class UserQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Fragment');
+            $this->addJoinObject($join, 'Activity');
         }
 
         return $this;
     }
 
     /**
-     * Use the Fragment relation Fragment object
+     * Use the Activity relation Activity object
      *
      * @see useQuery()
      *
@@ -613,13 +613,13 @@ abstract class UserQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \App\Model\FragmentQuery A secondary query class using the current class as primary query
+     * @return \App\Model\ActivityQuery A secondary query class using the current class as primary query
      */
-    public function useFragmentQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useActivityQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
-            ->joinFragment($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Fragment', '\App\Model\FragmentQuery');
+            ->joinActivity($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Activity', '\App\Model\ActivityQuery');
     }
 
     /**

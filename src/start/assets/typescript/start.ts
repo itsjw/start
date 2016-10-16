@@ -1,9 +1,9 @@
 define(['require'], function (require) {
     class Start {
-        private fragments: Array;
+        private activities: Array;
 
         constructor() {
-            this.fragments = [];
+            this.activities = [];
         }
 
         public run() {
@@ -13,18 +13,18 @@ define(['require'], function (require) {
         public loadStickers() {
             var start = this;
             var request = new XMLHttpRequest();
-            request.open('GET', '/fragments', true);
+            request.open('GET', '/activities', true);
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
-                    var fragments = data.content;
+                    var activities = data.content;
 
-                    for (var i = 0; i < fragments.length; i++) {
+                    for (var i = 0; i < activities.length; i++) {
                         (function(i) {
-                            var fragment = new Fragment(fragments[i].id, fragments[i].name, fragments[i].title);
-                            start.fragments.push(fragment);
-                            start.addSticker(fragment);
+                            var activity = new Activity(activities[i].id, activities[i].name, activities[i].title);
+                            start.activities.push(activity);
+                            start.addSticker(activity);
                         })(i)
                     }
 
@@ -38,7 +38,9 @@ define(['require'], function (require) {
                         })(i)
                     }
 
-                    start.addWorkspace(fragments[0].id);
+                    if (activities.length > 0) {
+                        start.addWorkspace(activities[0].id);
+                    }
                 } else {
                 }
             };
@@ -49,9 +51,9 @@ define(['require'], function (require) {
             request.send();
         }
 
-        public closeFragment(id: number) {
+        public closeActivity(id: number) {
             var request = new XMLHttpRequest();
-            request.open('POST', '/fragment/' + id, true);
+            request.open('POST', '/activity/' + id, true);
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
@@ -67,14 +69,14 @@ define(['require'], function (require) {
             request.send();
         }
 
-        public addSticker(fragment: Fragment) {
-            document.getElementById("stickers").innerHTML += `<div id="sticker` + fragment.id + `" class="sticker" data-id="` + fragment.id + `">
-                <div><span style="color: #cccccc">Для кого:</span> ` + fragment.name + `</div>
-                <div><span style="color: #cccccc">Описание:</span> ` + fragment.title + `</div>
+        public addSticker(activity: Activity) {
+            document.getElementById("stickers").innerHTML += `<div id="sticker` + activity.id + `" class="sticker" data-id="` + activity.id + `">
+                <div><span style="color: #cccccc">Для кого:</span> ` + activity.name + `</div>
+                <div><span style="color: #cccccc">Описание:</span> ` + activity.title + `</div>
             </div>`;
         }
 
-        public addFragment(id: number, html: string) {
+        public addActivity(id: number, html: string) {
             document.getElementById('workspace' + id).innerHTML = html;
         }
 
@@ -95,11 +97,11 @@ define(['require'], function (require) {
 
             document.getElementById("workspace" + id).style.display = "block";
 
-            require(['/fragment/' + id], function() {});
+            require(['/activity/' + id], function() {});
         }
     }
 
-    class Fragment {
+    class Activity {
         id: number;
         name: string;
         title: string;
