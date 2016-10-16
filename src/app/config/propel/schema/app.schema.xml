@@ -7,6 +7,8 @@
         <column name="priority" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="data" type="longvarchar"/>
+        <column name="raised_at" type="timestamp"/>
+        <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
         <behavior name="timestampable" />
         <foreign-key foreignTable="_user" phpName="User">

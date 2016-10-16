@@ -101,6 +101,18 @@ abstract class Activity implements ActiveRecordInterface
     protected $data;
 
     /**
+     * The value for the raised_at field.
+     * @var        \DateTime
+     */
+    protected $raised_at;
+
+    /**
+     * The value for the picked_at field.
+     * @var        \DateTime
+     */
+    protected $picked_at;
+
+    /**
      * The value for the closed_at field.
      * @var        \DateTime
      */
@@ -409,6 +421,46 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [optionally formatted] temporal [raised_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getRaisedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->raised_at;
+        } else {
+            return $this->raised_at instanceof \DateTime ? $this->raised_at->format($format) : null;
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] temporal [picked_at] column value.
+     *
+     *
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                            If format is NULL, then the raw DateTime object will be returned.
+     *
+     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
+     *
+     * @throws PropelException - if unable to parse/validate the date/time value.
+     */
+    public function getPickedAt($format = NULL)
+    {
+        if ($format === null) {
+            return $this->picked_at;
+        } else {
+            return $this->picked_at instanceof \DateTime ? $this->picked_at->format($format) : null;
+        }
+    }
+
+    /**
      * Get the [optionally formatted] temporal [closed_at] column value.
      *
      *
@@ -593,6 +645,46 @@ abstract class Activity implements ActiveRecordInterface
     } // setData()
 
     /**
+     * Sets the value of [raised_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     */
+    public function setRaisedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->raised_at !== null || $dt !== null) {
+            if ($this->raised_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->raised_at->format("Y-m-d H:i:s")) {
+                $this->raised_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ActivityTableMap::COL_RAISED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setRaisedAt()
+
+    /**
+     * Sets the value of [picked_at] column to a normalized version of the date/time value specified.
+     *
+     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     *               Empty strings are treated as NULL.
+     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     */
+    public function setPickedAt($v)
+    {
+        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+        if ($this->picked_at !== null || $dt !== null) {
+            if ($this->picked_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->picked_at->format("Y-m-d H:i:s")) {
+                $this->picked_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[ActivityTableMap::COL_PICKED_AT] = true;
+            }
+        } // if either are not null
+
+        return $this;
+    } // setPickedAt()
+
+    /**
      * Sets the value of [closed_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
@@ -706,13 +798,19 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Data', TableMap::TYPE_PHPNAME, $indexType)];
             $this->data = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('RaisedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->raised_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('PickedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->picked_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ActivityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : ActivityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -722,7 +820,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 11; // 11 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Activity'), 0, $e);
@@ -974,6 +1072,12 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_DATA)) {
             $modifiedColumns[':p' . $index++]  = 'data';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_RAISED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'raised_at';
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_PICKED_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'picked_at';
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_CLOSED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'closed_at';
         }
@@ -1011,6 +1115,12 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'data':
                         $stmt->bindValue($identifier, $this->data, PDO::PARAM_STR);
+                        break;
+                    case 'raised_at':
+                        $stmt->bindValue($identifier, $this->raised_at ? $this->raised_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'picked_at':
+                        $stmt->bindValue($identifier, $this->picked_at ? $this->picked_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
                         break;
                     case 'closed_at':
                         $stmt->bindValue($identifier, $this->closed_at ? $this->closed_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1095,12 +1205,18 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getData();
                 break;
             case 6:
-                return $this->getClosedAt();
+                return $this->getRaisedAt();
                 break;
             case 7:
-                return $this->getCreatedAt();
+                return $this->getPickedAt();
                 break;
             case 8:
+                return $this->getClosedAt();
+                break;
+            case 9:
+                return $this->getCreatedAt();
+                break;
+            case 10:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1139,9 +1255,11 @@ abstract class Activity implements ActiveRecordInterface
             $keys[3] => $this->getPriority(),
             $keys[4] => $this->getTitle(),
             $keys[5] => $this->getData(),
-            $keys[6] => $this->getClosedAt(),
-            $keys[7] => $this->getCreatedAt(),
-            $keys[8] => $this->getUpdatedAt(),
+            $keys[6] => $this->getRaisedAt(),
+            $keys[7] => $this->getPickedAt(),
+            $keys[8] => $this->getClosedAt(),
+            $keys[9] => $this->getCreatedAt(),
+            $keys[10] => $this->getUpdatedAt(),
         );
 
         $utc = new \DateTimeZone('utc');
@@ -1161,6 +1279,18 @@ abstract class Activity implements ActiveRecordInterface
             // When changing timezone we don't want to change existing instances
             $dateTime = clone $result[$keys[8]];
             $result[$keys[8]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+
+        if ($result[$keys[9]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[9]];
+            $result[$keys[9]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+
+        if ($result[$keys[10]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[10]];
+            $result[$keys[10]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1237,12 +1367,18 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setData($value);
                 break;
             case 6:
-                $this->setClosedAt($value);
+                $this->setRaisedAt($value);
                 break;
             case 7:
-                $this->setCreatedAt($value);
+                $this->setPickedAt($value);
                 break;
             case 8:
+                $this->setClosedAt($value);
+                break;
+            case 9:
+                $this->setCreatedAt($value);
+                break;
+            case 10:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1290,13 +1426,19 @@ abstract class Activity implements ActiveRecordInterface
             $this->setData($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setClosedAt($arr[$keys[6]]);
+            $this->setRaisedAt($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setCreatedAt($arr[$keys[7]]);
+            $this->setPickedAt($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setUpdatedAt($arr[$keys[8]]);
+            $this->setClosedAt($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setCreatedAt($arr[$keys[9]]);
+        }
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setUpdatedAt($arr[$keys[10]]);
         }
     }
 
@@ -1356,6 +1498,12 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_DATA)) {
             $criteria->add(ActivityTableMap::COL_DATA, $this->data);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_RAISED_AT)) {
+            $criteria->add(ActivityTableMap::COL_RAISED_AT, $this->raised_at);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_PICKED_AT)) {
+            $criteria->add(ActivityTableMap::COL_PICKED_AT, $this->picked_at);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_CLOSED_AT)) {
             $criteria->add(ActivityTableMap::COL_CLOSED_AT, $this->closed_at);
@@ -1457,6 +1605,8 @@ abstract class Activity implements ActiveRecordInterface
         $copyObj->setPriority($this->getPriority());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setData($this->getData());
+        $copyObj->setRaisedAt($this->getRaisedAt());
+        $copyObj->setPickedAt($this->getPickedAt());
         $copyObj->setClosedAt($this->getClosedAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -1555,6 +1705,8 @@ abstract class Activity implements ActiveRecordInterface
         $this->priority = null;
         $this->title = null;
         $this->data = null;
+        $this->raised_at = null;
+        $this->picked_at = null;
         $this->closed_at = null;
         $this->created_at = null;
         $this->updated_at = null;

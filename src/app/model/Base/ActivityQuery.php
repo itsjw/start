@@ -26,6 +26,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
  * @method     ChildActivityQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildActivityQuery orderByData($order = Criteria::ASC) Order by the data column
+ * @method     ChildActivityQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
+ * @method     ChildActivityQuery orderByPickedAt($order = Criteria::ASC) Order by the picked_at column
  * @method     ChildActivityQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
  * @method     ChildActivityQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildActivityQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -36,6 +38,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery groupByPriority() Group by the priority column
  * @method     ChildActivityQuery groupByTitle() Group by the title column
  * @method     ChildActivityQuery groupByData() Group by the data column
+ * @method     ChildActivityQuery groupByRaisedAt() Group by the raised_at column
+ * @method     ChildActivityQuery groupByPickedAt() Group by the picked_at column
  * @method     ChildActivityQuery groupByClosedAt() Group by the closed_at column
  * @method     ChildActivityQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildActivityQuery groupByUpdatedAt() Group by the updated_at column
@@ -59,6 +63,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column
  * @method     ChildActivity findOneByTitle(string $title) Return the first ChildActivity filtered by the title column
  * @method     ChildActivity findOneByData(string $data) Return the first ChildActivity filtered by the data column
+ * @method     ChildActivity findOneByRaisedAt(string $raised_at) Return the first ChildActivity filtered by the raised_at column
+ * @method     ChildActivity findOneByPickedAt(string $picked_at) Return the first ChildActivity filtered by the picked_at column
  * @method     ChildActivity findOneByClosedAt(string $closed_at) Return the first ChildActivity filtered by the closed_at column
  * @method     ChildActivity findOneByCreatedAt(string $created_at) Return the first ChildActivity filtered by the created_at column
  * @method     ChildActivity findOneByUpdatedAt(string $updated_at) Return the first ChildActivity filtered by the updated_at column *
@@ -72,6 +78,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByTitle(string $title) Return the first ChildActivity filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByData(string $data) Return the first ChildActivity filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByRaisedAt(string $raised_at) Return the first ChildActivity filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByPickedAt(string $picked_at) Return the first ChildActivity filtered by the picked_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByClosedAt(string $closed_at) Return the first ChildActivity filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCreatedAt(string $created_at) Return the first ChildActivity filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByUpdatedAt(string $updated_at) Return the first ChildActivity filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -83,6 +91,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
  * @method     ChildActivity[]|ObjectCollection findByTitle(string $title) Return ChildActivity objects filtered by the title column
  * @method     ChildActivity[]|ObjectCollection findByData(string $data) Return ChildActivity objects filtered by the data column
+ * @method     ChildActivity[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildActivity objects filtered by the raised_at column
+ * @method     ChildActivity[]|ObjectCollection findByPickedAt(string $picked_at) Return ChildActivity objects filtered by the picked_at column
  * @method     ChildActivity[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildActivity objects filtered by the closed_at column
  * @method     ChildActivity[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildActivity objects filtered by the created_at column
  * @method     ChildActivity[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildActivity objects filtered by the updated_at column
@@ -178,7 +188,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, code, priority, title, data, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, user_id, code, priority, title, data, raised_at, picked_at, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -490,6 +500,92 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_DATA, $data, $comparison);
+    }
+
+    /**
+     * Filter the query on the raised_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByRaisedAt('2011-03-14'); // WHERE raised_at = '2011-03-14'
+     * $query->filterByRaisedAt('now'); // WHERE raised_at = '2011-03-14'
+     * $query->filterByRaisedAt(array('max' => 'yesterday')); // WHERE raised_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $raisedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByRaisedAt($raisedAt = null, $comparison = null)
+    {
+        if (is_array($raisedAt)) {
+            $useMinMax = false;
+            if (isset($raisedAt['min'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_RAISED_AT, $raisedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($raisedAt['max'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_RAISED_AT, $raisedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_RAISED_AT, $raisedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the picked_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPickedAt('2011-03-14'); // WHERE picked_at = '2011-03-14'
+     * $query->filterByPickedAt('now'); // WHERE picked_at = '2011-03-14'
+     * $query->filterByPickedAt(array('max' => 'yesterday')); // WHERE picked_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $pickedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByPickedAt($pickedAt = null, $comparison = null)
+    {
+        if (is_array($pickedAt)) {
+            $useMinMax = false;
+            if (isset($pickedAt['min'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_PICKED_AT, $pickedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($pickedAt['max'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_PICKED_AT, $pickedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_PICKED_AT, $pickedAt, $comparison);
     }
 
     /**
