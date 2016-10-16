@@ -57,5 +57,10 @@ return [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\View\\TemplateProvider\\TwigFilesystemProvider',
         'arguments' => ['#twig.filesystem_loader', __DIR__ . '/../../view', 'start']
+    ],
+
+    'activity' => [
+        'shared' => true,
+        'class' => 'Start\\Service\\Activity'
     ]
 ];

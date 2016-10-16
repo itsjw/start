@@ -20,14 +20,16 @@ class ActivityController extends PlainController
         $data['created_at'] = $activity->getCreatedAt();
         $data['id'] = $id;
 
-        switch ($activity->getCode()) {
-            case 10:
-                $this->forward('_tile/text', 'amd', $data);
-                break;
-            case 20:
-                $this->forward('_tile/markdown', 'amd', $data);
-                break;
+        $reference = $this->getContainer()->getResource('activities');
+
+        if (!isset($reference[$activity->getCode()])) {
+            $this->pageNotFoundException();
         }
+
+        $request = $reference[$activity->getCode()]['request'];
+        $request = explode('.', $request);
+
+        $this->getProxy()->forward($request[0], $request[1], $request[2], $data);
     }
 
     public function post()
@@ -37,8 +39,7 @@ class ActivityController extends PlainController
         $activity = ActivityQuery::create()->findPk($id);
 
         if ($activity) {
-            $activity->setClosedAt(new \DateTime());
-            $activity->save();
+            $this->s('activity')->close($activity);
         }
     }
 }
