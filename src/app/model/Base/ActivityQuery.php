@@ -23,6 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
+ * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
  * @method     ChildActivityQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildActivityQuery orderByData($order = Criteria::ASC) Order by the data column
  * @method     ChildActivityQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
@@ -32,6 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByUserId() Group by the user_id column
  * @method     ChildActivityQuery groupByCode() Group by the code column
+ * @method     ChildActivityQuery groupByPriority() Group by the priority column
  * @method     ChildActivityQuery groupByTitle() Group by the title column
  * @method     ChildActivityQuery groupByData() Group by the data column
  * @method     ChildActivityQuery groupByClosedAt() Group by the closed_at column
@@ -54,6 +56,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByUserId(int $user_id) Return the first ChildActivity filtered by the user_id column
  * @method     ChildActivity findOneByCode(int $code) Return the first ChildActivity filtered by the code column
+ * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column
  * @method     ChildActivity findOneByTitle(string $title) Return the first ChildActivity filtered by the title column
  * @method     ChildActivity findOneByData(string $data) Return the first ChildActivity filtered by the data column
  * @method     ChildActivity findOneByClosedAt(string $closed_at) Return the first ChildActivity filtered by the closed_at column
@@ -66,6 +69,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByUserId(int $user_id) Return the first ChildActivity filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCode(int $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByTitle(string $title) Return the first ChildActivity filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByData(string $data) Return the first ChildActivity filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByClosedAt(string $closed_at) Return the first ChildActivity filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -76,6 +80,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByUserId(int $user_id) Return ChildActivity objects filtered by the user_id column
  * @method     ChildActivity[]|ObjectCollection findByCode(int $code) Return ChildActivity objects filtered by the code column
+ * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
  * @method     ChildActivity[]|ObjectCollection findByTitle(string $title) Return ChildActivity objects filtered by the title column
  * @method     ChildActivity[]|ObjectCollection findByData(string $data) Return ChildActivity objects filtered by the data column
  * @method     ChildActivity[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildActivity objects filtered by the closed_at column
@@ -173,7 +178,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, code, title, data, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, user_id, code, priority, title, data, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -386,6 +391,47 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_CODE, $code, $comparison);
+    }
+
+    /**
+     * Filter the query on the priority column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPriority(1234); // WHERE priority = 1234
+     * $query->filterByPriority(array(12, 34)); // WHERE priority IN (12, 34)
+     * $query->filterByPriority(array('min' => 12)); // WHERE priority > 12
+     * </code>
+     *
+     * @param     mixed $priority The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByPriority($priority = null, $comparison = null)
+    {
+        if (is_array($priority)) {
+            $useMinMax = false;
+            if (isset($priority['min'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($priority['max'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority, $comparison);
     }
 
     /**

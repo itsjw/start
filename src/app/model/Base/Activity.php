@@ -83,6 +83,12 @@ abstract class Activity implements ActiveRecordInterface
     protected $code;
 
     /**
+     * The value for the priority field.
+     * @var        int
+     */
+    protected $priority;
+
+    /**
      * The value for the title field.
      * @var        string
      */
@@ -373,6 +379,16 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [priority] column value.
+     *
+     * @return int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
      * Get the [title] column value.
      *
      * @return string
@@ -515,6 +531,26 @@ abstract class Activity implements ActiveRecordInterface
 
         return $this;
     } // setCode()
+
+    /**
+     * Set the value of [priority] column.
+     *
+     * @param int $v new value
+     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     */
+    public function setPriority($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->priority !== $v) {
+            $this->priority = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_PRIORITY] = true;
+        }
+
+        return $this;
+    } // setPriority()
 
     /**
      * Set the value of [title] column.
@@ -661,19 +697,22 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
             $this->code = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->priority = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
             $this->title = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Data', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Data', TableMap::TYPE_PHPNAME, $indexType)];
             $this->data = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -683,7 +722,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Activity'), 0, $e);
@@ -926,6 +965,9 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $modifiedColumns[':p' . $index++]  = 'code';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
+            $modifiedColumns[':p' . $index++]  = 'priority';
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_TITLE)) {
             $modifiedColumns[':p' . $index++]  = 'title';
         }
@@ -960,6 +1002,9 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'code':
                         $stmt->bindValue($identifier, $this->code, PDO::PARAM_INT);
+                        break;
+                    case 'priority':
+                        $stmt->bindValue($identifier, $this->priority, PDO::PARAM_INT);
                         break;
                     case 'title':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
@@ -1041,18 +1086,21 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getCode();
                 break;
             case 3:
-                return $this->getTitle();
+                return $this->getPriority();
                 break;
             case 4:
-                return $this->getData();
+                return $this->getTitle();
                 break;
             case 5:
-                return $this->getClosedAt();
+                return $this->getData();
                 break;
             case 6:
-                return $this->getCreatedAt();
+                return $this->getClosedAt();
                 break;
             case 7:
+                return $this->getCreatedAt();
+                break;
+            case 8:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1088,20 +1136,15 @@ abstract class Activity implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
             $keys[2] => $this->getCode(),
-            $keys[3] => $this->getTitle(),
-            $keys[4] => $this->getData(),
-            $keys[5] => $this->getClosedAt(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[3] => $this->getPriority(),
+            $keys[4] => $this->getTitle(),
+            $keys[5] => $this->getData(),
+            $keys[6] => $this->getClosedAt(),
+            $keys[7] => $this->getCreatedAt(),
+            $keys[8] => $this->getUpdatedAt(),
         );
 
         $utc = new \DateTimeZone('utc');
-        if ($result[$keys[5]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[5]];
-            $result[$keys[5]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
-        }
-
         if ($result[$keys[6]] instanceof \DateTime) {
             // When changing timezone we don't want to change existing instances
             $dateTime = clone $result[$keys[6]];
@@ -1112,6 +1155,12 @@ abstract class Activity implements ActiveRecordInterface
             // When changing timezone we don't want to change existing instances
             $dateTime = clone $result[$keys[7]];
             $result[$keys[7]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+
+        if ($result[$keys[8]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[8]];
+            $result[$keys[8]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1179,18 +1228,21 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setCode($value);
                 break;
             case 3:
-                $this->setTitle($value);
+                $this->setPriority($value);
                 break;
             case 4:
-                $this->setData($value);
+                $this->setTitle($value);
                 break;
             case 5:
-                $this->setClosedAt($value);
+                $this->setData($value);
                 break;
             case 6:
-                $this->setCreatedAt($value);
+                $this->setClosedAt($value);
                 break;
             case 7:
+                $this->setCreatedAt($value);
+                break;
+            case 8:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1229,19 +1281,22 @@ abstract class Activity implements ActiveRecordInterface
             $this->setCode($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setTitle($arr[$keys[3]]);
+            $this->setPriority($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setData($arr[$keys[4]]);
+            $this->setTitle($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setClosedAt($arr[$keys[5]]);
+            $this->setData($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
+            $this->setClosedAt($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setUpdatedAt($arr[$keys[7]]);
+            $this->setCreatedAt($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setUpdatedAt($arr[$keys[8]]);
         }
     }
 
@@ -1292,6 +1347,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $criteria->add(ActivityTableMap::COL_CODE, $this->code);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
+            $criteria->add(ActivityTableMap::COL_PRIORITY, $this->priority);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_TITLE)) {
             $criteria->add(ActivityTableMap::COL_TITLE, $this->title);
@@ -1396,6 +1454,7 @@ abstract class Activity implements ActiveRecordInterface
     {
         $copyObj->setUserId($this->getUserId());
         $copyObj->setCode($this->getCode());
+        $copyObj->setPriority($this->getPriority());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setData($this->getData());
         $copyObj->setClosedAt($this->getClosedAt());
@@ -1493,6 +1552,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->id = null;
         $this->user_id = null;
         $this->code = null;
+        $this->priority = null;
         $this->title = null;
         $this->data = null;
         $this->closed_at = null;

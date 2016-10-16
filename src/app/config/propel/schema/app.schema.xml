@@ -4,6 +4,7 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="code" type="integer"/>
+        <column name="priority" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="data" type="longvarchar"/>
         <column name="closed_at" type="timestamp"/>
