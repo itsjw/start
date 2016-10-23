@@ -18,4 +18,18 @@ use Perfumer\Component\Auth\UserHelpers;
 class User extends BaseUser
 {
     use UserHelpers;
+
+    public function getActivityCodes()
+    {
+        $roles = $this->getRoles();
+        $codes = [];
+
+        foreach ($roles as $role) {
+            if ($role->getActivityCodes() !== null) {
+                $codes = array_merge($codes, $role->getActivityCodes());
+            }
+        }
+
+        return array_unique($codes);
+    }
 }
