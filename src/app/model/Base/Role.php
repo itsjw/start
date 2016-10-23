@@ -84,6 +84,19 @@ abstract class Role implements ActiveRecordInterface
     protected $permission;
 
     /**
+     * The value for the activity_codes field.
+     * @var        array
+     */
+    protected $activity_codes;
+
+    /**
+     * The unserialized $activity_codes value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var object
+     */
+    protected $activity_codes_unserialized;
+
+    /**
      * @var        ObjectCollection|ChildUserRole[] Collection to store aggregation of ChildUserRole objects.
      */
     protected $collUserRoles;
@@ -367,6 +380,35 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
+     * Get the [activity_codes] column value.
+     *
+     * @return array
+     */
+    public function getActivityCodes()
+    {
+        if (null === $this->activity_codes_unserialized) {
+            $this->activity_codes_unserialized = array();
+        }
+        if (!$this->activity_codes_unserialized && null !== $this->activity_codes) {
+            $activity_codes_unserialized = substr($this->activity_codes, 2, -2);
+            $this->activity_codes_unserialized = $activity_codes_unserialized ? explode(' | ', $activity_codes_unserialized) : array();
+        }
+
+        return $this->activity_codes_unserialized;
+    }
+
+    /**
+     * Test the presence of a value in the [activity_codes] array column value.
+     * @param      mixed $value
+     *
+     * @return boolean
+     */
+    public function hasActivityCode($value)
+    {
+        return in_array($value, $this->getActivityCodes());
+    } // hasActivityCode()
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -427,6 +469,57 @@ abstract class Role implements ActiveRecordInterface
     } // setPermission()
 
     /**
+     * Set the value of [activity_codes] column.
+     *
+     * @param array $v new value
+     * @return $this|\App\Model\Role The current object (for fluent API support)
+     */
+    public function setActivityCodes($v)
+    {
+        if ($this->activity_codes_unserialized !== $v) {
+            $this->activity_codes_unserialized = $v;
+            $this->activity_codes = '| ' . implode(' | ', $v) . ' |';
+            $this->modifiedColumns[RoleTableMap::COL_ACTIVITY_CODES] = true;
+        }
+
+        return $this;
+    } // setActivityCodes()
+
+    /**
+     * Adds a value to the [activity_codes] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\App\Model\Role The current object (for fluent API support)
+     */
+    public function addActivityCode($value)
+    {
+        $currentArray = $this->getActivityCodes();
+        $currentArray []= $value;
+        $this->setActivityCodes($currentArray);
+
+        return $this;
+    } // addActivityCode()
+
+    /**
+     * Removes a value from the [activity_codes] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\App\Model\Role The current object (for fluent API support)
+     */
+    public function removeActivityCode($value)
+    {
+        $targetArray = array();
+        foreach ($this->getActivityCodes() as $element) {
+            if ($element != $value) {
+                $targetArray []= $element;
+            }
+        }
+        $this->setActivityCodes($targetArray);
+
+        return $this;
+    } // removeActivityCode()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -470,6 +563,10 @@ abstract class Role implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : RoleTableMap::translateFieldName('Permission', TableMap::TYPE_PHPNAME, $indexType)];
             $this->permission = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : RoleTableMap::translateFieldName('ActivityCodes', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->activity_codes = $col;
+            $this->activity_codes_unserialized = null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -478,7 +575,7 @@ abstract class Role implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = RoleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = RoleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Role'), 0, $e);
@@ -742,6 +839,9 @@ abstract class Role implements ActiveRecordInterface
         if ($this->isColumnModified(RoleTableMap::COL_PERMISSION)) {
             $modifiedColumns[':p' . $index++]  = 'permission';
         }
+        if ($this->isColumnModified(RoleTableMap::COL_ACTIVITY_CODES)) {
+            $modifiedColumns[':p' . $index++]  = 'activity_codes';
+        }
 
         $sql = sprintf(
             'INSERT INTO _role (%s) VALUES (%s)',
@@ -761,6 +861,9 @@ abstract class Role implements ActiveRecordInterface
                         break;
                     case 'permission':
                         $stmt->bindValue($identifier, $this->permission, PDO::PARAM_STR);
+                        break;
+                    case 'activity_codes':
+                        $stmt->bindValue($identifier, $this->activity_codes, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -826,6 +929,9 @@ abstract class Role implements ActiveRecordInterface
             case 2:
                 return $this->getPermission();
                 break;
+            case 3:
+                return $this->getActivityCodes();
+                break;
             default:
                 return null;
                 break;
@@ -859,6 +965,7 @@ abstract class Role implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getPermission(),
+            $keys[3] => $this->getActivityCodes(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -924,6 +1031,13 @@ abstract class Role implements ActiveRecordInterface
             case 2:
                 $this->setPermission($value);
                 break;
+            case 3:
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setActivityCodes($value);
+                break;
         } // switch()
 
         return $this;
@@ -958,6 +1072,9 @@ abstract class Role implements ActiveRecordInterface
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setPermission($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setActivityCodes($arr[$keys[3]]);
         }
     }
 
@@ -1008,6 +1125,9 @@ abstract class Role implements ActiveRecordInterface
         }
         if ($this->isColumnModified(RoleTableMap::COL_PERMISSION)) {
             $criteria->add(RoleTableMap::COL_PERMISSION, $this->permission);
+        }
+        if ($this->isColumnModified(RoleTableMap::COL_ACTIVITY_CODES)) {
+            $criteria->add(RoleTableMap::COL_ACTIVITY_CODES, $this->activity_codes);
         }
 
         return $criteria;
@@ -1097,6 +1217,7 @@ abstract class Role implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setPermission($this->getPermission());
+        $copyObj->setActivityCodes($this->getActivityCodes());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1653,6 +1774,8 @@ abstract class Role implements ActiveRecordInterface
         $this->id = null;
         $this->name = null;
         $this->permission = null;
+        $this->activity_codes = null;
+        $this->activity_codes_unserialized = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

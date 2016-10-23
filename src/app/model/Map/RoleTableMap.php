@@ -59,7 +59,7 @@ class RoleTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class RoleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -87,6 +87,11 @@ class RoleTableMap extends TableMap
     const COL_PERMISSION = '_role.permission';
 
     /**
+     * the column name for the activity_codes field
+     */
+    const COL_ACTIVITY_CODES = '_role.activity_codes';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -98,11 +103,11 @@ class RoleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Permission', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'permission', ),
-        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID, RoleTableMap::COL_NAME, RoleTableMap::COL_PERMISSION, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'permission', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Permission', 'ActivityCodes', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'permission', 'activityCodes', ),
+        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID, RoleTableMap::COL_NAME, RoleTableMap::COL_PERMISSION, RoleTableMap::COL_ACTIVITY_CODES, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'permission', 'activity_codes', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class RoleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Permission' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'permission' => 2, ),
-        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID => 0, RoleTableMap::COL_NAME => 1, RoleTableMap::COL_PERMISSION => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'permission' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Permission' => 2, 'ActivityCodes' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'permission' => 2, 'activityCodes' => 3, ),
+        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID => 0, RoleTableMap::COL_NAME => 1, RoleTableMap::COL_PERMISSION => 2, RoleTableMap::COL_ACTIVITY_CODES => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'permission' => 2, 'activity_codes' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -140,6 +145,7 @@ class RoleTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
         $this->addColumn('permission', 'Permission', 'VARCHAR', false, 255, null);
+        $this->addColumn('activity_codes', 'ActivityCodes', 'ARRAY', false, null, null);
     } // initialize()
 
     /**
@@ -310,10 +316,12 @@ class RoleTableMap extends TableMap
             $criteria->addSelectColumn(RoleTableMap::COL_ID);
             $criteria->addSelectColumn(RoleTableMap::COL_NAME);
             $criteria->addSelectColumn(RoleTableMap::COL_PERMISSION);
+            $criteria->addSelectColumn(RoleTableMap::COL_ACTIVITY_CODES);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.permission');
+            $criteria->addSelectColumn($alias . '.activity_codes');
         }
     }
 
