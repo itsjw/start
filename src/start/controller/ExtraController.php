@@ -34,6 +34,7 @@ class ExtraController extends ViewController
             ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
             ->filterByPriority($highest_priority, Criteria::GREATER_THAN)
             ->filterById($picked_activities->getPrimaryKeys(), Criteria::NOT_IN)
+            ->orderByPriority(Criteria::DESC)
             ->orderByCreatedAt()
             ->findOne();
 
