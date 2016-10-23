@@ -1,4 +1,4 @@
-define(['require'], function (require) {
+define(['require', 'buzz'], function (require, buzz) {
     var Start = (function () {
         function Start() {
             this.activities = [];
@@ -40,6 +40,8 @@ define(['require'], function (require) {
                             var activity = data.content;
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
                                 start.addActivity(new Activity(activity.id, activity.name, activity.title));
+                                var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
+                                sound.play();
                             }
                         }
                     }
