@@ -1,5 +1,5 @@
 define(['start'], function (Start) {
     var html = `<div>{{ text|raw }}</div><p style='color: #cccccc'>{{ created_at|date('d.m.Y H:i') }}</p>`;
 
-    Start.addActivity('{{ id }}', html);
+    Start.setWorkspaceContent('{{ id }}', html);
 });

@@ -23,24 +23,8 @@ define(['require'], function (require) {
 
                     for (var i = 0; i < activities.length; i++) {
                         (function(i) {
-                            var activity = new Activity(activities[i].id, activities[i].name, activities[i].title);
-                            start.activities.push(activity);
-                            start.addSticker(activity);
+                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title));
                         })(i)
-                    }
-
-                    //var stickers = document.getElementsByClassName('sticker');
-                    //
-                    //for (var i = 0; i < stickers.length; i++) {
-                    //    (function(i) {
-                    //        stickers[i].addEventListener('click', function () {
-                    //            start.addWorkspace(stickers[i].dataset.id);
-                    //        }, false);
-                    //    })(i)
-                    //}
-
-                    if (activities.length > 0) {
-                        start.addWorkspace(activities[0].id);
                     }
                 } else {
                 }
@@ -67,9 +51,7 @@ define(['require'], function (require) {
                             var activity = data.content;
 
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                var activity = new Activity(activity.id, activity.name, activity.title);
-                                start.activities.push(activity);
-                                start.addSticker(activity);
+                                start.addActivity(new Activity(activity.id, activity.name, activity.title));
                             }
                         }
                     } else {
@@ -101,6 +83,15 @@ define(['require'], function (require) {
             request.send();
         }
 
+        public addActivity(activity: Activity) {
+            this.activities.push(activity);
+            this.addSticker(activity);
+
+            if (this.activities.length === 1) {
+                this.openWorkspace(activity);
+            }
+        }
+
         public addSticker(activity: Activity) {
             var start = this;
 
@@ -113,21 +104,21 @@ define(['require'], function (require) {
             `;
 
             sticker.addEventListener('click', function () {
-                start.addWorkspace(activity.id);
+                start.openWorkspace(activity);
             }, false);
 
             document.getElementById("stickers").appendChild(sticker);
         }
 
-        public addActivity(id: number, html: string) {
+        public setWorkspaceContent(id: number, html: string) {
             document.getElementById('workspace' + id).innerHTML = html;
         }
 
-        public addWorkspace(id: number) {
-            var fragment = document.getElementById("workspace" + id);
+        public openWorkspace(activity: Activity) {
+            var workspace = document.getElementById("workspace" + activity.id);
 
-            if (fragment == null) {
-                document.getElementById("workspaces").innerHTML += '<div id="workspace' + id + '" class="workspace"></div>';
+            if (workspace == null) {
+                document.getElementById("workspaces").innerHTML += '<div id="workspace' + activity.id + '" class="workspace"></div>';
             }
 
             var workspaces = document.getElementsByClassName('workspace');
@@ -138,9 +129,9 @@ define(['require'], function (require) {
                 })(i)
             }
 
-            document.getElementById("workspace" + id).style.display = "block";
+            document.getElementById("workspace" + activity.id).style.display = "block";
 
-            require(['/activity/' + id], function() {});
+            require(['/activity/' + activity.id], function() {});
         }
     }
 

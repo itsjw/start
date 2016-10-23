@@ -17,22 +17,8 @@ define(['require'], function (require) {
                     var activities = data.content;
                     for (var i = 0; i < activities.length; i++) {
                         (function (i) {
-                            var activity = new Activity(activities[i].id, activities[i].name, activities[i].title);
-                            start.activities.push(activity);
-                            start.addSticker(activity);
+                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title));
                         })(i);
-                    }
-                    //var stickers = document.getElementsByClassName('sticker');
-                    //
-                    //for (var i = 0; i < stickers.length; i++) {
-                    //    (function(i) {
-                    //        stickers[i].addEventListener('click', function () {
-                    //            start.addWorkspace(stickers[i].dataset.id);
-                    //        }, false);
-                    //    })(i)
-                    //}
-                    if (activities.length > 0) {
-                        start.addWorkspace(activities[0].id);
                     }
                 }
                 else {
@@ -53,9 +39,7 @@ define(['require'], function (require) {
                         if (data.hasOwnProperty('content') && data.content !== null) {
                             var activity = data.content;
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                var activity = new Activity(activity.id, activity.name, activity.title);
-                                start.activities.push(activity);
-                                start.addSticker(activity);
+                                start.addActivity(new Activity(activity.id, activity.name, activity.title));
                             }
                         }
                     }
@@ -82,6 +66,13 @@ define(['require'], function (require) {
             };
             request.send();
         };
+        Start.prototype.addActivity = function (activity) {
+            this.activities.push(activity);
+            this.addSticker(activity);
+            if (this.activities.length === 1) {
+                this.openWorkspace(activity);
+            }
+        };
         Start.prototype.addSticker = function (activity) {
             var start = this;
             var sticker = document.createElement("div");
@@ -89,17 +80,17 @@ define(['require'], function (require) {
             sticker.setAttribute('class', 'sticker');
             sticker.innerHTML = "\n                <div><span style=\"color: #cccccc\">\u0414\u043B\u044F \u043A\u043E\u0433\u043E:</span> " + activity.name + "</div>\n                <div><span style=\"color: #cccccc\">\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435:</span> " + activity.title + "</div>\n            ";
             sticker.addEventListener('click', function () {
-                start.addWorkspace(activity.id);
+                start.openWorkspace(activity);
             }, false);
             document.getElementById("stickers").appendChild(sticker);
         };
-        Start.prototype.addActivity = function (id, html) {
+        Start.prototype.setWorkspaceContent = function (id, html) {
             document.getElementById('workspace' + id).innerHTML = html;
         };
-        Start.prototype.addWorkspace = function (id) {
-            var fragment = document.getElementById("workspace" + id);
-            if (fragment == null) {
-                document.getElementById("workspaces").innerHTML += '<div id="workspace' + id + '" class="workspace"></div>';
+        Start.prototype.openWorkspace = function (activity) {
+            var workspace = document.getElementById("workspace" + activity.id);
+            if (workspace == null) {
+                document.getElementById("workspaces").innerHTML += '<div id="workspace' + activity.id + '" class="workspace"></div>';
             }
             var workspaces = document.getElementsByClassName('workspace');
             for (var i = 0; i < workspaces.length; i++) {
@@ -107,8 +98,8 @@ define(['require'], function (require) {
                     workspaces[i].style.display = "none";
                 })(i);
             }
-            document.getElementById("workspace" + id).style.display = "block";
-            require(['/activity/' + id], function () { });
+            document.getElementById("workspace" + activity.id).style.display = "block";
+            require(['/activity/' + activity.id], function () { });
         };
         return Start;
     }());
