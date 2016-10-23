@@ -4,9 +4,10 @@ define(['require'], function (require) {
             this.activities = [];
         }
         Start.prototype.run = function () {
-            this.loadStickers();
+            this.loadActivities();
+            this.extraActivities();
         };
-        Start.prototype.loadStickers = function () {
+        Start.prototype.loadActivities = function () {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('GET', '/activities', true);
@@ -21,14 +22,15 @@ define(['require'], function (require) {
                             start.addSticker(activity);
                         })(i);
                     }
-                    var stickers = document.getElementsByClassName('sticker');
-                    for (var i = 0; i < stickers.length; i++) {
-                        (function (i) {
-                            stickers[i].addEventListener('click', function () {
-                                start.addWorkspace(stickers[i].dataset.id);
-                            }, false);
-                        })(i);
-                    }
+                    //var stickers = document.getElementsByClassName('sticker');
+                    //
+                    //for (var i = 0; i < stickers.length; i++) {
+                    //    (function(i) {
+                    //        stickers[i].addEventListener('click', function () {
+                    //            start.addWorkspace(stickers[i].dataset.id);
+                    //        }, false);
+                    //    })(i)
+                    //}
                     if (activities.length > 0) {
                         start.addWorkspace(activities[0].id);
                     }
@@ -39,6 +41,31 @@ define(['require'], function (require) {
             request.onerror = function () {
             };
             request.send();
+        };
+        Start.prototype.extraActivities = function () {
+            var start = this;
+            setInterval(function () {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/extra', true);
+                request.onload = function () {
+                    if (request.status >= 200 && request.status < 400) {
+                        var data = JSON.parse(request.responseText);
+                        if (data.hasOwnProperty('content') && data.content !== null) {
+                            var activity = data.content;
+                            if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
+                                var activity = new Activity(activity.id, activity.name, activity.title);
+                                start.activities.push(activity);
+                                start.addSticker(activity);
+                            }
+                        }
+                    }
+                    else {
+                    }
+                };
+                request.onerror = function () {
+                };
+                request.send();
+            }, 10000);
         };
         Start.prototype.closeActivity = function (id) {
             var request = new XMLHttpRequest();
@@ -56,7 +83,15 @@ define(['require'], function (require) {
             request.send();
         };
         Start.prototype.addSticker = function (activity) {
-            document.getElementById("stickers").innerHTML += "<div id=\"sticker" + activity.id + "\" class=\"sticker\" data-id=\"" + activity.id + "\">\n                <div><span style=\"color: #cccccc\">\u0414\u043B\u044F \u043A\u043E\u0433\u043E:</span> " + activity.name + "</div>\n                <div><span style=\"color: #cccccc\">\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435:</span> " + activity.title + "</div>\n            </div>";
+            var start = this;
+            var sticker = document.createElement("div");
+            sticker.id = 'sticker' + activity.id;
+            sticker.setAttribute('class', 'sticker');
+            sticker.innerHTML = "\n                <div><span style=\"color: #cccccc\">\u0414\u043B\u044F \u043A\u043E\u0433\u043E:</span> " + activity.name + "</div>\n                <div><span style=\"color: #cccccc\">\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435:</span> " + activity.title + "</div>\n            ";
+            sticker.addEventListener('click', function () {
+                start.addWorkspace(activity.id);
+            }, false);
+            document.getElementById("stickers").appendChild(sticker);
         };
         Start.prototype.addActivity = function (id, html) {
             document.getElementById('workspace' + id).innerHTML = html;

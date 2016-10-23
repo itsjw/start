@@ -15,11 +15,10 @@ class ActivitiesController extends ViewController
     public function get()
     {
         $activities = ActivityQuery::create()
-            ->joinWith('User')
             ->filterByUser($this->getUser())
             ->filterByClosedAt(null, Criteria::ISNULL)
-            ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
-            ->orderByCreatedAt(Criteria::DESC)
+            ->filterByPickedAt(null, Criteria::ISNOTNULL)
+            ->orderByRaisedAt()
             ->find();
 
         $content = [];
@@ -27,7 +26,7 @@ class ActivitiesController extends ViewController
         foreach ($activities as $activity) {
             $content[] = [
                 'id' => $activity->getId(),
-                'name' => $activity->getUser()->getUsername(),
+                'name' => $this->getUser()->getUsername(),
                 'title' => $activity->getTitle()
             ];
         }

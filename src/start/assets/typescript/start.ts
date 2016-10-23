@@ -7,10 +7,11 @@ define(['require'], function (require) {
         }
 
         public run() {
-            this.loadStickers();
+            this.loadActivities();
+            this.extraActivities();
         }
 
-        public loadStickers() {
+        public loadActivities() {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('GET', '/activities', true);
@@ -28,15 +29,15 @@ define(['require'], function (require) {
                         })(i)
                     }
 
-                    var stickers = document.getElementsByClassName('sticker');
-
-                    for (var i = 0; i < stickers.length; i++) {
-                        (function(i) {
-                            stickers[i].addEventListener('click', function () {
-                                start.addWorkspace(stickers[i].dataset.id);
-                            }, false);
-                        })(i)
-                    }
+                    //var stickers = document.getElementsByClassName('sticker');
+                    //
+                    //for (var i = 0; i < stickers.length; i++) {
+                    //    (function(i) {
+                    //        stickers[i].addEventListener('click', function () {
+                    //            start.addWorkspace(stickers[i].dataset.id);
+                    //        }, false);
+                    //    })(i)
+                    //}
 
                     if (activities.length > 0) {
                         start.addWorkspace(activities[0].id);
@@ -49,6 +50,37 @@ define(['require'], function (require) {
             };
 
             request.send();
+        }
+
+        public extraActivities() {
+            var start = this;
+
+            setInterval(function() {
+                var request = new XMLHttpRequest();
+                request.open('GET', '/extra', true);
+
+                request.onload = function() {
+                    if (request.status >= 200 && request.status < 400) {
+                        var data = JSON.parse(request.responseText);
+
+                        if (data.hasOwnProperty('content') && data.content !== null) {
+                            var activity = data.content;
+
+                            if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
+                                var activity = new Activity(activity.id, activity.name, activity.title);
+                                start.activities.push(activity);
+                                start.addSticker(activity);
+                            }
+                        }
+                    } else {
+                    }
+                };
+
+                request.onerror = function() {
+                };
+
+                request.send();
+            }, 10000);
         }
 
         public closeActivity(id: number) {
@@ -70,10 +102,21 @@ define(['require'], function (require) {
         }
 
         public addSticker(activity: Activity) {
-            document.getElementById("stickers").innerHTML += `<div id="sticker` + activity.id + `" class="sticker" data-id="` + activity.id + `">
+            var start = this;
+
+            var sticker = document.createElement("div");
+            sticker.id = 'sticker' + activity.id;
+            sticker.setAttribute('class', 'sticker');
+            sticker.innerHTML = `
                 <div><span style="color: #cccccc">Для кого:</span> ` + activity.name + `</div>
                 <div><span style="color: #cccccc">Описание:</span> ` + activity.title + `</div>
-            </div>`;
+            `;
+
+            sticker.addEventListener('click', function () {
+                start.addWorkspace(activity.id);
+            }, false);
+
+            document.getElementById("stickers").appendChild(sticker);
         }
 
         public addActivity(id: number, html: string) {
