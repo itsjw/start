@@ -10,6 +10,6 @@ class LogoutController extends PlainController
     {
         $this->getAuth()->logout();
 
-        $this->redirect('/home');
+        $this->redirect('/login');
     }
 }

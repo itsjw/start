@@ -9,7 +9,7 @@ class HomeController extends TemplateController
     public function get()
     {
         if (!$this->getAuth()->isLogged()) {
-            $this->pageNotFoundException();
+            $this->redirect('/login');
         }
     }
 }
