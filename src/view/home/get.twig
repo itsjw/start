@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title>Start</title>
+    <script src="http://static.start.dev/js/requirejs.min.js"></script>
+    <script>
+        requirejs.config({
+            paths: {
+                "text" : "http://static.start.dev/vendor/requirejs-text/text",
+                "css" : "http://static.start.dev/vendor/require-css/css.min",
+                "start" : "http://static.start.dev/js/start",
+                "buzz" : "http://static.start.dev/vendor/buzz/dist/buzz.min"
+            }
+        });
+
+        requirejs(['start'], function (Start) {
+            Start.run();
+        });
+    </script>
+    <style>
+        .sticker { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
+    </style>
+</head>
+
+<body>
+<div id="dashboard" style="width: 1200px; margin: 0 auto">
+    <div id="stickers" style="width: 500px; float: left">
+    </div>
+
+    <div id="workspaces" style="width: 690px; float: right">
+    </div>
+
+    <div style="clear: both"></div>
+</div>
+</body>
+</html>

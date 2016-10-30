@@ -25,15 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\Bundle\\": "src/app/bundle/",
-            "App\\Command\\": "src/app/command/",
-            "App\\Controller\\": "src/app/controller/",
-            "App\\Model\\": "src/app/model/",
-            "App\\Service\\": "src/app/service/",
-            "Start\\Bundle\\": "src/start/bundle/",
-            "Start\\Command\\": "src/start/command/",
-            "Start\\Controller\\": "src/start/controller/",
-            "Start\\Service\\": "src/start/service/"
+            "App\\Model\\": "src/model/",
+            "Start\\Application\\": "src/application/",
+            "Start\\Bundle\\": "src/bundle/",
+            "Start\\Command\\": "src/command/",
+            "Start\\Controller\\": "src/controller/",
+            "Start\\Service\\": "src/service/"
         }
     },
     "config": {
