@@ -6,6 +6,8 @@ use \Exception;
 use \PDO;
 use App\Model\Role as ChildRole;
 use App\Model\RoleQuery as ChildRoleQuery;
+use App\Model\Schedule as ChildSchedule;
+use App\Model\ScheduleQuery as ChildScheduleQuery;
 use App\Model\User as ChildUser;
 use App\Model\UserQuery as ChildUserQuery;
 use App\Model\UserRole as ChildUserRole;
@@ -84,17 +86,10 @@ abstract class Role implements ActiveRecordInterface
     protected $permission;
 
     /**
-     * The value for the activity_codes field.
-     * @var        array
+     * @var        ObjectCollection|ChildSchedule[] Collection to store aggregation of ChildSchedule objects.
      */
-    protected $activity_codes;
-
-    /**
-     * The unserialized $activity_codes value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */
-    protected $activity_codes_unserialized;
+    protected $collSchedules;
+    protected $collSchedulesPartial;
 
     /**
      * @var        ObjectCollection|ChildUserRole[] Collection to store aggregation of ChildUserRole objects.
@@ -125,6 +120,12 @@ abstract class Role implements ActiveRecordInterface
      * @var ObjectCollection|ChildUser[]
      */
     protected $usersScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildSchedule[]
+     */
+    protected $schedulesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -380,35 +381,6 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Get the [activity_codes] column value.
-     *
-     * @return array
-     */
-    public function getActivityCodes()
-    {
-        if (null === $this->activity_codes_unserialized) {
-            $this->activity_codes_unserialized = array();
-        }
-        if (!$this->activity_codes_unserialized && null !== $this->activity_codes) {
-            $activity_codes_unserialized = substr($this->activity_codes, 2, -2);
-            $this->activity_codes_unserialized = $activity_codes_unserialized ? explode(' | ', $activity_codes_unserialized) : array();
-        }
-
-        return $this->activity_codes_unserialized;
-    }
-
-    /**
-     * Test the presence of a value in the [activity_codes] array column value.
-     * @param      mixed $value
-     *
-     * @return boolean
-     */
-    public function hasActivityCode($value)
-    {
-        return in_array($value, $this->getActivityCodes());
-    } // hasActivityCode()
-
-    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -469,57 +441,6 @@ abstract class Role implements ActiveRecordInterface
     } // setPermission()
 
     /**
-     * Set the value of [activity_codes] column.
-     *
-     * @param array $v new value
-     * @return $this|\App\Model\Role The current object (for fluent API support)
-     */
-    public function setActivityCodes($v)
-    {
-        if ($this->activity_codes_unserialized !== $v) {
-            $this->activity_codes_unserialized = $v;
-            $this->activity_codes = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[RoleTableMap::COL_ACTIVITY_CODES] = true;
-        }
-
-        return $this;
-    } // setActivityCodes()
-
-    /**
-     * Adds a value to the [activity_codes] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\App\Model\Role The current object (for fluent API support)
-     */
-    public function addActivityCode($value)
-    {
-        $currentArray = $this->getActivityCodes();
-        $currentArray []= $value;
-        $this->setActivityCodes($currentArray);
-
-        return $this;
-    } // addActivityCode()
-
-    /**
-     * Removes a value from the [activity_codes] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\App\Model\Role The current object (for fluent API support)
-     */
-    public function removeActivityCode($value)
-    {
-        $targetArray = array();
-        foreach ($this->getActivityCodes() as $element) {
-            if ($element != $value) {
-                $targetArray []= $element;
-            }
-        }
-        $this->setActivityCodes($targetArray);
-
-        return $this;
-    } // removeActivityCode()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -563,10 +484,6 @@ abstract class Role implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : RoleTableMap::translateFieldName('Permission', TableMap::TYPE_PHPNAME, $indexType)];
             $this->permission = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : RoleTableMap::translateFieldName('ActivityCodes', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->activity_codes = $col;
-            $this->activity_codes_unserialized = null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -575,7 +492,7 @@ abstract class Role implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = RoleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = RoleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Role'), 0, $e);
@@ -635,6 +552,8 @@ abstract class Role implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
+
+            $this->collSchedules = null;
 
             $this->collUserRoles = null;
 
@@ -778,6 +697,24 @@ abstract class Role implements ActiveRecordInterface
             }
 
 
+            if ($this->schedulesScheduledForDeletion !== null) {
+                if (!$this->schedulesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->schedulesScheduledForDeletion as $schedule) {
+                        // need to save related object because we set the relation to null
+                        $schedule->save($con);
+                    }
+                    $this->schedulesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collSchedules !== null) {
+                foreach ($this->collSchedules as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             if ($this->userRolesScheduledForDeletion !== null) {
                 if (!$this->userRolesScheduledForDeletion->isEmpty()) {
                     \App\Model\UserRoleQuery::create()
@@ -839,9 +776,6 @@ abstract class Role implements ActiveRecordInterface
         if ($this->isColumnModified(RoleTableMap::COL_PERMISSION)) {
             $modifiedColumns[':p' . $index++]  = 'permission';
         }
-        if ($this->isColumnModified(RoleTableMap::COL_ACTIVITY_CODES)) {
-            $modifiedColumns[':p' . $index++]  = 'activity_codes';
-        }
 
         $sql = sprintf(
             'INSERT INTO _role (%s) VALUES (%s)',
@@ -861,9 +795,6 @@ abstract class Role implements ActiveRecordInterface
                         break;
                     case 'permission':
                         $stmt->bindValue($identifier, $this->permission, PDO::PARAM_STR);
-                        break;
-                    case 'activity_codes':
-                        $stmt->bindValue($identifier, $this->activity_codes, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -929,9 +860,6 @@ abstract class Role implements ActiveRecordInterface
             case 2:
                 return $this->getPermission();
                 break;
-            case 3:
-                return $this->getActivityCodes();
-                break;
             default:
                 return null;
                 break;
@@ -965,7 +893,6 @@ abstract class Role implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getPermission(),
-            $keys[3] => $this->getActivityCodes(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -973,6 +900,21 @@ abstract class Role implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collSchedules) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'schedules';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'schedules';
+                        break;
+                    default:
+                        $key = 'Schedules';
+                }
+
+                $result[$key] = $this->collSchedules->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collUserRoles) {
 
                 switch ($keyType) {
@@ -1031,13 +973,6 @@ abstract class Role implements ActiveRecordInterface
             case 2:
                 $this->setPermission($value);
                 break;
-            case 3:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setActivityCodes($value);
-                break;
         } // switch()
 
         return $this;
@@ -1072,9 +1007,6 @@ abstract class Role implements ActiveRecordInterface
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setPermission($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setActivityCodes($arr[$keys[3]]);
         }
     }
 
@@ -1125,9 +1057,6 @@ abstract class Role implements ActiveRecordInterface
         }
         if ($this->isColumnModified(RoleTableMap::COL_PERMISSION)) {
             $criteria->add(RoleTableMap::COL_PERMISSION, $this->permission);
-        }
-        if ($this->isColumnModified(RoleTableMap::COL_ACTIVITY_CODES)) {
-            $criteria->add(RoleTableMap::COL_ACTIVITY_CODES, $this->activity_codes);
         }
 
         return $criteria;
@@ -1217,12 +1146,17 @@ abstract class Role implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setPermission($this->getPermission());
-        $copyObj->setActivityCodes($this->getActivityCodes());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
+
+            foreach ($this->getSchedules() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addSchedule($relObj->copy($deepCopy));
+                }
+            }
 
             foreach ($this->getUserRoles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1271,9 +1205,255 @@ abstract class Role implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('Schedule' == $relationName) {
+            return $this->initSchedules();
+        }
         if ('UserRole' == $relationName) {
             return $this->initUserRoles();
         }
+    }
+
+    /**
+     * Clears out the collSchedules collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addSchedules()
+     */
+    public function clearSchedules()
+    {
+        $this->collSchedules = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collSchedules collection loaded partially.
+     */
+    public function resetPartialSchedules($v = true)
+    {
+        $this->collSchedulesPartial = $v;
+    }
+
+    /**
+     * Initializes the collSchedules collection.
+     *
+     * By default this just sets the collSchedules collection to an empty array (like clearcollSchedules());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initSchedules($overrideExisting = true)
+    {
+        if (null !== $this->collSchedules && !$overrideExisting) {
+            return;
+        }
+        $this->collSchedules = new ObjectCollection();
+        $this->collSchedules->setModel('\App\Model\Schedule');
+    }
+
+    /**
+     * Gets an array of ChildSchedule objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildRole is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildSchedule[] List of ChildSchedule objects
+     * @throws PropelException
+     */
+    public function getSchedules(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collSchedulesPartial && !$this->isNew();
+        if (null === $this->collSchedules || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collSchedules) {
+                // return empty collection
+                $this->initSchedules();
+            } else {
+                $collSchedules = ChildScheduleQuery::create(null, $criteria)
+                    ->filterByRole($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collSchedulesPartial && count($collSchedules)) {
+                        $this->initSchedules(false);
+
+                        foreach ($collSchedules as $obj) {
+                            if (false == $this->collSchedules->contains($obj)) {
+                                $this->collSchedules->append($obj);
+                            }
+                        }
+
+                        $this->collSchedulesPartial = true;
+                    }
+
+                    return $collSchedules;
+                }
+
+                if ($partial && $this->collSchedules) {
+                    foreach ($this->collSchedules as $obj) {
+                        if ($obj->isNew()) {
+                            $collSchedules[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collSchedules = $collSchedules;
+                $this->collSchedulesPartial = false;
+            }
+        }
+
+        return $this->collSchedules;
+    }
+
+    /**
+     * Sets a collection of ChildSchedule objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $schedules A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildRole The current object (for fluent API support)
+     */
+    public function setSchedules(Collection $schedules, ConnectionInterface $con = null)
+    {
+        /** @var ChildSchedule[] $schedulesToDelete */
+        $schedulesToDelete = $this->getSchedules(new Criteria(), $con)->diff($schedules);
+
+
+        $this->schedulesScheduledForDeletion = $schedulesToDelete;
+
+        foreach ($schedulesToDelete as $scheduleRemoved) {
+            $scheduleRemoved->setRole(null);
+        }
+
+        $this->collSchedules = null;
+        foreach ($schedules as $schedule) {
+            $this->addSchedule($schedule);
+        }
+
+        $this->collSchedules = $schedules;
+        $this->collSchedulesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Schedule objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Schedule objects.
+     * @throws PropelException
+     */
+    public function countSchedules(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collSchedulesPartial && !$this->isNew();
+        if (null === $this->collSchedules || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collSchedules) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getSchedules());
+            }
+
+            $query = ChildScheduleQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByRole($this)
+                ->count($con);
+        }
+
+        return count($this->collSchedules);
+    }
+
+    /**
+     * Method called to associate a ChildSchedule object to this object
+     * through the ChildSchedule foreign key attribute.
+     *
+     * @param  ChildSchedule $l ChildSchedule
+     * @return $this|\App\Model\Role The current object (for fluent API support)
+     */
+    public function addSchedule(ChildSchedule $l)
+    {
+        if ($this->collSchedules === null) {
+            $this->initSchedules();
+            $this->collSchedulesPartial = true;
+        }
+
+        if (!$this->collSchedules->contains($l)) {
+            $this->doAddSchedule($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildSchedule $schedule The ChildSchedule object to add.
+     */
+    protected function doAddSchedule(ChildSchedule $schedule)
+    {
+        $this->collSchedules[]= $schedule;
+        $schedule->setRole($this);
+    }
+
+    /**
+     * @param  ChildSchedule $schedule The ChildSchedule object to remove.
+     * @return $this|ChildRole The current object (for fluent API support)
+     */
+    public function removeSchedule(ChildSchedule $schedule)
+    {
+        if ($this->getSchedules()->contains($schedule)) {
+            $pos = $this->collSchedules->search($schedule);
+            $this->collSchedules->remove($pos);
+            if (null === $this->schedulesScheduledForDeletion) {
+                $this->schedulesScheduledForDeletion = clone $this->collSchedules;
+                $this->schedulesScheduledForDeletion->clear();
+            }
+            $this->schedulesScheduledForDeletion[]= $schedule;
+            $schedule->setRole(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Role is new, it will return
+     * an empty collection; or if this Role has previously
+     * been saved, it will retrieve related Schedules from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Role.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildSchedule[] List of ChildSchedule objects
+     */
+    public function getSchedulesJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildScheduleQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
+
+        return $this->getSchedules($query, $con);
     }
 
     /**
@@ -1774,8 +1954,6 @@ abstract class Role implements ActiveRecordInterface
         $this->id = null;
         $this->name = null;
         $this->permission = null;
-        $this->activity_codes = null;
-        $this->activity_codes_unserialized = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1794,6 +1972,11 @@ abstract class Role implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collSchedules) {
+                foreach ($this->collSchedules as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collUserRoles) {
                 foreach ($this->collUserRoles as $o) {
                     $o->clearAllReferences($deep);
@@ -1806,6 +1989,7 @@ abstract class Role implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collSchedules = null;
         $this->collUserRoles = null;
         $this->collUsers = null;
     }

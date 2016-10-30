@@ -11,7 +11,6 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255" required="true"/>
         <column name="permission" type="varchar" size="255"/>
-        <column name="activity_codes" type="array"/>
     </table>
 
     <table name="_resource" phpName="Resource">

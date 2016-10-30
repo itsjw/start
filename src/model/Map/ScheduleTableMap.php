@@ -2,8 +2,8 @@
 
 namespace App\Model\Map;
 
-use App\Model\Role;
-use App\Model\RoleQuery;
+use App\Model\Schedule;
+use App\Model\ScheduleQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the '_role' table.
+ * This class defines the structure of the 'schedule' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class RoleTableMap extends TableMap
+class ScheduleTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class RoleTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.RoleTableMap';
+    const CLASS_NAME = '.Map.ScheduleTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class RoleTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = '_role';
+    const TABLE_NAME = 'schedule';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\App\\Model\\Role';
+    const OM_CLASS = '\\App\\Model\\Schedule';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Role';
+    const CLASS_DEFAULT = 'Schedule';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 8;
 
     /**
      * The number of lazy-loaded columns
@@ -69,22 +69,47 @@ class RoleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 8;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = '_role.id';
+    const COL_ID = 'schedule.id';
 
     /**
-     * the column name for the name field
+     * the column name for the user_id field
      */
-    const COL_NAME = '_role.name';
+    const COL_USER_ID = 'schedule.user_id';
 
     /**
-     * the column name for the permission field
+     * the column name for the role_id field
      */
-    const COL_PERMISSION = '_role.permission';
+    const COL_ROLE_ID = 'schedule.role_id';
+
+    /**
+     * the column name for the activity_codes field
+     */
+    const COL_ACTIVITY_CODES = 'schedule.activity_codes';
+
+    /**
+     * the column name for the week_day field
+     */
+    const COL_WEEK_DAY = 'schedule.week_day';
+
+    /**
+     * the column name for the _date field
+     */
+    const COL__DATE = 'schedule._date';
+
+    /**
+     * the column name for the time_from field
+     */
+    const COL_TIME_FROM = 'schedule.time_from';
+
+    /**
+     * the column name for the time_to field
+     */
+    const COL_TIME_TO = 'schedule.time_to';
 
     /**
      * The default string format for model objects of the related table
@@ -98,11 +123,11 @@ class RoleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Permission', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'permission', ),
-        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID, RoleTableMap::COL_NAME, RoleTableMap::COL_PERMISSION, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'permission', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'RoleId', 'ActivityCodes', 'WeekDay', 'Date', 'TimeFrom', 'TimeTo', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'roleId', 'activityCodes', 'weekDay', 'date', 'timeFrom', 'timeTo', ),
+        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID, ScheduleTableMap::COL_USER_ID, ScheduleTableMap::COL_ROLE_ID, ScheduleTableMap::COL_ACTIVITY_CODES, ScheduleTableMap::COL_WEEK_DAY, ScheduleTableMap::COL__DATE, ScheduleTableMap::COL_TIME_FROM, ScheduleTableMap::COL_TIME_TO, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'role_id', 'activity_codes', 'week_day', '_date', 'time_from', 'time_to', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -112,11 +137,11 @@ class RoleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Permission' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'permission' => 2, ),
-        self::TYPE_COLNAME       => array(RoleTableMap::COL_ID => 0, RoleTableMap::COL_NAME => 1, RoleTableMap::COL_PERMISSION => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'permission' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'RoleId' => 2, 'ActivityCodes' => 3, 'WeekDay' => 4, 'Date' => 5, 'TimeFrom' => 6, 'TimeTo' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'roleId' => 2, 'activityCodes' => 3, 'weekDay' => 4, 'date' => 5, 'timeFrom' => 6, 'timeTo' => 7, ),
+        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID => 0, ScheduleTableMap::COL_USER_ID => 1, ScheduleTableMap::COL_ROLE_ID => 2, ScheduleTableMap::COL_ACTIVITY_CODES => 3, ScheduleTableMap::COL_WEEK_DAY => 4, ScheduleTableMap::COL__DATE => 5, ScheduleTableMap::COL_TIME_FROM => 6, ScheduleTableMap::COL_TIME_TO => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'role_id' => 2, 'activity_codes' => 3, 'week_day' => 4, '_date' => 5, 'time_from' => 6, 'time_to' => 7, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -129,17 +154,22 @@ class RoleTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('_role');
-        $this->setPhpName('Role');
+        $this->setName('schedule');
+        $this->setPhpName('Schedule');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\App\\Model\\Role');
+        $this->setClassName('\\App\\Model\\Schedule');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
-        $this->setPrimaryKeyMethodInfo('_role_id_seq');
+        $this->setPrimaryKeyMethodInfo('schedule_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
-        $this->addColumn('permission', 'Permission', 'VARCHAR', false, 255, null);
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
+        $this->addForeignKey('role_id', 'RoleId', 'INTEGER', '_role', 'id', false, null, null);
+        $this->addColumn('activity_codes', 'ActivityCodes', 'ARRAY', false, null, null);
+        $this->addColumn('week_day', 'WeekDay', 'INTEGER', false, null, null);
+        $this->addColumn('_date', 'Date', 'DATE', false, null, null);
+        $this->addColumn('time_from', 'TimeFrom', 'TIME', false, null, null);
+        $this->addColumn('time_to', 'TimeTo', 'TIME', false, null, null);
     } // initialize()
 
     /**
@@ -147,31 +177,21 @@ class RoleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Schedule', '\\App\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
+        $this->addRelation('Role', '\\App\\Model\\Role', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
     0 => ':role_id',
     1 => ':id',
   ),
-), null, null, 'Schedules', false);
-        $this->addRelation('UserRole', '\\App\\Model\\UserRole', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':role_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, 'UserRoles', false);
-        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Users');
+), null, null, null, false);
     } // buildRelations()
-    /**
-     * Method to invalidate the instance pool of all tables related to _role     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool()
-    {
-        // Invalidate objects in related instance pools,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        UserRoleTableMap::clearInstancePool();
-    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -230,7 +250,7 @@ class RoleTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? RoleTableMap::CLASS_DEFAULT : RoleTableMap::OM_CLASS;
+        return $withPrefix ? ScheduleTableMap::CLASS_DEFAULT : ScheduleTableMap::OM_CLASS;
     }
 
     /**
@@ -244,22 +264,22 @@ class RoleTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Role object, last column rank)
+     * @return array           (Schedule object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = RoleTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = RoleTableMap::getInstanceFromPool($key))) {
+        $key = ScheduleTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = ScheduleTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + RoleTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + ScheduleTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = RoleTableMap::OM_CLASS;
-            /** @var Role $obj */
+            $cls = ScheduleTableMap::OM_CLASS;
+            /** @var Schedule $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            RoleTableMap::addInstanceToPool($obj, $key);
+            ScheduleTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -282,18 +302,18 @@ class RoleTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = RoleTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = RoleTableMap::getInstanceFromPool($key))) {
+            $key = ScheduleTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = ScheduleTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Role $obj */
+                /** @var Schedule $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                RoleTableMap::addInstanceToPool($obj, $key);
+                ScheduleTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -314,13 +334,23 @@ class RoleTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(RoleTableMap::COL_ID);
-            $criteria->addSelectColumn(RoleTableMap::COL_NAME);
-            $criteria->addSelectColumn(RoleTableMap::COL_PERMISSION);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_ID);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_ROLE_ID);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_ACTIVITY_CODES);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_WEEK_DAY);
+            $criteria->addSelectColumn(ScheduleTableMap::COL__DATE);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_TIME_FROM);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_TIME_TO);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.permission');
+            $criteria->addSelectColumn($alias . '.user_id');
+            $criteria->addSelectColumn($alias . '.role_id');
+            $criteria->addSelectColumn($alias . '.activity_codes');
+            $criteria->addSelectColumn($alias . '.week_day');
+            $criteria->addSelectColumn($alias . '._date');
+            $criteria->addSelectColumn($alias . '.time_from');
+            $criteria->addSelectColumn($alias . '.time_to');
         }
     }
 
@@ -333,7 +363,7 @@ class RoleTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(RoleTableMap::DATABASE_NAME)->getTable(RoleTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(ScheduleTableMap::DATABASE_NAME)->getTable(ScheduleTableMap::TABLE_NAME);
     }
 
     /**
@@ -341,16 +371,16 @@ class RoleTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(RoleTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(RoleTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new RoleTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ScheduleTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(ScheduleTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new ScheduleTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Role or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Schedule or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Role object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Schedule object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -361,27 +391,27 @@ class RoleTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \App\Model\Role) { // it's a model object
+        } elseif ($values instanceof \App\Model\Schedule) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(RoleTableMap::DATABASE_NAME);
-            $criteria->add(RoleTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(ScheduleTableMap::DATABASE_NAME);
+            $criteria->add(ScheduleTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = RoleQuery::create()->mergeWith($criteria);
+        $query = ScheduleQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            RoleTableMap::clearInstancePool();
+            ScheduleTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                RoleTableMap::removeInstanceFromPool($singleval);
+                ScheduleTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -389,20 +419,20 @@ class RoleTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the _role table.
+     * Deletes all rows from the schedule table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return RoleQuery::create()->doDeleteAll($con);
+        return ScheduleQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Role or Criteria object.
+     * Performs an INSERT on the database, given a Schedule or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Role object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Schedule object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -411,22 +441,22 @@ class RoleTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(RoleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Role object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Schedule object
         }
 
-        if ($criteria->containsKey(RoleTableMap::COL_ID) && $criteria->keyContainsValue(RoleTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.RoleTableMap::COL_ID.')');
+        if ($criteria->containsKey(ScheduleTableMap::COL_ID) && $criteria->keyContainsValue(ScheduleTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ScheduleTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = RoleQuery::create()->mergeWith($criteria);
+        $query = ScheduleQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -435,7 +465,7 @@ class RoleTableMap extends TableMap
         });
     }
 
-} // RoleTableMap
+} // ScheduleTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-RoleTableMap::buildTableMap();
+ScheduleTableMap::buildTableMap();

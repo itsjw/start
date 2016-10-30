@@ -9,6 +9,8 @@ use App\Model\Activity as ChildActivity;
 use App\Model\ActivityQuery as ChildActivityQuery;
 use App\Model\Role as ChildRole;
 use App\Model\RoleQuery as ChildRoleQuery;
+use App\Model\Schedule as ChildSchedule;
+use App\Model\ScheduleQuery as ChildScheduleQuery;
 use App\Model\User as ChildUser;
 use App\Model\UserQuery as ChildUserQuery;
 use App\Model\UserRole as ChildUserRole;
@@ -126,6 +128,12 @@ abstract class User implements ActiveRecordInterface
     protected $collActivitiesPartial;
 
     /**
+     * @var        ObjectCollection|ChildSchedule[] Collection to store aggregation of ChildSchedule objects.
+     */
+    protected $collSchedules;
+    protected $collSchedulesPartial;
+
+    /**
      * @var        ObjectCollection|ChildUserRole[] Collection to store aggregation of ChildUserRole objects.
      */
     protected $collUserRoles;
@@ -160,6 +168,12 @@ abstract class User implements ActiveRecordInterface
      * @var ObjectCollection|ChildActivity[]
      */
     protected $activitiesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildSchedule[]
+     */
+    protected $schedulesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -842,6 +856,8 @@ abstract class User implements ActiveRecordInterface
 
             $this->collActivities = null;
 
+            $this->collSchedules = null;
+
             $this->collUserRoles = null;
 
             $this->collRoles = null;
@@ -1008,6 +1024,24 @@ abstract class User implements ActiveRecordInterface
 
             if ($this->collActivities !== null) {
                 foreach ($this->collActivities as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->schedulesScheduledForDeletion !== null) {
+                if (!$this->schedulesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->schedulesScheduledForDeletion as $schedule) {
+                        // need to save related object because we set the relation to null
+                        $schedule->save($con);
+                    }
+                    $this->schedulesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collSchedules !== null) {
+                foreach ($this->collSchedules as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1283,6 +1317,21 @@ abstract class User implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collActivities->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collSchedules) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'schedules';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'schedules';
+                        break;
+                    default:
+                        $key = 'Schedules';
+                }
+
+                $result[$key] = $this->collSchedules->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collUserRoles) {
 
@@ -1577,6 +1626,12 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getSchedules() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addSchedule($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getUserRoles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addUserRole($relObj->copy($deepCopy));
@@ -1626,6 +1681,9 @@ abstract class User implements ActiveRecordInterface
     {
         if ('Activity' == $relationName) {
             return $this->initActivities();
+        }
+        if ('Schedule' == $relationName) {
+            return $this->initSchedules();
         }
         if ('UserRole' == $relationName) {
             return $this->initUserRoles();
@@ -1848,6 +1906,249 @@ abstract class User implements ActiveRecordInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Clears out the collSchedules collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addSchedules()
+     */
+    public function clearSchedules()
+    {
+        $this->collSchedules = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collSchedules collection loaded partially.
+     */
+    public function resetPartialSchedules($v = true)
+    {
+        $this->collSchedulesPartial = $v;
+    }
+
+    /**
+     * Initializes the collSchedules collection.
+     *
+     * By default this just sets the collSchedules collection to an empty array (like clearcollSchedules());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initSchedules($overrideExisting = true)
+    {
+        if (null !== $this->collSchedules && !$overrideExisting) {
+            return;
+        }
+        $this->collSchedules = new ObjectCollection();
+        $this->collSchedules->setModel('\App\Model\Schedule');
+    }
+
+    /**
+     * Gets an array of ChildSchedule objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildSchedule[] List of ChildSchedule objects
+     * @throws PropelException
+     */
+    public function getSchedules(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collSchedulesPartial && !$this->isNew();
+        if (null === $this->collSchedules || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collSchedules) {
+                // return empty collection
+                $this->initSchedules();
+            } else {
+                $collSchedules = ChildScheduleQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collSchedulesPartial && count($collSchedules)) {
+                        $this->initSchedules(false);
+
+                        foreach ($collSchedules as $obj) {
+                            if (false == $this->collSchedules->contains($obj)) {
+                                $this->collSchedules->append($obj);
+                            }
+                        }
+
+                        $this->collSchedulesPartial = true;
+                    }
+
+                    return $collSchedules;
+                }
+
+                if ($partial && $this->collSchedules) {
+                    foreach ($this->collSchedules as $obj) {
+                        if ($obj->isNew()) {
+                            $collSchedules[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collSchedules = $collSchedules;
+                $this->collSchedulesPartial = false;
+            }
+        }
+
+        return $this->collSchedules;
+    }
+
+    /**
+     * Sets a collection of ChildSchedule objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $schedules A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setSchedules(Collection $schedules, ConnectionInterface $con = null)
+    {
+        /** @var ChildSchedule[] $schedulesToDelete */
+        $schedulesToDelete = $this->getSchedules(new Criteria(), $con)->diff($schedules);
+
+
+        $this->schedulesScheduledForDeletion = $schedulesToDelete;
+
+        foreach ($schedulesToDelete as $scheduleRemoved) {
+            $scheduleRemoved->setUser(null);
+        }
+
+        $this->collSchedules = null;
+        foreach ($schedules as $schedule) {
+            $this->addSchedule($schedule);
+        }
+
+        $this->collSchedules = $schedules;
+        $this->collSchedulesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Schedule objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Schedule objects.
+     * @throws PropelException
+     */
+    public function countSchedules(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collSchedulesPartial && !$this->isNew();
+        if (null === $this->collSchedules || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collSchedules) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getSchedules());
+            }
+
+            $query = ChildScheduleQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collSchedules);
+    }
+
+    /**
+     * Method called to associate a ChildSchedule object to this object
+     * through the ChildSchedule foreign key attribute.
+     *
+     * @param  ChildSchedule $l ChildSchedule
+     * @return $this|\App\Model\User The current object (for fluent API support)
+     */
+    public function addSchedule(ChildSchedule $l)
+    {
+        if ($this->collSchedules === null) {
+            $this->initSchedules();
+            $this->collSchedulesPartial = true;
+        }
+
+        if (!$this->collSchedules->contains($l)) {
+            $this->doAddSchedule($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildSchedule $schedule The ChildSchedule object to add.
+     */
+    protected function doAddSchedule(ChildSchedule $schedule)
+    {
+        $this->collSchedules[]= $schedule;
+        $schedule->setUser($this);
+    }
+
+    /**
+     * @param  ChildSchedule $schedule The ChildSchedule object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeSchedule(ChildSchedule $schedule)
+    {
+        if ($this->getSchedules()->contains($schedule)) {
+            $pos = $this->collSchedules->search($schedule);
+            $this->collSchedules->remove($pos);
+            if (null === $this->schedulesScheduledForDeletion) {
+                $this->schedulesScheduledForDeletion = clone $this->collSchedules;
+                $this->schedulesScheduledForDeletion->clear();
+            }
+            $this->schedulesScheduledForDeletion[]= $schedule;
+            $schedule->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Schedules from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ChildSchedule[] List of ChildSchedule objects
+     */
+    public function getSchedulesJoinRole(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildScheduleQuery::create(null, $criteria);
+        $query->joinWith('Role', $joinBehavior);
+
+        return $this->getSchedules($query, $con);
     }
 
     /**
@@ -2377,6 +2678,11 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collSchedules) {
+                foreach ($this->collSchedules as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collUserRoles) {
                 foreach ($this->collUserRoles as $o) {
                     $o->clearAllReferences($deep);
@@ -2390,6 +2696,7 @@ abstract class User implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collActivities = null;
+        $this->collSchedules = null;
         $this->collUserRoles = null;
         $this->collRoles = null;
     }

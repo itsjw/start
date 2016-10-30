@@ -23,30 +23,31 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRoleQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildRoleQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildRoleQuery orderByPermission($order = Criteria::ASC) Order by the permission column
- * @method     ChildRoleQuery orderByActivityCodes($order = Criteria::ASC) Order by the activity_codes column
  *
  * @method     ChildRoleQuery groupById() Group by the id column
  * @method     ChildRoleQuery groupByName() Group by the name column
  * @method     ChildRoleQuery groupByPermission() Group by the permission column
- * @method     ChildRoleQuery groupByActivityCodes() Group by the activity_codes column
  *
  * @method     ChildRoleQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildRoleQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildRoleQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildRoleQuery leftJoinSchedule($relationAlias = null) Adds a LEFT JOIN clause to the query using the Schedule relation
+ * @method     ChildRoleQuery rightJoinSchedule($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Schedule relation
+ * @method     ChildRoleQuery innerJoinSchedule($relationAlias = null) Adds a INNER JOIN clause to the query using the Schedule relation
+ *
  * @method     ChildRoleQuery leftJoinUserRole($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserRole relation
  * @method     ChildRoleQuery rightJoinUserRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserRole relation
  * @method     ChildRoleQuery innerJoinUserRole($relationAlias = null) Adds a INNER JOIN clause to the query using the UserRole relation
  *
- * @method     \App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \App\Model\ScheduleQuery|\App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildRole findOne(ConnectionInterface $con = null) Return the first ChildRole matching the query
  * @method     ChildRole findOneOrCreate(ConnectionInterface $con = null) Return the first ChildRole matching the query, or a new ChildRole object populated from the query conditions when no match is found
  *
  * @method     ChildRole findOneById(int $id) Return the first ChildRole filtered by the id column
  * @method     ChildRole findOneByName(string $name) Return the first ChildRole filtered by the name column
- * @method     ChildRole findOneByPermission(string $permission) Return the first ChildRole filtered by the permission column
- * @method     ChildRole findOneByActivityCodes(array $activity_codes) Return the first ChildRole filtered by the activity_codes column *
+ * @method     ChildRole findOneByPermission(string $permission) Return the first ChildRole filtered by the permission column *
 
  * @method     ChildRole requirePk($key, ConnectionInterface $con = null) Return the ChildRole by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildRole requireOne(ConnectionInterface $con = null) Return the first ChildRole matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -54,13 +55,11 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRole requireOneById(int $id) Return the first ChildRole filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildRole requireOneByName(string $name) Return the first ChildRole filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildRole requireOneByPermission(string $permission) Return the first ChildRole filtered by the permission column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildRole requireOneByActivityCodes(array $activity_codes) Return the first ChildRole filtered by the activity_codes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildRole[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildRole objects based on current ModelCriteria
  * @method     ChildRole[]|ObjectCollection findById(int $id) Return ChildRole objects filtered by the id column
  * @method     ChildRole[]|ObjectCollection findByName(string $name) Return ChildRole objects filtered by the name column
  * @method     ChildRole[]|ObjectCollection findByPermission(string $permission) Return ChildRole objects filtered by the permission column
- * @method     ChildRole[]|ObjectCollection findByActivityCodes(array $activity_codes) Return ChildRole objects filtered by the activity_codes column
  * @method     ChildRole[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -153,7 +152,7 @@ abstract class RoleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, permission, activity_codes FROM _role WHERE id = :p0';
+        $sql = 'SELECT id, name, permission FROM _role WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -343,84 +342,76 @@ abstract class RoleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the activity_codes column
+     * Filter the query by a related \App\Model\Schedule object
      *
-     * @param     array $activityCodes The values to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param \App\Model\Schedule|ObjectCollection $schedule the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
+     * @return ChildRoleQuery The current query, for fluid interface
      */
-    public function filterByActivityCodes($activityCodes = null, $comparison = null)
+    public function filterBySchedule($schedule, $comparison = null)
     {
-        $key = $this->getAliasedColName(RoleTableMap::COL_ACTIVITY_CODES);
-        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            foreach ($activityCodes as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addAnd($key, $value, Criteria::LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::LIKE);
-                }
-            }
-
-            return $this;
-        } elseif ($comparison == Criteria::CONTAINS_SOME) {
-            foreach ($activityCodes as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addOr($key, $value, Criteria::LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::LIKE);
-                }
-            }
-
-            return $this;
-        } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            foreach ($activityCodes as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::NOT_LIKE);
-                }
-            }
-            $this->addOr($key, null, Criteria::ISNULL);
-
-            return $this;
+        if ($schedule instanceof \App\Model\Schedule) {
+            return $this
+                ->addUsingAlias(RoleTableMap::COL_ID, $schedule->getRoleId(), $comparison);
+        } elseif ($schedule instanceof ObjectCollection) {
+            return $this
+                ->useScheduleQuery()
+                ->filterByPrimaryKeys($schedule->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterBySchedule() only accepts arguments of type \App\Model\Schedule or Collection');
         }
-
-        return $this->addUsingAlias(RoleTableMap::COL_ACTIVITY_CODES, $activityCodes, $comparison);
     }
 
     /**
-     * Filter the query on the activity_codes column
-     * @param     mixed $activityCodes The value to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     * Adds a JOIN clause to the query using the Schedule relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildRoleQuery The current query, for fluid interface
      */
-    public function filterByActivityCode($activityCodes = null, $comparison = null)
+    public function joinSchedule($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            if (is_scalar($activityCodes)) {
-                $activityCodes = '%| ' . $activityCodes . ' |%';
-                $comparison = Criteria::LIKE;
-            }
-        } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            $activityCodes = '%| ' . $activityCodes . ' |%';
-            $comparison = Criteria::NOT_LIKE;
-            $key = $this->getAliasedColName(RoleTableMap::COL_ACTIVITY_CODES);
-            if ($this->containsKey($key)) {
-                $this->addAnd($key, $activityCodes, $comparison);
-            } else {
-                $this->addAnd($key, $activityCodes, $comparison);
-            }
-            $this->addOr($key, null, Criteria::ISNULL);
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Schedule');
 
-            return $this;
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
         }
 
-        return $this->addUsingAlias(RoleTableMap::COL_ACTIVITY_CODES, $activityCodes, $comparison);
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Schedule');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Schedule relation Schedule object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \App\Model\ScheduleQuery A secondary query class using the current class as primary query
+     */
+    public function useScheduleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinSchedule($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Schedule', '\App\Model\ScheduleQuery');
     }
 
     /**

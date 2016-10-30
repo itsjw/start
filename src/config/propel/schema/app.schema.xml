@@ -15,4 +15,21 @@
             <reference local="user_id" foreign="id"/>
         </foreign-key>
     </table>
+
+    <table name="schedule" phpName="Schedule">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="user_id" type="integer"/>
+        <column name="role_id" type="integer"/>
+        <column name="activity_codes" type="array"/>
+        <column name="week_day" type="integer"/>
+        <column name="_date" type="date" phpName="Date"/>
+        <column name="time_from" type="time"/>
+        <column name="time_to" type="time"/>
+        <foreign-key foreignTable="_user" phpName="User">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="_role" phpName="Role">
+            <reference local="role_id" foreign="id"/>
+        </foreign-key>
+    </table>
 </database>
