@@ -3,6 +3,7 @@
 namespace App\Model;
 
 use App\Model\Base\Activity as BaseActivity;
+use Propel\Runtime\Connection\ConnectionInterface;
 
 /**
  * Skeleton subclass for representing a row from the 'activity' table.
@@ -16,5 +17,17 @@ use App\Model\Base\Activity as BaseActivity;
  */
 class Activity extends BaseActivity
 {
+    public function preSave(ConnectionInterface $con = null)
+    {
+        if ($this->getPriority() > 10) {
+            $this->setPriority(10);
+        }
+
+        if ($this->getPriority() < 1) {
+            $this->setPriority(1);
+        }
+
+        return true;
+    }
 
 }
