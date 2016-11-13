@@ -7,4 +7,6 @@ abstract class AbstractActivity
     public $code;
 
     public $amd;
+
+    public $color;
 }

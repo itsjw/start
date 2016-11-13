@@ -23,7 +23,7 @@ define(['require', 'buzz'], function (require, buzz) {
 
                     for (var i = 0; i < activities.length; i++) {
                         (function(i) {
-                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title));
+                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title, activities[i].color));
                         })(i)
                     }
                 } else {
@@ -51,7 +51,7 @@ define(['require', 'buzz'], function (require, buzz) {
                             var activity = data.content;
 
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(new Activity(activity.id, activity.name, activity.title));
+                                start.addActivity(new Activity(activity.id, activity.name, activity.title, activity.color));
 
                                 var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3")
                                 sound.play()
@@ -99,6 +99,11 @@ define(['require', 'buzz'], function (require, buzz) {
             var start = this;
 
             var sticker = document.createElement("div");
+
+            if (activity.color != null) {
+                sticker.style['border-left'] = '20px solid ' + activity.color;
+            }
+
             sticker.id = 'sticker' + activity.id;
             sticker.setAttribute('class', 'sticker');
             sticker.innerHTML = `
@@ -142,11 +147,13 @@ define(['require', 'buzz'], function (require, buzz) {
         id: number;
         name: string;
         title: string;
+        color: string;
 
-        constructor(id: number, name: string, title: string) {
+        constructor(id: number, name: string, title: string, color: string) {
             this.id = id;
             this.name = name;
             this.title = title;
+            this.color = color;
         }
     }
 

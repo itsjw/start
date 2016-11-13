@@ -17,7 +17,7 @@ define(['require', 'buzz'], function (require, buzz) {
                     var activities = data.content;
                     for (var i = 0; i < activities.length; i++) {
                         (function (i) {
-                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title));
+                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title, activities[i].color));
                         })(i);
                     }
                 }
@@ -39,7 +39,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         if (data.hasOwnProperty('content') && data.content !== null) {
                             var activity = data.content;
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(new Activity(activity.id, activity.name, activity.title));
+                                start.addActivity(new Activity(activity.id, activity.name, activity.title, activity.color));
                                 var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
                                 sound.play();
                             }
@@ -78,6 +78,9 @@ define(['require', 'buzz'], function (require, buzz) {
         Start.prototype.addSticker = function (activity) {
             var start = this;
             var sticker = document.createElement("div");
+            if (activity.color != null) {
+                sticker.style['border-left'] = '20px solid ' + activity.color;
+            }
             sticker.id = 'sticker' + activity.id;
             sticker.setAttribute('class', 'sticker');
             sticker.innerHTML = "\n                <div style=\"color: #cccccc; font-size: smaller\">" + activity.name + "</div>\n                <div style=\"margin-top: 5px\">" + activity.title + "</div>\n            ";
@@ -106,10 +109,11 @@ define(['require', 'buzz'], function (require, buzz) {
         return Start;
     }());
     var Activity = (function () {
-        function Activity(id, name, title) {
+        function Activity(id, name, title, color) {
             this.id = id;
             this.name = name;
             this.title = title;
+            this.color = color;
         }
         return Activity;
     }());

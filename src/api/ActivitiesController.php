@@ -27,7 +27,8 @@ class ActivitiesController extends ViewController
             $content[] = [
                 'id' => $activity->getId(),
                 'name' => $this->getUser()->getUsername(),
-                'title' => $activity->getTitle()
+                'title' => $activity->getTitle(),
+                'color' => $this->s('start')->getActivity($activity->getCode())->color,
             ];
         }
 
