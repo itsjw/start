@@ -9,4 +9,6 @@ abstract class AbstractActivity
     public $amd;
 
     public $color;
+
+    public $readonly = false;
 }

@@ -9,4 +9,6 @@ class TextActivity extends AbstractActivity
     public $amd = 'start._tile/text.amd';
 
     public $color = '#3498db';
+
+    public $readonly = true;
 }

@@ -29,6 +29,7 @@ class ActivitiesController extends ViewController
                 'name' => $this->getUser()->getUsername(),
                 'title' => $activity->getTitle(),
                 'color' => $this->s('start')->getActivity($activity->getCode())->color,
+                'readonly' => $this->s('start')->getActivity($activity->getCode())->readonly,
             ];
         }
 

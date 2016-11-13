@@ -23,7 +23,7 @@ define(['require', 'buzz'], function (require, buzz) {
 
                     for (var i = 0; i < activities.length; i++) {
                         (function(i) {
-                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title, activities[i].color));
+                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title, activities[i].color, activities[i].readonly));
                         })(i)
                     }
                 } else {
@@ -51,10 +51,10 @@ define(['require', 'buzz'], function (require, buzz) {
                             var activity = data.content;
 
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(new Activity(activity.id, activity.name, activity.title, activity.color));
+                                start.addActivity(new Activity(activity.id, activity.name, activity.title, activity.color, activity.readonly));
 
-                                var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3")
-                                sound.play()
+                                var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
+                                sound.play();
                             }
                         }
                     } else {
@@ -69,6 +69,7 @@ define(['require', 'buzz'], function (require, buzz) {
         }
 
         public closeActivity(id: number) {
+            var start = this;
             var request = new XMLHttpRequest();
             request.open('POST', '/activity/' + id, true);
 
@@ -76,6 +77,18 @@ define(['require', 'buzz'], function (require, buzz) {
                 if (request.status >= 200 && request.status < 400) {
                     document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
                     document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
+
+                    for (var i = 0;  i < start.activities.length; i++) {
+                        (function(i) {
+                            if(start.activities[i].id === id) {
+                                start.activities.splice(i, 1);
+                            }
+                        })(i)
+                    }
+
+                    if (start.activities.length > 0) {
+                        start.openWorkspace(start.activities[0]);
+                    }
                 } else {
                 }
             };
@@ -119,14 +132,38 @@ define(['require', 'buzz'], function (require, buzz) {
         }
 
         public setWorkspaceContent(id: number, html: string) {
-            document.getElementById('workspace' + id).innerHTML = html;
+            document.getElementById('workspace-content' + id).innerHTML = html;
         }
 
         public openWorkspace(activity: Activity) {
+            var start = this;
             var workspace = document.getElementById("workspace" + activity.id);
 
             if (workspace == null) {
-                document.getElementById("workspaces").innerHTML += '<div id="workspace' + activity.id + '" class="workspace"></div>';
+                var _workspace = document.createElement("div");
+                _workspace.id = 'workspace' + activity.id;
+                _workspace.setAttribute('class', 'workspace');
+
+                var _workspace_content = document.createElement("div");
+                _workspace_content.id = 'workspace-content' + activity.id;
+
+                _workspace.appendChild(_workspace_content);
+
+                if (activity.readonly) {
+                    var _close_button = document.createElement("button");
+                    _close_button.id = 'close-button' + activity.id;
+                    _close_button.innerText = 'Закрыть';
+
+                    _workspace.appendChild(_close_button);
+                }
+
+                _close_button.addEventListener('click', function () {
+                    if (confirm('Close activity?')) {
+                        start.closeActivity(activity.id);
+                    }
+                }, false);
+
+                document.getElementById("workspaces").appendChild(_workspace);
             }
 
             var workspaces = document.getElementsByClassName('workspace');
@@ -148,12 +185,14 @@ define(['require', 'buzz'], function (require, buzz) {
         name: string;
         title: string;
         color: string;
+        readonly: boolean;
 
-        constructor(id: number, name: string, title: string, color: string) {
+        constructor(id: number, name: string, title: string, color: string, readonly: boolean) {
             this.id = id;
             this.name = name;
             this.title = title;
             this.color = color;
+            this.readonly = readonly;
         }
     }
 
