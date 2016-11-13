@@ -34,6 +34,22 @@ return [
         ]]
     ],
 
+    'start.api_router' => [
+        'shared' => true,
+        'class' => 'Perfumer\\Framework\\Router\\Http\\DefaultRouter',
+        'arguments' => ['#bundle_resolver', [
+            'data_type' => 'json'
+        ]]
+    ],
+
+    'start.api_request' => [
+        'class' => 'Perfumer\\Framework\\Proxy\\Request',
+        'arguments' => ['$0', '$1', '$2', '$3', [
+            'prefix' => 'Start\\Api',
+            'suffix' => 'Controller'
+        ]]
+    ],
+
     'start.console_router' => [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\Router\\ConsoleRouter'
@@ -61,5 +77,25 @@ return [
     'activity' => [
         'shared' => true,
         'class' => 'Start\\Service\\Activity'
-    ]
+    ],
+
+    'auth.api' => [
+        'shared' => true,
+        'class' => 'Perfumer\\Component\\Auth\\Authorization\\DatabaseAuthorization',
+        'arguments' => ['#session', '#auth.token.http_header_handler', [
+            'username_field' => 'username',
+            'acl' => true,
+            'application' => false,
+            'update_gap' => 1800
+        ]]
+    ],
+
+    'auth.token.http_header_handler' => [
+        'shared' => true,
+        'class' => 'Perfumer\\Component\\Session\\TokenHandler\\HttpHeaderHandler',
+        'arguments' => [[
+            'header' => 'HTTP_API_SESSION',
+            'lifetime' => 60 * 86400
+        ]]
+    ],
 ];

@@ -4,6 +4,11 @@ return [
     '_domains' => [
         [
             'domain' => 'start.dev',
+            'prefix' => '/api',
+            'bundle' => 'api'
+        ],
+        [
+            'domain' => 'start.dev',
             'bundle' => 'start'
         ]
     ],
