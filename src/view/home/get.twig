@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <base href="/">
     <title>Start</title>
+    <link href="http://static.start.dev/vendor/normalize-css/normalize.css" rel='stylesheet' type='text/css'>
     <script src="http://static.start.dev/js/requirejs.min.js"></script>
     <script>
         requirejs.config({
@@ -20,11 +21,17 @@
         });
     </script>
     <style>
+        #navbar {border-bottom: 1px solid #ccc; text-align: right; margin-bottom: 10px; padding: 5px}
+        #navbar > a {}
         .sticker { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
     </style>
 </head>
 
 <body>
+<div id="navbar">
+    <a href="{{ url('logout') }}">Выход</a>
+</div>
+
 <div id="dashboard" style="width: 1200px; margin: 0 auto">
     <div id="stickers" style="width: 500px; float: left">
     </div>
