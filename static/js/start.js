@@ -80,7 +80,7 @@ define(['require', 'buzz'], function (require, buzz) {
             var sticker = document.createElement("div");
             sticker.id = 'sticker' + activity.id;
             sticker.setAttribute('class', 'sticker');
-            sticker.innerHTML = "\n                <div><span style=\"color: #cccccc\">\u0414\u043B\u044F \u043A\u043E\u0433\u043E:</span> " + activity.name + "</div>\n                <div><span style=\"color: #cccccc\">\u041E\u043F\u0438\u0441\u0430\u043D\u0438\u0435:</span> " + activity.title + "</div>\n            ";
+            sticker.innerHTML = "\n                <div style=\"color: #cccccc; font-size: smaller\">" + activity.name + "</div>\n                <div style=\"margin-top: 5px\">" + activity.title + "</div>\n            ";
             sticker.addEventListener('click', function () {
                 start.openWorkspace(activity);
             }, false);

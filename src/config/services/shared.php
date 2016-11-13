@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'start' => [
+        'shared' => true,
+        'class' => 'Start\\Service\\Start',
+        'after' => function(\Perfumer\Component\Container\Container $container, \Start\Service\Start $start) {
+            $start->addActivity(new \Start\Service\Activity\TextActivity());
+            $start->addActivity(new \Start\Service\Activity\MarkdownActivity());
+        }
+    ],
+
     'auth' => [
         'shared' => true,
         'class' => 'Perfumer\\Component\\Auth\\Authorization\\DatabaseAuthorization',

@@ -102,8 +102,8 @@ define(['require', 'buzz'], function (require, buzz) {
             sticker.id = 'sticker' + activity.id;
             sticker.setAttribute('class', 'sticker');
             sticker.innerHTML = `
-                <div><span style="color: #cccccc">Для кого:</span> ` + activity.name + `</div>
-                <div><span style="color: #cccccc">Описание:</span> ` + activity.title + `</div>
+                <div style="color: #cccccc; font-size: smaller">` + activity.name + `</div>
+                <div style="margin-top: 5px">` + activity.title + `</div>
             `;
 
             sticker.addEventListener('click', function () {
@@ -112,7 +112,7 @@ define(['require', 'buzz'], function (require, buzz) {
 
             document.getElementById("stickers").appendChild(sticker);
         }
- 
+
         public setWorkspaceContent(id: number, html: string) {
             document.getElementById('workspace' + id).innerHTML = html;
         }

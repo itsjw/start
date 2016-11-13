@@ -20,16 +20,12 @@ class ActivityController extends PlainController
         $data['created_at'] = $activity->getCreatedAt();
         $data['id'] = $id;
 
-        $reference = $this->getContainer()->getResource('activities');
+        $reference = $this->s('start')->getActivity($activity->getCode());
 
-        if (!isset($reference[$activity->getCode()])) {
-            $this->pageNotFoundException();
-        }
+        $amd = $reference->amd;
+        $amd = explode('.', $amd);
 
-        $request = $reference[$activity->getCode()]['request'];
-        $request = explode('.', $request);
-
-        $this->getProxy()->forward($request[0], $request[1], $request[2], $data);
+        $this->getProxy()->forward($amd[0], $amd[1], $amd[2], $data);
     }
 
     public function post()
