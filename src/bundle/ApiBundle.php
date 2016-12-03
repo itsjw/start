@@ -8,21 +8,27 @@ class ApiBundle extends AbstractBundle
 {
     public function getName()
     {
-        return 'api';
+        return 'perfumerlabs/start/api';
     }
 
     public function getDescription()
     {
-        return 'api';
+        return 'PerfumerLabs Start api bundle';
     }
 
+    public function getDefinitionFiles()
+    {
+        return [
+            __DIR__ . '/../config/services/api.php'
+        ];
+    }
 
     public function getAliases()
     {
         return [
-            'auth' => 'auth.api',
-            'router' => 'start.api_router',
-            'request' => 'start.api_request',
+            'auth' => 'perfumerlabs.start.api.auth',
+            'router' => 'perfumerlabs.start.api.router',
+            'request' => 'perfumerlabs.start.api.request',
             'view' => 'view.status'
         ];
     }

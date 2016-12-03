@@ -4,31 +4,29 @@ namespace Perfumerlabs\Start\Bundle;
 
 use Perfumer\Component\Container\AbstractBundle;
 
-abstract class BaseBundle extends AbstractBundle
+class DevBundle extends AbstractBundle
 {
     public function getName()
     {
-        return 'start';
+        return 'perfumerlabs/start/dev';
     }
 
     public function getDescription()
     {
-        return 'Start package bundle';
+        return 'PerfumerLabs Start dev bundle';
     }
 
     public function getDefinitionFiles()
     {
         return [
-            __DIR__ . '/../config/services/shared.php',
-            __DIR__ . '/../config/services/' . ENV . '.php',
+            __DIR__ . '/../config/services/dev.php'
         ];
     }
 
     public function getResourceFiles()
     {
         return [
-            __DIR__ . '/../config/resources/shared.php',
-            __DIR__ . '/../config/resources/' . ENV . '.php',
+            __DIR__ . '/../config/resources/dev.php'
         ];
     }
 }

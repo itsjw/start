@@ -5,11 +5,15 @@ return [
         [
             'domain' => 'start.dev',
             'prefix' => '/api',
-            'bundle' => 'api'
+            'bundle' => 'perfumerlabs/start/api'
         ],
         [
             'domain' => 'start.dev',
-            'bundle' => 'start'
+            'bundle' => 'perfumerlabs/start/controller'
+        ],
+        [
+            'domain' => 'start',
+            'bundle' => 'perfumerlabs/start/command'
         ]
     ],
 
@@ -27,4 +31,10 @@ return [
         'model_dir' => __DIR__ . '/../../model',
         'migration_dir' => __DIR__ . '/../propel/migration',
     ],
+
+    'dir' => [
+        'log_file' => TMP_DIR . 'logs/example.log',
+        'twig_cache' => TMP_DIR . 'twig',
+        'file_cache' => TMP_DIR . 'cache/'
+    ]
 ];

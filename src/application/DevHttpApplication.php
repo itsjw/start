@@ -6,7 +6,9 @@ use Perfumer\Component\Container\Container;
 use Perfumer\Framework\Application\AbstractApplication;
 use Perfumer\Package\Framework\Bundle\HttpBundle as PerfumerHttpBundle;
 use Perfumerlabs\Start\Bundle\ApiBundle;
-use Perfumerlabs\Start\Bundle\HttpBundle as StartHttpBundle;
+use Perfumerlabs\Start\Bundle\CommonBundle;
+use Perfumerlabs\Start\Bundle\ControllerBundle;
+use Perfumerlabs\Start\Bundle\DevBundle;
 
 class DevHttpApplication extends AbstractApplication
 {
@@ -14,8 +16,10 @@ class DevHttpApplication extends AbstractApplication
     {
         return [
             new PerfumerHttpBundle(),
-            new StartHttpBundle(),
-            new ApiBundle()
+            new CommonBundle(),
+            new ControllerBundle(),
+            new ApiBundle(),
+            new DevBundle()
         ];
     }
 
