@@ -177,20 +177,6 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Activity', '\\App\\Model\\Activity', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, 'Activities', false);
-        $this->addRelation('Schedule', '\\App\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, 'Schedules', false);
         $this->addRelation('UserRole', '\\App\\Model\\UserRole', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -198,6 +184,20 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'UserRoles', false);
+        $this->addRelation('Activity', '\\Perfumerlabs\\Start\\Model\\Activity', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, 'Activities', false);
+        $this->addRelation('Schedule', '\\Perfumerlabs\\Start\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, 'Schedules', false);
         $this->addRelation('Role', '\\App\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
     } // buildRelations()
 

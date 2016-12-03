@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace Perfumerlabs\Start\Model;
 
-use App\Model\Base\Schedule as BaseSchedule;
+use Perfumerlabs\Start\Model\Base\Schedule as BaseSchedule;
 
 /**
  * Skeleton subclass for representing a row from the 'schedule' table.

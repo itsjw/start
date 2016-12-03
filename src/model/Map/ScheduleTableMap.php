@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Model\Map;
+namespace Perfumerlabs\Start\Model\Map;
 
-use App\Model\Schedule;
-use App\Model\ScheduleQuery;
+use Perfumerlabs\Start\Model\Schedule;
+use Perfumerlabs\Start\Model\ScheduleQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -49,7 +49,7 @@ class ScheduleTableMap extends TableMap
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\App\\Model\\Schedule';
+    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\Schedule';
 
     /**
      * A class that can be returned by this tableMap
@@ -157,7 +157,7 @@ class ScheduleTableMap extends TableMap
         $this->setName('schedule');
         $this->setPhpName('Schedule');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\App\\Model\\Schedule');
+        $this->setClassName('\\Perfumerlabs\\Start\\Model\\Schedule');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         $this->setPrimaryKeyMethodInfo('schedule_id_seq');
@@ -397,7 +397,7 @@ class ScheduleTableMap extends TableMap
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \App\Model\Schedule) { // it's a model object
+        } elseif ($values instanceof \Perfumerlabs\Start\Model\Schedule) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks

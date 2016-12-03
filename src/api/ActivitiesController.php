@@ -1,8 +1,8 @@
 <?php
 
-namespace Start\Api;
+namespace Perfumerlabs\Start\Api;
 
-use App\Model\ActivityQuery;
+use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;

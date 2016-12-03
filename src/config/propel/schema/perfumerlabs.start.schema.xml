@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="start" defaultIdMethod="native" namespace="App\Model">
-    <table name="activity" phpName="Activity">
+<database name="start" defaultIdMethod="native">
+    <table name="activity" phpName="Activity" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="code" type="integer"/>
@@ -16,7 +16,7 @@
         </foreign-key>
     </table>
 
-    <table name="schedule" phpName="Schedule">
+    <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="role_id" type="integer"/>

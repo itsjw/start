@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Model\Map;
+namespace Perfumerlabs\Start\Model\Map;
 
-use App\Model\Activity;
-use App\Model\ActivityQuery;
+use Perfumerlabs\Start\Model\Activity;
+use Perfumerlabs\Start\Model\ActivityQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -49,7 +49,7 @@ class ActivityTableMap extends TableMap
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\App\\Model\\Activity';
+    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\Activity';
 
     /**
      * A class that can be returned by this tableMap
@@ -172,7 +172,7 @@ class ActivityTableMap extends TableMap
         $this->setName('activity');
         $this->setPhpName('Activity');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\App\\Model\\Activity');
+        $this->setClassName('\\Perfumerlabs\\Start\\Model\\Activity');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
         $this->setPrimaryKeyMethodInfo('activity_id_seq');
@@ -427,7 +427,7 @@ class ActivityTableMap extends TableMap
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \App\Model\Activity) { // it's a model object
+        } elseif ($values instanceof \Perfumerlabs\Start\Model\Activity) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks

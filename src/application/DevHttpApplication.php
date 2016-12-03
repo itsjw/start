@@ -1,12 +1,12 @@
 <?php
 
-namespace Start\Application;
+namespace Perfumerlabs\Start\Application;
 
 use Perfumer\Component\Container\Container;
 use Perfumer\Framework\Application\AbstractApplication;
 use Perfumer\Package\Framework\Bundle\HttpBundle as PerfumerHttpBundle;
-use Start\Bundle\ApiBundle;
-use Start\Bundle\HttpBundle as StartHttpBundle;
+use Perfumerlabs\Start\Bundle\ApiBundle;
+use Perfumerlabs\Start\Bundle\HttpBundle as StartHttpBundle;
 
 class DevHttpApplication extends AbstractApplication
 {

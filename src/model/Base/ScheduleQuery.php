@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Model\Base;
+namespace Perfumerlabs\Start\Model\Base;
 
 use \Exception;
 use \PDO;
-use App\Model\Schedule as ChildSchedule;
-use App\Model\ScheduleQuery as ChildScheduleQuery;
-use App\Model\Map\ScheduleTableMap;
+use App\Model\Role;
+use App\Model\User;
+use Perfumerlabs\Start\Model\Schedule as ChildSchedule;
+use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
+use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -93,13 +95,13 @@ abstract class ScheduleQuery extends ModelCriteria
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \App\Model\Base\ScheduleQuery object.
+     * Initializes internal state of \Perfumerlabs\Start\Model\Base\ScheduleQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'start', $modelName = '\\App\\Model\\Schedule', $modelAlias = null)
+    public function __construct($dbName = 'start', $modelName = '\\Perfumerlabs\\Start\\Model\\Schedule', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Start\Service;
+namespace Perfumerlabs\Start\Service;
 
-use Start\Service\Activity\AbstractActivity;
+use Perfumerlabs\Start\Service\Activity\AbstractActivity;
 
 class Start
 {

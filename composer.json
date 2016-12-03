@@ -25,12 +25,13 @@
     "autoload": {
         "psr-4": {
             "App\\Model\\": "src/model/",
-            "Start\\Api\\": "src/api/",
-            "Start\\Application\\": "src/application/",
-            "Start\\Bundle\\": "src/bundle/",
-            "Start\\Command\\": "src/command/",
-            "Start\\Controller\\": "src/controller/",
-            "Start\\Service\\": "src/service/"
+            "Perfumerlabs\\Start\\Model\\": "src/model/",
+            "Perfumerlabs\\Start\\Api\\": "src/api/",
+            "Perfumerlabs\\Start\\Application\\": "src/application/",
+            "Perfumerlabs\\Start\\Bundle\\": "src/bundle/",
+            "Perfumerlabs\\Start\\Command\\": "src/command/",
+            "Perfumerlabs\\Start\\Controller\\": "src/controller/",
+            "Perfumerlabs\\Start\\Service\\": "src/service/"
         }
     },
     "config": {

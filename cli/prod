@@ -2,5 +2,5 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$application = new \Start\Application\ProdConsoleApplication();
+$application = new \Perfumerlabs\Start\Application\ProdConsoleApplication();
 $application->run();

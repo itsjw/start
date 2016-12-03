@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Api;
+namespace Perfumerlabs\Start\Api;
 
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;

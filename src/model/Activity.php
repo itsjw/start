@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace Perfumerlabs\Start\Model;
 
-use App\Model\Base\Activity as BaseActivity;
+use Perfumerlabs\Start\Model\Base\Activity as BaseActivity;
 use Propel\Runtime\Connection\ConnectionInterface;
 
 /**

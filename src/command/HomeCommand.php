@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Command;
+namespace Perfumerlabs\Start\Command;
 
 use Perfumer\Framework\Controller\PlainController;
 

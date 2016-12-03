@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace Perfumerlabs\Start\Model;
 
-use App\Model\Base\ActivityQuery as BaseActivityQuery;
+use Perfumerlabs\Start\Model\Base\ActivityQuery as BaseActivityQuery;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'activity' table.

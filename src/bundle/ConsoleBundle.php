@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Bundle;
+namespace Perfumerlabs\Start\Bundle;
 
 class ConsoleBundle extends BaseBundle
 {

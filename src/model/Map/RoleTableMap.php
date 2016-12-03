@@ -147,13 +147,6 @@ class RoleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Schedule', '\\App\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':role_id',
-    1 => ':id',
-  ),
-), null, null, 'Schedules', false);
         $this->addRelation('UserRole', '\\App\\Model\\UserRole', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -161,6 +154,13 @@ class RoleTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'UserRoles', false);
+        $this->addRelation('Schedule', '\\Perfumerlabs\\Start\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':role_id',
+    1 => ':id',
+  ),
+), null, null, 'Schedules', false);
         $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Users');
     } // buildRelations()
     /**

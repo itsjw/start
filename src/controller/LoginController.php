@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Controller;
+namespace Perfumerlabs\Start\Controller;
 
 use Perfumer\Framework\Controller\TemplateController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;

@@ -3,10 +3,10 @@
 return [
     'start' => [
         'shared' => true,
-        'class' => 'Start\\Service\\Start',
-        'after' => function(\Perfumer\Component\Container\Container $container, \Start\Service\Start $start) {
-            $start->addActivity(new \Start\Service\Activity\TextActivity());
-            $start->addActivity(new \Start\Service\Activity\MarkdownActivity());
+        'class' => 'Perfumerlabs\\Start\\Service\\Start',
+        'after' => function(\Perfumer\Component\Container\Container $container, \Perfumerlabs\Start\Service\Start $start) {
+            $start->addActivity(new \Perfumerlabs\Start\Service\Activity\TextActivity());
+            $start->addActivity(new \Perfumerlabs\Start\Service\Activity\MarkdownActivity());
         }
     ],
 
@@ -14,6 +14,7 @@ return [
         'shared' => true,
         'class' => 'Perfumer\\Component\\Auth\\Authorization\\DatabaseAuthorization',
         'arguments' => ['#session', '#auth.token.cookie_handler', [
+            'model' => '\\App\\Model\\User',
             'username_field' => 'username',
             'acl' => true,
             'application' => false,
@@ -38,7 +39,7 @@ return [
     'start.http_request' => [
         'class' => 'Perfumer\\Framework\\Proxy\\Request',
         'arguments' => ['$0', '$1', '$2', '$3', [
-            'prefix' => 'Start\\Controller',
+            'prefix' => 'Perfumerlabs\\Start\\Controller',
             'suffix' => 'Controller'
         ]]
     ],
@@ -54,7 +55,7 @@ return [
     'start.api_request' => [
         'class' => 'Perfumer\\Framework\\Proxy\\Request',
         'arguments' => ['$0', '$1', '$2', '$3', [
-            'prefix' => 'Start\\Api',
+            'prefix' => 'Perfumerlabs\\Start\\Api',
             'suffix' => 'Controller'
         ]]
     ],
@@ -67,7 +68,7 @@ return [
     'start.console_request' => [
         'class' => 'Perfumer\\Framework\\Proxy\\Request',
         'arguments' => ['$0', '$1', '$2', '$3', [
-            'prefix' => 'Start\\Command',
+            'prefix' => 'Perfumerlabs\\Start\\Command',
             'suffix' => 'Command'
         ]]
     ],
@@ -85,13 +86,14 @@ return [
 
     'activity' => [
         'shared' => true,
-        'class' => 'Start\\Service\\Activity'
+        'class' => 'Perfumerlabs\\Start\\Service\\Activity'
     ],
 
     'auth.api' => [
         'shared' => true,
         'class' => 'Perfumer\\Component\\Auth\\Authorization\\DatabaseAuthorization',
         'arguments' => ['#session', '#auth.token.http_header_handler', [
+            'model' => '\\App\\Model\\User',
             'username_field' => 'username',
             'acl' => true,
             'application' => false,

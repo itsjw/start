@@ -1,10 +1,10 @@
 <?php
 
-namespace Start\Service;
+namespace Perfumerlabs\Start\Service;
 
 class Activity
 {
-    public function close(\App\Model\Activity $activity)
+    public function close(\Perfumerlabs\Start\Model\Activity $activity)
     {
         $activity->setClosedAt(new \DateTime());
         $activity->save();

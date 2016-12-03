@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Model\Base;
+namespace Perfumerlabs\Start\Model\Base;
 
 use \Exception;
 use \PDO;
-use App\Model\Activity as ChildActivity;
-use App\Model\ActivityQuery as ChildActivityQuery;
-use App\Model\Map\ActivityTableMap;
+use App\Model\User;
+use Perfumerlabs\Start\Model\Activity as ChildActivity;
+use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
+use Perfumerlabs\Start\Model\Map\ActivityTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -104,13 +105,13 @@ abstract class ActivityQuery extends ModelCriteria
     protected $entityNotFoundExceptionClass = '\\Propel\\Runtime\\Exception\\EntityNotFoundException';
 
     /**
-     * Initializes internal state of \App\Model\Base\ActivityQuery object.
+     * Initializes internal state of \Perfumerlabs\Start\Model\Base\ActivityQuery object.
      *
      * @param     string $dbName The database name
      * @param     string $modelName The phpName of a model, e.g. 'Book'
      * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
      */
-    public function __construct($dbName = 'start', $modelName = '\\App\\Model\\Activity', $modelAlias = null)
+    public function __construct($dbName = 'start', $modelName = '\\Perfumerlabs\\Start\\Model\\Activity', $modelAlias = null)
     {
         parent::__construct($dbName, $modelName, $modelAlias);
     }

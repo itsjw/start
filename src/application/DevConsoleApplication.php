@@ -1,11 +1,11 @@
 <?php
 
-namespace Start\Application;
+namespace Perfumerlabs\Start\Application;
 
 use Perfumer\Component\Container\Container;
 use Perfumer\Framework\Application\AbstractApplication;
 use Perfumer\Package\Framework\Bundle\ConsoleBundle as PerfumerConsoleBundle;
-use Start\Bundle\ConsoleBundle as StartConsoleBundle;
+use Perfumerlabs\Start\Bundle\ConsoleBundle as StartConsoleBundle;
 
 class DevConsoleApplication extends AbstractApplication
 {

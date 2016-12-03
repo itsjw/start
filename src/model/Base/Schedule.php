@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Model\Base;
+namespace Perfumerlabs\Start\Model\Base;
 
 use \DateTime;
 use \Exception;
 use \PDO;
-use App\Model\Role as ChildRole;
-use App\Model\RoleQuery as ChildRoleQuery;
-use App\Model\ScheduleQuery as ChildScheduleQuery;
-use App\Model\User as ChildUser;
-use App\Model\UserQuery as ChildUserQuery;
-use App\Model\Map\ScheduleTableMap;
+use App\Model\Role;
+use App\Model\RoleQuery;
+use App\Model\User;
+use App\Model\UserQuery;
+use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
+use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -36,7 +36,7 @@ abstract class Schedule implements ActiveRecordInterface
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\App\\Model\\Map\\ScheduleTableMap';
+    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\ScheduleTableMap';
 
 
     /**
@@ -121,12 +121,12 @@ abstract class Schedule implements ActiveRecordInterface
     protected $time_to;
 
     /**
-     * @var        ChildUser
+     * @var        User
      */
     protected $aUser;
 
     /**
-     * @var        ChildRole
+     * @var        Role
      */
     protected $aRole;
 
@@ -139,7 +139,7 @@ abstract class Schedule implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of App\Model\Base\Schedule object.
+     * Initializes internal state of Perfumerlabs\Start\Model\Base\Schedule object.
      */
     public function __construct()
     {
@@ -488,7 +488,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -508,7 +508,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Set the value of [user_id] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setUserId($v)
     {
@@ -532,7 +532,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Set the value of [role_id] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setRoleId($v)
     {
@@ -556,7 +556,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Set the value of [activity_codes] column.
      *
      * @param array $v new value
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setActivityCodes($v)
     {
@@ -573,7 +573,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Adds a value to the [activity_codes] array column value.
      * @param  mixed $value
      *
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function addActivityCode($value)
     {
@@ -588,7 +588,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Removes a value from the [activity_codes] array column value.
      * @param  mixed $value
      *
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function removeActivityCode($value)
     {
@@ -607,7 +607,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Set the value of [week_day] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setWeekDay($v)
     {
@@ -628,7 +628,7 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setDate($v)
     {
@@ -648,7 +648,7 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setTimeFrom($v)
     {
@@ -668,7 +668,7 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
     public function setTimeTo($v)
     {
@@ -754,7 +754,7 @@ abstract class Schedule implements ActiveRecordInterface
             return $startcol + 8; // 8 = ScheduleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Schedule'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Schedule'), 0, $e);
         }
     }
 
@@ -1231,7 +1231,7 @@ abstract class Schedule implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\App\Model\Schedule
+     * @return $this|\Perfumerlabs\Start\Model\Schedule
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
@@ -1246,7 +1246,7 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\App\Model\Schedule
+     * @return $this|\Perfumerlabs\Start\Model\Schedule
      */
     public function setByPosition($pos, $value)
     {
@@ -1348,7 +1348,7 @@ abstract class Schedule implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\App\Model\Schedule The current object, for fluid interface
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1473,7 +1473,7 @@ abstract class Schedule implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \App\Model\Schedule (or compatible) type.
+     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\Schedule (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1502,7 +1502,7 @@ abstract class Schedule implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \App\Model\Schedule Clone of current object.
+     * @return \Perfumerlabs\Start\Model\Schedule Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1516,13 +1516,13 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildUser object.
+     * Declares an association between this object and a User object.
      *
-     * @param  ChildUser $v
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @param  User $v
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setUser(ChildUser $v = null)
+    public function setUser(User $v = null)
     {
         if ($v === null) {
             $this->setUserId(NULL);
@@ -1533,7 +1533,7 @@ abstract class Schedule implements ActiveRecordInterface
         $this->aUser = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildUser object, it will not be re-added.
+        // If this object has already been added to the User object, it will not be re-added.
         if ($v !== null) {
             $v->addSchedule($this);
         }
@@ -1544,16 +1544,16 @@ abstract class Schedule implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildUser object
+     * Get the associated User object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildUser The associated ChildUser object.
+     * @return User The associated User object.
      * @throws PropelException
      */
     public function getUser(ConnectionInterface $con = null)
     {
         if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
+            $this->aUser = UserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
@@ -1567,13 +1567,13 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildRole object.
+     * Declares an association between this object and a Role object.
      *
-     * @param  ChildRole $v
-     * @return $this|\App\Model\Schedule The current object (for fluent API support)
+     * @param  Role $v
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setRole(ChildRole $v = null)
+    public function setRole(Role $v = null)
     {
         if ($v === null) {
             $this->setRoleId(NULL);
@@ -1584,7 +1584,7 @@ abstract class Schedule implements ActiveRecordInterface
         $this->aRole = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildRole object, it will not be re-added.
+        // If this object has already been added to the Role object, it will not be re-added.
         if ($v !== null) {
             $v->addSchedule($this);
         }
@@ -1595,16 +1595,16 @@ abstract class Schedule implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildRole object
+     * Get the associated Role object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildRole The associated ChildRole object.
+     * @return Role The associated Role object.
      * @throws PropelException
      */
     public function getRole(ConnectionInterface $con = null)
     {
         if ($this->aRole === null && ($this->role_id !== null)) {
-            $this->aRole = ChildRoleQuery::create()->findPk($this->role_id, $con);
+            $this->aRole = RoleQuery::create()->findPk($this->role_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be

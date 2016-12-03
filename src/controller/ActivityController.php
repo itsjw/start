@@ -1,8 +1,8 @@
 <?php
 
-namespace Start\Controller;
+namespace Perfumerlabs\Start\Controller;
 
-use App\Model\ActivityQuery;
+use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumer\Framework\Controller\PlainController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 

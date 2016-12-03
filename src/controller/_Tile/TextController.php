@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Controller\_Tile;
+namespace Perfumerlabs\Start\Controller\_Tile;
 
 use Perfumer\Framework\Controller\TemplateController;
 

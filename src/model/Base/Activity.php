@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Model\Base;
+namespace Perfumerlabs\Start\Model\Base;
 
 use \DateTime;
 use \Exception;
 use \PDO;
-use App\Model\Activity as ChildActivity;
-use App\Model\ActivityQuery as ChildActivityQuery;
-use App\Model\User as ChildUser;
-use App\Model\UserQuery as ChildUserQuery;
-use App\Model\Map\ActivityTableMap;
+use App\Model\User;
+use App\Model\UserQuery;
+use Perfumerlabs\Start\Model\Activity as ChildActivity;
+use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
+use Perfumerlabs\Start\Model\Map\ActivityTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -35,7 +35,7 @@ abstract class Activity implements ActiveRecordInterface
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\App\\Model\\Map\\ActivityTableMap';
+    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\ActivityTableMap';
 
 
     /**
@@ -131,7 +131,7 @@ abstract class Activity implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ChildUser
+     * @var        User
      */
     protected $aUser;
 
@@ -144,7 +144,7 @@ abstract class Activity implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of App\Model\Base\Activity object.
+     * Initializes internal state of Perfumerlabs\Start\Model\Base\Activity object.
      */
     public function __construct()
     {
@@ -524,7 +524,7 @@ abstract class Activity implements ActiveRecordInterface
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -544,7 +544,7 @@ abstract class Activity implements ActiveRecordInterface
      * Set the value of [user_id] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setUserId($v)
     {
@@ -568,7 +568,7 @@ abstract class Activity implements ActiveRecordInterface
      * Set the value of [code] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setCode($v)
     {
@@ -588,7 +588,7 @@ abstract class Activity implements ActiveRecordInterface
      * Set the value of [priority] column.
      *
      * @param int $v new value
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setPriority($v)
     {
@@ -608,7 +608,7 @@ abstract class Activity implements ActiveRecordInterface
      * Set the value of [title] column.
      *
      * @param string $v new value
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setTitle($v)
     {
@@ -628,7 +628,7 @@ abstract class Activity implements ActiveRecordInterface
      * Set the value of [data] column.
      *
      * @param string $v new value
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setData($v)
     {
@@ -649,7 +649,7 @@ abstract class Activity implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setRaisedAt($v)
     {
@@ -669,7 +669,7 @@ abstract class Activity implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setPickedAt($v)
     {
@@ -689,7 +689,7 @@ abstract class Activity implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setClosedAt($v)
     {
@@ -709,7 +709,7 @@ abstract class Activity implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -729,7 +729,7 @@ abstract class Activity implements ActiveRecordInterface
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
     public function setUpdatedAt($v)
     {
@@ -823,7 +823,7 @@ abstract class Activity implements ActiveRecordInterface
             return $startcol + 11; // 11 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Activity'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
         }
     }
 
@@ -1328,7 +1328,7 @@ abstract class Activity implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\App\Model\Activity
+     * @return $this|\Perfumerlabs\Start\Model\Activity
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
@@ -1343,7 +1343,7 @@ abstract class Activity implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\App\Model\Activity
+     * @return $this|\Perfumerlabs\Start\Model\Activity
      */
     public function setByPosition($pos, $value)
     {
@@ -1459,7 +1459,7 @@ abstract class Activity implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\App\Model\Activity The current object, for fluid interface
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1593,7 +1593,7 @@ abstract class Activity implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \App\Model\Activity (or compatible) type.
+     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\Activity (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1625,7 +1625,7 @@ abstract class Activity implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \App\Model\Activity Clone of current object.
+     * @return \Perfumerlabs\Start\Model\Activity Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1639,13 +1639,13 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildUser object.
+     * Declares an association between this object and a User object.
      *
-     * @param  ChildUser $v
-     * @return $this|\App\Model\Activity The current object (for fluent API support)
+     * @param  User $v
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setUser(ChildUser $v = null)
+    public function setUser(User $v = null)
     {
         if ($v === null) {
             $this->setUserId(NULL);
@@ -1656,7 +1656,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->aUser = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildUser object, it will not be re-added.
+        // If this object has already been added to the User object, it will not be re-added.
         if ($v !== null) {
             $v->addActivity($this);
         }
@@ -1667,16 +1667,16 @@ abstract class Activity implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildUser object
+     * Get the associated User object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildUser The associated ChildUser object.
+     * @return User The associated User object.
      * @throws PropelException
      */
     public function getUser(ConnectionInterface $con = null)
     {
         if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
+            $this->aUser = UserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be

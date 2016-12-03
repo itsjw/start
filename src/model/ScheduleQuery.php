@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Model;
+namespace Perfumerlabs\Start\Model;
 
-use App\Model\Base\ScheduleQuery as BaseScheduleQuery;
+use Perfumerlabs\Start\Model\Base\ScheduleQuery as BaseScheduleQuery;
 
 /**
  * Skeleton subclass for performing query and update operations on the 'schedule' table.

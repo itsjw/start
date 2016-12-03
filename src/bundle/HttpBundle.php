@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Bundle;
+namespace Perfumerlabs\Start\Bundle;
 
 class HttpBundle extends BaseBundle
 {

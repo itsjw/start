@@ -1,6 +1,6 @@
 <?php
 
-namespace Start\Service\Activity;
+namespace Perfumerlabs\Start\Service\Activity;
 
 class MarkdownActivity extends AbstractActivity
 {
