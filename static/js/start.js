@@ -5,7 +5,6 @@ define(['require', 'buzz'], function (require, buzz) {
         }
         Start.prototype.run = function () {
             this.loadActivities();
-            this.extraActivities();
         };
         Start.prototype.loadActivities = function () {
             var start = this;
@@ -20,6 +19,9 @@ define(['require', 'buzz'], function (require, buzz) {
                             start.addActivity(new Activity(activities[i]));
                         })(i);
                     }
+                    setInterval(function () {
+                        start.loadExtraActivities();
+                    }, 10000);
                 }
                 else {
                 }
@@ -28,30 +30,28 @@ define(['require', 'buzz'], function (require, buzz) {
             };
             request.send();
         };
-        Start.prototype.extraActivities = function () {
+        Start.prototype.loadExtraActivities = function () {
             var start = this;
-            setInterval(function () {
-                var request = new XMLHttpRequest();
-                request.open('GET', '/extra', true);
-                request.onload = function () {
-                    if (request.status >= 200 && request.status < 400) {
-                        var data = JSON.parse(request.responseText);
-                        if (data.hasOwnProperty('content') && data.content !== null) {
-                            var activity = data.content;
-                            if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(new Activity(activity));
-                                var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
-                                sound.play();
-                            }
+            var request = new XMLHttpRequest();
+            request.open('GET', '/extra', true);
+            request.onload = function () {
+                if (request.status >= 200 && request.status < 400) {
+                    var data = JSON.parse(request.responseText);
+                    if (data.hasOwnProperty('content') && data.content !== null) {
+                        var activity = data.content;
+                        if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
+                            start.addActivity(new Activity(activity));
+                            var sound = new buzz.sound(DATA.static + "/sound/activity.mp3");
+                            sound.play();
                         }
                     }
-                    else {
-                    }
-                };
-                request.onerror = function () {
-                };
-                request.send();
-            }, 10000);
+                }
+                else {
+                }
+            };
+            request.onerror = function () {
+            };
+            request.send();
         };
         Start.prototype.closeActivity = function (id) {
             var start = this;
@@ -70,6 +70,9 @@ define(['require', 'buzz'], function (require, buzz) {
                     }
                     if (start.activities.length > 0) {
                         start.openWorkspace(start.activities[0]);
+                    }
+                    else {
+                        start.loadExtraActivities();
                     }
                 }
                 else {

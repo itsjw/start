@@ -16,14 +16,22 @@ class ActivityController extends PlainController
 
         $activity = ActivityQuery::create()->findPk($id);
 
-        $data = $activity->getData() === null ? [] : unserialize($activity->getData());
-        $data['created_at'] = $activity->getCreatedAt();
-        $data['id'] = $id;
+        if (!$activity) {
+            $this->pageNotFoundException();
+        }
 
         $reference = $this->s('perfumerlabs.start')->getActivity($activity->getCode());
 
+        if (!$reference->amd) {
+            $this->pageNotFoundException();
+        }
+
         $amd = $reference->amd;
         $amd = explode('.', $amd);
+
+        $data = $activity->getData() === null ? [] : unserialize($activity->getData());
+        $data['created_at'] = $activity->getCreatedAt();
+        $data['id'] = $id;
 
         $this->getProxy()->forward($amd[0], $amd[1], $amd[2], $data);
     }

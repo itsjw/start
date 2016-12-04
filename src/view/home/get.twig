@@ -4,15 +4,19 @@
     <meta charset="utf-8">
     <base href="/">
     <title>Start</title>
-    <link href="http://static.start.dev/vendor/normalize-css/normalize.css" rel='stylesheet' type='text/css'>
-    <script src="http://static.start.dev/js/requirejs.min.js"></script>
+    <link href="{{ param('perfumerlabs.start/static') }}/vendor/normalize-css/normalize.css" rel='stylesheet' type='text/css'>
+    <script src="{{ param('perfumerlabs.start/static') }}/js/requirejs.min.js"></script>
     <script>
+        var DATA = {
+            "static": "{{ param('perfumerlabs.start/static') }}"
+        };
+
         requirejs.config({
             paths: {
-                "text" : "http://static.start.dev/vendor/requirejs-text/text",
-                "css" : "http://static.start.dev/vendor/require-css/css.min",
-                "start" : "http://static.start.dev/js/start",
-                "buzz" : "http://static.start.dev/vendor/buzz/dist/buzz.min"
+                "text" : "{{ param('perfumerlabs.start/static') }}/vendor/requirejs-text/text",
+                "css" : "{{ param('perfumerlabs.start/static') }}/vendor/require-css/css.min",
+                "start" : "{{ param('perfumerlabs.start/static') }}/js/start",
+                "buzz" : "{{ param('perfumerlabs.start/static') }}/vendor/buzz/dist/buzz.min"
             }
         });
 

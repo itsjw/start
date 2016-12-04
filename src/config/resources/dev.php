@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'perfumerlabs.start' => [
+        'static' => 'http://static.start.dev'
+    ],
+
     '_domains' => [
         [
             'domain' => 'start.dev',

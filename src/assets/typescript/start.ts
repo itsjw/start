@@ -8,7 +8,6 @@ define(['require', 'buzz'], function (require, buzz) {
 
         public run() {
             this.loadActivities();
-            this.extraActivities();
         }
 
         public loadActivities() {
@@ -26,6 +25,10 @@ define(['require', 'buzz'], function (require, buzz) {
                             start.addActivity(new Activity(activities[i]));
                         })(i)
                     }
+
+                    setInterval(function() {
+                        start.loadExtraActivities();
+                    }, 10000);
                 } else {
                 }
             };
@@ -36,36 +39,34 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send();
         }
 
-        public extraActivities() {
+        public loadExtraActivities() {
             var start = this;
 
-            setInterval(function() {
-                var request = new XMLHttpRequest();
-                request.open('GET', '/extra', true);
+            var request = new XMLHttpRequest();
+            request.open('GET', '/extra', true);
 
-                request.onload = function() {
-                    if (request.status >= 200 && request.status < 400) {
-                        var data = JSON.parse(request.responseText);
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    var data = JSON.parse(request.responseText);
 
-                        if (data.hasOwnProperty('content') && data.content !== null) {
-                            var activity = data.content;
+                    if (data.hasOwnProperty('content') && data.content !== null) {
+                        var activity = data.content;
 
-                            if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(new Activity(activity));
+                        if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
+                            start.addActivity(new Activity(activity));
 
-                                var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
-                                sound.play();
-                            }
+                            var sound = new buzz.sound(DATA.static + "/sound/activity.mp3");
+                            sound.play();
                         }
-                    } else {
                     }
-                };
+                } else {
+                }
+            };
 
-                request.onerror = function() {
-                };
+            request.onerror = function() {
+            };
 
-                request.send();
-            }, 10000);
+            request.send();
         }
 
         public closeActivity(id: number) {
@@ -88,6 +89,8 @@ define(['require', 'buzz'], function (require, buzz) {
 
                     if (start.activities.length > 0) {
                         start.openWorkspace(start.activities[0]);
+                    } else {
+                        start.loadExtraActivities();
                     }
                 } else {
                 }

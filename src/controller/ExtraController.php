@@ -47,11 +47,21 @@ class ExtraController extends ViewController
             $extra_activity->setUser($this->getUser());
 
             if ($extra_activity->save()) {
+                $Activity = $this->s('perfumerlabs.start')->getActivity($extra_activity->getCode());
+
                 $content = [
                     'id' => $extra_activity->getId(),
-                    'name' => $extra_activity->getUser()->getUsername(),
-                    'title' => $extra_activity->getTitle()
+                    'name' => $this->getUser()->getUsername(),
+                    'title' => $extra_activity->getTitle(),
+                    'color' => $this->s('perfumerlabs.start')->getActivity($extra_activity->getCode())->color,
+                    'readonly' => $this->s('perfumerlabs.start')->getActivity($extra_activity->getCode())->readonly,
                 ];
+
+                if ($Activity->iframe) {
+                    $query_string = $extra_activity->getData() ? '?' . http_build_query(unserialize($extra_activity->getData())) : '';
+
+                    $content['iframe'] = $Activity->iframe . $query_string;
+                }
 
                 $this->setContent($content);
             }
