@@ -4,7 +4,7 @@ namespace Perfumerlabs\Start\Service\Activity;
 
 class IframeActivity extends AbstractActivity
 {
-    public $code = 30;
+    public $name = 'perfumerlabs/start/iframe';
 
     public $iframe = 'http://start.dev/test';
 }

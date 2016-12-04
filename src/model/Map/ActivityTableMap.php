@@ -82,9 +82,9 @@ class ActivityTableMap extends TableMap
     const COL_USER_ID = 'activity.user_id';
 
     /**
-     * the column name for the code field
+     * the column name for the name field
      */
-    const COL_CODE = 'activity.code';
+    const COL_NAME = 'activity.name';
 
     /**
      * the column name for the priority field
@@ -138,10 +138,10 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Code', 'Priority', 'Title', 'Data', 'RaisedAt', 'PickedAt', 'ClosedAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'code', 'priority', 'title', 'data', 'raisedAt', 'pickedAt', 'closedAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_USER_ID, ActivityTableMap::COL_CODE, ActivityTableMap::COL_PRIORITY, ActivityTableMap::COL_TITLE, ActivityTableMap::COL_DATA, ActivityTableMap::COL_RAISED_AT, ActivityTableMap::COL_PICKED_AT, ActivityTableMap::COL_CLOSED_AT, ActivityTableMap::COL_CREATED_AT, ActivityTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'code', 'priority', 'title', 'data', 'raised_at', 'picked_at', 'closed_at', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'Name', 'Priority', 'Title', 'Data', 'RaisedAt', 'PickedAt', 'ClosedAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'name', 'priority', 'title', 'data', 'raisedAt', 'pickedAt', 'closedAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_USER_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_PRIORITY, ActivityTableMap::COL_TITLE, ActivityTableMap::COL_DATA, ActivityTableMap::COL_RAISED_AT, ActivityTableMap::COL_PICKED_AT, ActivityTableMap::COL_CLOSED_AT, ActivityTableMap::COL_CREATED_AT, ActivityTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'name', 'priority', 'title', 'data', 'raised_at', 'picked_at', 'closed_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
@@ -152,10 +152,10 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Code' => 2, 'Priority' => 3, 'Title' => 4, 'Data' => 5, 'RaisedAt' => 6, 'PickedAt' => 7, 'ClosedAt' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'code' => 2, 'priority' => 3, 'title' => 4, 'data' => 5, 'raisedAt' => 6, 'pickedAt' => 7, 'closedAt' => 8, 'createdAt' => 9, 'updatedAt' => 10, ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_USER_ID => 1, ActivityTableMap::COL_CODE => 2, ActivityTableMap::COL_PRIORITY => 3, ActivityTableMap::COL_TITLE => 4, ActivityTableMap::COL_DATA => 5, ActivityTableMap::COL_RAISED_AT => 6, ActivityTableMap::COL_PICKED_AT => 7, ActivityTableMap::COL_CLOSED_AT => 8, ActivityTableMap::COL_CREATED_AT => 9, ActivityTableMap::COL_UPDATED_AT => 10, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'code' => 2, 'priority' => 3, 'title' => 4, 'data' => 5, 'raised_at' => 6, 'picked_at' => 7, 'closed_at' => 8, 'created_at' => 9, 'updated_at' => 10, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'Name' => 2, 'Priority' => 3, 'Title' => 4, 'Data' => 5, 'RaisedAt' => 6, 'PickedAt' => 7, 'ClosedAt' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'name' => 2, 'priority' => 3, 'title' => 4, 'data' => 5, 'raisedAt' => 6, 'pickedAt' => 7, 'closedAt' => 8, 'createdAt' => 9, 'updatedAt' => 10, ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_USER_ID => 1, ActivityTableMap::COL_NAME => 2, ActivityTableMap::COL_PRIORITY => 3, ActivityTableMap::COL_TITLE => 4, ActivityTableMap::COL_DATA => 5, ActivityTableMap::COL_RAISED_AT => 6, ActivityTableMap::COL_PICKED_AT => 7, ActivityTableMap::COL_CLOSED_AT => 8, ActivityTableMap::COL_CREATED_AT => 9, ActivityTableMap::COL_UPDATED_AT => 10, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'name' => 2, 'priority' => 3, 'title' => 4, 'data' => 5, 'raised_at' => 6, 'picked_at' => 7, 'closed_at' => 8, 'created_at' => 9, 'updated_at' => 10, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
     );
 
@@ -179,7 +179,7 @@ class ActivityTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
-        $this->addColumn('code', 'Code', 'INTEGER', false, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
         $this->addColumn('priority', 'Priority', 'INTEGER', false, null, null);
         $this->addColumn('title', 'Title', 'LONGVARCHAR', false, null, null);
         $this->addColumn('data', 'Data', 'LONGVARCHAR', false, null, null);
@@ -360,7 +360,7 @@ class ActivityTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(ActivityTableMap::COL_ID);
             $criteria->addSelectColumn(ActivityTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(ActivityTableMap::COL_CODE);
+            $criteria->addSelectColumn(ActivityTableMap::COL_NAME);
             $criteria->addSelectColumn(ActivityTableMap::COL_PRIORITY);
             $criteria->addSelectColumn(ActivityTableMap::COL_TITLE);
             $criteria->addSelectColumn(ActivityTableMap::COL_DATA);
@@ -372,7 +372,7 @@ class ActivityTableMap extends TableMap
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.user_id');
-            $criteria->addSelectColumn($alias . '.code');
+            $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.priority');
             $criteria->addSelectColumn($alias . '.title');
             $criteria->addSelectColumn($alias . '.data');

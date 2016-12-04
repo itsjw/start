@@ -84,17 +84,17 @@ abstract class Schedule implements ActiveRecordInterface
     protected $role_id;
 
     /**
-     * The value for the activity_codes field.
+     * The value for the activities field.
      * @var        array
      */
-    protected $activity_codes;
+    protected $activities;
 
     /**
-     * The unserialized $activity_codes value - i.e. the persisted object.
+     * The unserialized $activities value - i.e. the persisted object.
      * This is necessary to avoid repeated calls to unserialize() at runtime.
      * @var object
      */
-    protected $activity_codes_unserialized;
+    protected $activities_unserialized;
 
     /**
      * The value for the week_day field.
@@ -386,33 +386,33 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Get the [activity_codes] column value.
+     * Get the [activities] column value.
      *
      * @return array
      */
-    public function getActivityCodes()
+    public function getActivities()
     {
-        if (null === $this->activity_codes_unserialized) {
-            $this->activity_codes_unserialized = array();
+        if (null === $this->activities_unserialized) {
+            $this->activities_unserialized = array();
         }
-        if (!$this->activity_codes_unserialized && null !== $this->activity_codes) {
-            $activity_codes_unserialized = substr($this->activity_codes, 2, -2);
-            $this->activity_codes_unserialized = $activity_codes_unserialized ? explode(' | ', $activity_codes_unserialized) : array();
+        if (!$this->activities_unserialized && null !== $this->activities) {
+            $activities_unserialized = substr($this->activities, 2, -2);
+            $this->activities_unserialized = $activities_unserialized ? explode(' | ', $activities_unserialized) : array();
         }
 
-        return $this->activity_codes_unserialized;
+        return $this->activities_unserialized;
     }
 
     /**
-     * Test the presence of a value in the [activity_codes] array column value.
+     * Test the presence of a value in the [activities] array column value.
      * @param      mixed $value
      *
      * @return boolean
      */
-    public function hasActivityCode($value)
+    public function hasActivitie($value)
     {
-        return in_array($value, $this->getActivityCodes());
-    } // hasActivityCode()
+        return in_array($value, $this->getActivities());
+    } // hasActivitie()
 
     /**
      * Get the [week_day] column value.
@@ -553,55 +553,55 @@ abstract class Schedule implements ActiveRecordInterface
     } // setRoleId()
 
     /**
-     * Set the value of [activity_codes] column.
+     * Set the value of [activities] column.
      *
      * @param array $v new value
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
-    public function setActivityCodes($v)
+    public function setActivities($v)
     {
-        if ($this->activity_codes_unserialized !== $v) {
-            $this->activity_codes_unserialized = $v;
-            $this->activity_codes = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[ScheduleTableMap::COL_ACTIVITY_CODES] = true;
+        if ($this->activities_unserialized !== $v) {
+            $this->activities_unserialized = $v;
+            $this->activities = '| ' . implode(' | ', $v) . ' |';
+            $this->modifiedColumns[ScheduleTableMap::COL_ACTIVITIES] = true;
         }
 
         return $this;
-    } // setActivityCodes()
+    } // setActivities()
 
     /**
-     * Adds a value to the [activity_codes] array column value.
+     * Adds a value to the [activities] array column value.
      * @param  mixed $value
      *
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
-    public function addActivityCode($value)
+    public function addActivitie($value)
     {
-        $currentArray = $this->getActivityCodes();
+        $currentArray = $this->getActivities();
         $currentArray []= $value;
-        $this->setActivityCodes($currentArray);
+        $this->setActivities($currentArray);
 
         return $this;
-    } // addActivityCode()
+    } // addActivitie()
 
     /**
-     * Removes a value from the [activity_codes] array column value.
+     * Removes a value from the [activities] array column value.
      * @param  mixed $value
      *
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
-    public function removeActivityCode($value)
+    public function removeActivitie($value)
     {
         $targetArray = array();
-        foreach ($this->getActivityCodes() as $element) {
+        foreach ($this->getActivities() as $element) {
             if ($element != $value) {
                 $targetArray []= $element;
             }
         }
-        $this->setActivityCodes($targetArray);
+        $this->setActivities($targetArray);
 
         return $this;
-    } // removeActivityCode()
+    } // removeActivitie()
 
     /**
      * Set the value of [week_day] column.
@@ -728,9 +728,9 @@ abstract class Schedule implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ScheduleTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->role_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ScheduleTableMap::translateFieldName('ActivityCodes', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->activity_codes = $col;
-            $this->activity_codes_unserialized = null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ScheduleTableMap::translateFieldName('Activities', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->activities = $col;
+            $this->activities_unserialized = null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ScheduleTableMap::translateFieldName('WeekDay', TableMap::TYPE_PHPNAME, $indexType)];
             $this->week_day = (null !== $col) ? (int) $col : null;
@@ -993,8 +993,8 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->isColumnModified(ScheduleTableMap::COL_ROLE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'role_id';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITY_CODES)) {
-            $modifiedColumns[':p' . $index++]  = 'activity_codes';
+        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITIES)) {
+            $modifiedColumns[':p' . $index++]  = 'activities';
         }
         if ($this->isColumnModified(ScheduleTableMap::COL_WEEK_DAY)) {
             $modifiedColumns[':p' . $index++]  = 'week_day';
@@ -1028,8 +1028,8 @@ abstract class Schedule implements ActiveRecordInterface
                     case 'role_id':
                         $stmt->bindValue($identifier, $this->role_id, PDO::PARAM_INT);
                         break;
-                    case 'activity_codes':
-                        $stmt->bindValue($identifier, $this->activity_codes, PDO::PARAM_STR);
+                    case 'activities':
+                        $stmt->bindValue($identifier, $this->activities, PDO::PARAM_STR);
                         break;
                     case 'week_day':
                         $stmt->bindValue($identifier, $this->week_day, PDO::PARAM_INT);
@@ -1108,7 +1108,7 @@ abstract class Schedule implements ActiveRecordInterface
                 return $this->getRoleId();
                 break;
             case 3:
-                return $this->getActivityCodes();
+                return $this->getActivities();
                 break;
             case 4:
                 return $this->getWeekDay();
@@ -1155,7 +1155,7 @@ abstract class Schedule implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
             $keys[2] => $this->getRoleId(),
-            $keys[3] => $this->getActivityCodes(),
+            $keys[3] => $this->getActivities(),
             $keys[4] => $this->getWeekDay(),
             $keys[5] => $this->getDate(),
             $keys[6] => $this->getTimeFrom(),
@@ -1265,7 +1265,7 @@ abstract class Schedule implements ActiveRecordInterface
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setActivityCodes($value);
+                $this->setActivities($value);
                 break;
             case 4:
                 $this->setWeekDay($value);
@@ -1315,7 +1315,7 @@ abstract class Schedule implements ActiveRecordInterface
             $this->setRoleId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setActivityCodes($arr[$keys[3]]);
+            $this->setActivities($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setWeekDay($arr[$keys[4]]);
@@ -1379,8 +1379,8 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->isColumnModified(ScheduleTableMap::COL_ROLE_ID)) {
             $criteria->add(ScheduleTableMap::COL_ROLE_ID, $this->role_id);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITY_CODES)) {
-            $criteria->add(ScheduleTableMap::COL_ACTIVITY_CODES, $this->activity_codes);
+        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITIES)) {
+            $criteria->add(ScheduleTableMap::COL_ACTIVITIES, $this->activities);
         }
         if ($this->isColumnModified(ScheduleTableMap::COL_WEEK_DAY)) {
             $criteria->add(ScheduleTableMap::COL_WEEK_DAY, $this->week_day);
@@ -1482,7 +1482,7 @@ abstract class Schedule implements ActiveRecordInterface
     {
         $copyObj->setUserId($this->getUserId());
         $copyObj->setRoleId($this->getRoleId());
-        $copyObj->setActivityCodes($this->getActivityCodes());
+        $copyObj->setActivities($this->getActivities());
         $copyObj->setWeekDay($this->getWeekDay());
         $copyObj->setDate($this->getDate());
         $copyObj->setTimeFrom($this->getTimeFrom());
@@ -1633,8 +1633,8 @@ abstract class Schedule implements ActiveRecordInterface
         $this->id = null;
         $this->user_id = null;
         $this->role_id = null;
-        $this->activity_codes = null;
-        $this->activity_codes_unserialized = null;
+        $this->activities = null;
+        $this->activities_unserialized = null;
         $this->week_day = null;
         $this->_date = null;
         $this->time_from = null;

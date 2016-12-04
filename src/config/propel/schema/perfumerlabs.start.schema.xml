@@ -3,7 +3,7 @@
     <table name="activity" phpName="Activity" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
-        <column name="code" type="integer"/>
+        <column name="name" type="varchar" size="255"/>
         <column name="priority" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="data" type="longvarchar"/>
@@ -20,7 +20,7 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="role_id" type="integer"/>
-        <column name="activity_codes" type="array"/>
+        <column name="activities" type="array"/>
         <column name="week_day" type="integer"/>
         <column name="_date" type="date" phpName="Date"/>
         <column name="time_from" type="time"/>

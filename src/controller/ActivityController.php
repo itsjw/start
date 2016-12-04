@@ -20,7 +20,7 @@ class ActivityController extends PlainController
             $this->pageNotFoundException();
         }
 
-        $reference = $this->s('perfumerlabs.start')->getActivity($activity->getCode());
+        $reference = $this->s('perfumerlabs.start')->getActivity($activity->getName());
 
         if (!$reference->amd) {
             $this->pageNotFoundException();

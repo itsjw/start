@@ -77,10 +77,10 @@ abstract class Activity implements ActiveRecordInterface
     protected $user_id;
 
     /**
-     * The value for the code field.
-     * @var        int
+     * The value for the name field.
+     * @var        string
      */
-    protected $code;
+    protected $name;
 
     /**
      * The value for the priority field.
@@ -381,13 +381,13 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [code] column value.
+     * Get the [name] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getCode()
+    public function getName()
     {
-        return $this->code;
+        return $this->name;
     }
 
     /**
@@ -565,24 +565,24 @@ abstract class Activity implements ActiveRecordInterface
     } // setUserId()
 
     /**
-     * Set the value of [code] column.
+     * Set the value of [name] column.
      *
-     * @param int $v new value
+     * @param string $v new value
      * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
-    public function setCode($v)
+    public function setName($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->code !== $v) {
-            $this->code = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_CODE] = true;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setCode()
+    } // setName()
 
     /**
      * Set the value of [priority] column.
@@ -786,8 +786,8 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ActivityTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->code = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
             $this->priority = (null !== $col) ? (int) $col : null;
@@ -1060,8 +1060,8 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
-            $modifiedColumns[':p' . $index++]  = 'code';
+        if ($this->isColumnModified(ActivityTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'name';
         }
         if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
             $modifiedColumns[':p' . $index++]  = 'priority';
@@ -1104,8 +1104,8 @@ abstract class Activity implements ActiveRecordInterface
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
-                    case 'code':
-                        $stmt->bindValue($identifier, $this->code, PDO::PARAM_INT);
+                    case 'name':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
                     case 'priority':
                         $stmt->bindValue($identifier, $this->priority, PDO::PARAM_INT);
@@ -1193,7 +1193,7 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getUserId();
                 break;
             case 2:
-                return $this->getCode();
+                return $this->getName();
                 break;
             case 3:
                 return $this->getPriority();
@@ -1251,7 +1251,7 @@ abstract class Activity implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
-            $keys[2] => $this->getCode(),
+            $keys[2] => $this->getName(),
             $keys[3] => $this->getPriority(),
             $keys[4] => $this->getTitle(),
             $keys[5] => $this->getData(),
@@ -1355,7 +1355,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setUserId($value);
                 break;
             case 2:
-                $this->setCode($value);
+                $this->setName($value);
                 break;
             case 3:
                 $this->setPriority($value);
@@ -1414,7 +1414,7 @@ abstract class Activity implements ActiveRecordInterface
             $this->setUserId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setCode($arr[$keys[2]]);
+            $this->setName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
             $this->setPriority($arr[$keys[3]]);
@@ -1487,8 +1487,8 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_USER_ID)) {
             $criteria->add(ActivityTableMap::COL_USER_ID, $this->user_id);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
-            $criteria->add(ActivityTableMap::COL_CODE, $this->code);
+        if ($this->isColumnModified(ActivityTableMap::COL_NAME)) {
+            $criteria->add(ActivityTableMap::COL_NAME, $this->name);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
             $criteria->add(ActivityTableMap::COL_PRIORITY, $this->priority);
@@ -1601,7 +1601,7 @@ abstract class Activity implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setUserId($this->getUserId());
-        $copyObj->setCode($this->getCode());
+        $copyObj->setName($this->getName());
         $copyObj->setPriority($this->getPriority());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setData($this->getData());
@@ -1701,7 +1701,7 @@ abstract class Activity implements ActiveRecordInterface
         }
         $this->id = null;
         $this->user_id = null;
-        $this->code = null;
+        $this->name = null;
         $this->priority = null;
         $this->title = null;
         $this->data = null;

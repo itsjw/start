@@ -4,7 +4,7 @@ namespace Perfumerlabs\Start\Service\Activity;
 
 abstract class AbstractActivity
 {
-    public $code;
+    public $name;
 
     public $amd;
 

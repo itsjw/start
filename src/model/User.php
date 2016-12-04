@@ -22,10 +22,10 @@ class User extends BaseUser
 {
     use UserHelpers;
 
-    public function getActivityCodes()
+    public function getAllowedActivities()
     {
         $roles = $this->getRoles();
-        $codes = [];
+        $activities = [];
 
         foreach ($roles as $role) {
             $date = date('Y-m-d');
@@ -51,11 +51,11 @@ class User extends BaseUser
             if (count($schedules) > 0) {
                 foreach ($schedules as $schedule) {
                     /** @var Schedule $schedule */
-                    $codes = array_merge($codes, $schedule->getActivityCodes());
+                    $activities = array_merge($activities, $schedule->getActivities());
                 }
             }
         }
 
-        return array_unique($codes);
+        return array_unique($activities);
     }
 }

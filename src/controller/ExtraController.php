@@ -32,7 +32,7 @@ class ExtraController extends ViewController
         $extra_activity = ActivityQuery::create()
             ->filterByUser($this->getUser())
             ->_or()
-            ->filterByCode($this->getUser()->getActivityCodes(), Criteria::IN)
+            ->filterByName($this->getUser()->getAllowedActivities(), Criteria::IN)
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNULL)
             ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
@@ -47,14 +47,14 @@ class ExtraController extends ViewController
             $extra_activity->setUser($this->getUser());
 
             if ($extra_activity->save()) {
-                $Activity = $this->s('perfumerlabs.start')->getActivity($extra_activity->getCode());
+                $Activity = $this->s('perfumerlabs.start')->getActivity($extra_activity->getName());
 
                 $content = [
                     'id' => $extra_activity->getId(),
                     'name' => $this->getUser()->getUsername(),
                     'title' => $extra_activity->getTitle(),
-                    'color' => $this->s('perfumerlabs.start')->getActivity($extra_activity->getCode())->color,
-                    'readonly' => $this->s('perfumerlabs.start')->getActivity($extra_activity->getCode())->readonly,
+                    'color' => $Activity->color,
+                    'readonly' => $Activity->readonly,
                 ];
 
                 if ($Activity->iframe) {

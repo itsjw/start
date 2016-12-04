@@ -10,11 +10,11 @@ class Start
 
     public function addActivity(AbstractActivity $activity)
     {
-        $this->activities[$activity->code] = $activity;
+        $this->activities[$activity->name] = $activity;
     }
 
-    public function getActivity($code)
+    public function getActivity($name)
     {
-        return $this->activities[$code];
+        return $this->activities[$name];
     }
 }

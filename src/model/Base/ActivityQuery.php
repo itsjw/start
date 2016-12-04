@@ -23,7 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
- * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
+ * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
  * @method     ChildActivityQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildActivityQuery orderByData($order = Criteria::ASC) Order by the data column
@@ -35,7 +35,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByUserId() Group by the user_id column
- * @method     ChildActivityQuery groupByCode() Group by the code column
+ * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByPriority() Group by the priority column
  * @method     ChildActivityQuery groupByTitle() Group by the title column
  * @method     ChildActivityQuery groupByData() Group by the data column
@@ -60,7 +60,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByUserId(int $user_id) Return the first ChildActivity filtered by the user_id column
- * @method     ChildActivity findOneByCode(int $code) Return the first ChildActivity filtered by the code column
+ * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column
  * @method     ChildActivity findOneByTitle(string $title) Return the first ChildActivity filtered by the title column
  * @method     ChildActivity findOneByData(string $data) Return the first ChildActivity filtered by the data column
@@ -75,7 +75,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByUserId(int $user_id) Return the first ChildActivity filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByCode(int $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByTitle(string $title) Return the first ChildActivity filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByData(string $data) Return the first ChildActivity filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -88,7 +88,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByUserId(int $user_id) Return ChildActivity objects filtered by the user_id column
- * @method     ChildActivity[]|ObjectCollection findByCode(int $code) Return ChildActivity objects filtered by the code column
+ * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
  * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
  * @method     ChildActivity[]|ObjectCollection findByTitle(string $title) Return ChildActivity objects filtered by the title column
  * @method     ChildActivity[]|ObjectCollection findByData(string $data) Return ChildActivity objects filtered by the data column
@@ -189,7 +189,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, code, priority, title, data, raised_at, picked_at, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, user_id, name, priority, title, data, raised_at, picked_at, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -364,44 +364,32 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the code column
+     * Filter the query on the name column
      *
      * Example usage:
      * <code>
-     * $query->filterByCode(1234); // WHERE code = 1234
-     * $query->filterByCode(array(12, 34)); // WHERE code IN (12, 34)
-     * $query->filterByCode(array('min' => 12)); // WHERE code > 12
+     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
+     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
      * </code>
      *
-     * @param     mixed $code The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $name The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByCode($code = null, $comparison = null)
+    public function filterByName($name = null, $comparison = null)
     {
-        if (is_array($code)) {
-            $useMinMax = false;
-            if (isset($code['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_CODE, $code['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($code['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_CODE, $code['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($name)) {
                 $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $name)) {
+                $name = str_replace('*', '%', $name);
+                $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_CODE, $code, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_NAME, $name, $comparison);
     }
 
     /**

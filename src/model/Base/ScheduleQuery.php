@@ -25,7 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildScheduleQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildScheduleQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildScheduleQuery orderByRoleId($order = Criteria::ASC) Order by the role_id column
- * @method     ChildScheduleQuery orderByActivityCodes($order = Criteria::ASC) Order by the activity_codes column
+ * @method     ChildScheduleQuery orderByActivities($order = Criteria::ASC) Order by the activities column
  * @method     ChildScheduleQuery orderByWeekDay($order = Criteria::ASC) Order by the week_day column
  * @method     ChildScheduleQuery orderByDate($order = Criteria::ASC) Order by the _date column
  * @method     ChildScheduleQuery orderByTimeFrom($order = Criteria::ASC) Order by the time_from column
@@ -34,7 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildScheduleQuery groupById() Group by the id column
  * @method     ChildScheduleQuery groupByUserId() Group by the user_id column
  * @method     ChildScheduleQuery groupByRoleId() Group by the role_id column
- * @method     ChildScheduleQuery groupByActivityCodes() Group by the activity_codes column
+ * @method     ChildScheduleQuery groupByActivities() Group by the activities column
  * @method     ChildScheduleQuery groupByWeekDay() Group by the week_day column
  * @method     ChildScheduleQuery groupByDate() Group by the _date column
  * @method     ChildScheduleQuery groupByTimeFrom() Group by the time_from column
@@ -60,7 +60,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSchedule findOneById(int $id) Return the first ChildSchedule filtered by the id column
  * @method     ChildSchedule findOneByUserId(int $user_id) Return the first ChildSchedule filtered by the user_id column
  * @method     ChildSchedule findOneByRoleId(int $role_id) Return the first ChildSchedule filtered by the role_id column
- * @method     ChildSchedule findOneByActivityCodes(array $activity_codes) Return the first ChildSchedule filtered by the activity_codes column
+ * @method     ChildSchedule findOneByActivities(array $activities) Return the first ChildSchedule filtered by the activities column
  * @method     ChildSchedule findOneByWeekDay(int $week_day) Return the first ChildSchedule filtered by the week_day column
  * @method     ChildSchedule findOneByDate(string $_date) Return the first ChildSchedule filtered by the _date column
  * @method     ChildSchedule findOneByTimeFrom(string $time_from) Return the first ChildSchedule filtered by the time_from column
@@ -72,7 +72,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSchedule requireOneById(int $id) Return the first ChildSchedule filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByUserId(int $user_id) Return the first ChildSchedule filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByRoleId(int $role_id) Return the first ChildSchedule filtered by the role_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByActivityCodes(array $activity_codes) Return the first ChildSchedule filtered by the activity_codes column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildSchedule requireOneByActivities(array $activities) Return the first ChildSchedule filtered by the activities column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByWeekDay(int $week_day) Return the first ChildSchedule filtered by the week_day column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByDate(string $_date) Return the first ChildSchedule filtered by the _date column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByTimeFrom(string $time_from) Return the first ChildSchedule filtered by the time_from column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -82,7 +82,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSchedule[]|ObjectCollection findById(int $id) Return ChildSchedule objects filtered by the id column
  * @method     ChildSchedule[]|ObjectCollection findByUserId(int $user_id) Return ChildSchedule objects filtered by the user_id column
  * @method     ChildSchedule[]|ObjectCollection findByRoleId(int $role_id) Return ChildSchedule objects filtered by the role_id column
- * @method     ChildSchedule[]|ObjectCollection findByActivityCodes(array $activity_codes) Return ChildSchedule objects filtered by the activity_codes column
+ * @method     ChildSchedule[]|ObjectCollection findByActivities(array $activities) Return ChildSchedule objects filtered by the activities column
  * @method     ChildSchedule[]|ObjectCollection findByWeekDay(int $week_day) Return ChildSchedule objects filtered by the week_day column
  * @method     ChildSchedule[]|ObjectCollection findByDate(string $_date) Return ChildSchedule objects filtered by the _date column
  * @method     ChildSchedule[]|ObjectCollection findByTimeFrom(string $time_from) Return ChildSchedule objects filtered by the time_from column
@@ -179,7 +179,7 @@ abstract class ScheduleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, role_id, activity_codes, week_day, _date, time_from, time_to FROM schedule WHERE id = :p0';
+        $sql = 'SELECT id, user_id, role_id, activities, week_day, _date, time_from, time_to FROM schedule WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -397,18 +397,18 @@ abstract class ScheduleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the activity_codes column
+     * Filter the query on the activities column
      *
-     * @param     array $activityCodes The values to use as filter.
+     * @param     array $activities The values to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByActivityCodes($activityCodes = null, $comparison = null)
+    public function filterByActivities($activities = null, $comparison = null)
     {
-        $key = $this->getAliasedColName(ScheduleTableMap::COL_ACTIVITY_CODES);
+        $key = $this->getAliasedColName(ScheduleTableMap::COL_ACTIVITIES);
         if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            foreach ($activityCodes as $value) {
+            foreach ($activities as $value) {
                 $value = '%| ' . $value . ' |%';
                 if ($this->containsKey($key)) {
                     $this->addAnd($key, $value, Criteria::LIKE);
@@ -419,7 +419,7 @@ abstract class ScheduleQuery extends ModelCriteria
 
             return $this;
         } elseif ($comparison == Criteria::CONTAINS_SOME) {
-            foreach ($activityCodes as $value) {
+            foreach ($activities as $value) {
                 $value = '%| ' . $value . ' |%';
                 if ($this->containsKey($key)) {
                     $this->addOr($key, $value, Criteria::LIKE);
@@ -430,7 +430,7 @@ abstract class ScheduleQuery extends ModelCriteria
 
             return $this;
         } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            foreach ($activityCodes as $value) {
+            foreach ($activities as $value) {
                 $value = '%| ' . $value . ' |%';
                 if ($this->containsKey($key)) {
                     $this->addAnd($key, $value, Criteria::NOT_LIKE);
@@ -443,38 +443,38 @@ abstract class ScheduleQuery extends ModelCriteria
             return $this;
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_CODES, $activityCodes, $comparison);
+        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITIES, $activities, $comparison);
     }
 
     /**
-     * Filter the query on the activity_codes column
-     * @param     mixed $activityCodes The value to use as filter
+     * Filter the query on the activities column
+     * @param     mixed $activities The value to use as filter
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
      *
      * @return $this|ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByActivityCode($activityCodes = null, $comparison = null)
+    public function filterByActivitie($activities = null, $comparison = null)
     {
         if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            if (is_scalar($activityCodes)) {
-                $activityCodes = '%| ' . $activityCodes . ' |%';
+            if (is_scalar($activities)) {
+                $activities = '%| ' . $activities . ' |%';
                 $comparison = Criteria::LIKE;
             }
         } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            $activityCodes = '%| ' . $activityCodes . ' |%';
+            $activities = '%| ' . $activities . ' |%';
             $comparison = Criteria::NOT_LIKE;
-            $key = $this->getAliasedColName(ScheduleTableMap::COL_ACTIVITY_CODES);
+            $key = $this->getAliasedColName(ScheduleTableMap::COL_ACTIVITIES);
             if ($this->containsKey($key)) {
-                $this->addAnd($key, $activityCodes, $comparison);
+                $this->addAnd($key, $activities, $comparison);
             } else {
-                $this->addAnd($key, $activityCodes, $comparison);
+                $this->addAnd($key, $activities, $comparison);
             }
             $this->addOr($key, null, Criteria::ISNULL);
 
             return $this;
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_CODES, $activityCodes, $comparison);
+        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITIES, $activities, $comparison);
     }
 
     /**

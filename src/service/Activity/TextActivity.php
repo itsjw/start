@@ -4,9 +4,9 @@ namespace Perfumerlabs\Start\Service\Activity;
 
 class TextActivity extends AbstractActivity
 {
-    public $code = 10;
+    public $name = 'perfumerlabs/start/text';
 
-    public $amd = 'perfumerlabs/start/controller._tile/text.amd';
+    public $amd = 'perfumerlabs/start/controller.activity/text.amd';
 
     public $color = '#3498db';
 

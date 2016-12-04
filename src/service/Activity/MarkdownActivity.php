@@ -4,9 +4,9 @@ namespace Perfumerlabs\Start\Service\Activity;
 
 class MarkdownActivity extends AbstractActivity
 {
-    public $code = 20;
+    public $name = 'perfumerlabs/start/markdown';
 
-    public $amd = 'perfumerlabs/start/controller._tile/markdown.amd';
+    public $amd = 'perfumerlabs/start/controller.activity/markdown.amd';
 
     public $color = '#c39bd3';
 
