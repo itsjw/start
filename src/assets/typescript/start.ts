@@ -7,7 +7,13 @@ define(['require', 'buzz'], function (require, buzz) {
         }
 
         public run() {
+            var start = this;
+
             this.loadActivities();
+
+            document.addEventListener('Start.closeActivity', function(event) {
+                start.closeActivity(event.detail);
+            });
         }
 
         public loadActivities() {

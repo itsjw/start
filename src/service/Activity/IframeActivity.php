@@ -6,5 +6,5 @@ class IframeActivity extends AbstractActivity
 {
     public $code = 30;
 
-    public $iframe = 'http://admin.naimi.dev';
+    public $iframe = 'http://start.dev/test';
 }

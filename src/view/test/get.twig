@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title>Test page</title>
+</head>
+
+<body>
+<h3>Test page</h3>
+<button id="button">Close activity #3</button>
+<script>
+    document.getElementById('button').addEventListener('click', function() {
+        var event = new CustomEvent('Start.closeActivity', {'detail': 3});
+
+        parent.document.dispatchEvent(event);
+    });
+</script>
+</body>
+</html>

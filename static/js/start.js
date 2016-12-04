@@ -4,7 +4,11 @@ define(['require', 'buzz'], function (require, buzz) {
             this.activities = [];
         }
         Start.prototype.run = function () {
+            var start = this;
             this.loadActivities();
+            document.addEventListener('Start.closeActivity', function (event) {
+                start.closeActivity(event.detail);
+            });
         };
         Start.prototype.loadActivities = function () {
             var start = this;
