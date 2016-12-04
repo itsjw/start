@@ -4,6 +4,8 @@ namespace App\Model;
 
 use App\Model\Base\User as BaseUser;
 use Perfumer\Component\Auth\UserHelpers;
+use Perfumerlabs\Start\Model\Schedule;
+use Perfumerlabs\Start\Model\ScheduleQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 /**

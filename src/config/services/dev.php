@@ -5,14 +5,6 @@ return [
         'alias' => 'cache.ephemeral'
     ],
 
-    'start' => [
-        'alias' => 'perfumerlabs.start'
-    ],
-
-    'activity' => [
-        'alias' => 'perfumerlabs.activity'
-    ],
-
     'twig' => [
         'shared' => true,
         'class' => 'Twig_Environment',

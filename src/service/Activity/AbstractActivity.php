@@ -10,5 +10,7 @@ abstract class AbstractActivity
 
     public $color;
 
+    public $iframe;
+
     public $readonly = false;
 }

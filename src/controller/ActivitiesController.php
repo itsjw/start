@@ -28,8 +28,9 @@ class ActivitiesController extends ViewController
                 'id' => $activity->getId(),
                 'name' => $this->getUser()->getUsername(),
                 'title' => $activity->getTitle(),
-                'color' => $this->s('start')->getActivity($activity->getCode())->color,
-                'readonly' => $this->s('start')->getActivity($activity->getCode())->readonly,
+                'iframe' => $this->s('perfumerlabs.start')->getActivity($activity->getCode())->iframe,
+                'color' => $this->s('perfumerlabs.start')->getActivity($activity->getCode())->color,
+                'readonly' => $this->s('perfumerlabs.start')->getActivity($activity->getCode())->readonly,
             ];
         }
 

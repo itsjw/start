@@ -17,7 +17,7 @@ define(['require', 'buzz'], function (require, buzz) {
                     var activities = data.content;
                     for (var i = 0; i < activities.length; i++) {
                         (function (i) {
-                            start.addActivity(new Activity(activities[i].id, activities[i].name, activities[i].title, activities[i].color, activities[i].readonly));
+                            start.addActivity(activities[i]);
                         })(i);
                     }
                 }
@@ -39,7 +39,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         if (data.hasOwnProperty('content') && data.content !== null) {
                             var activity = data.content;
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(new Activity(activity.id, activity.name, activity.title, activity.color, activity.readonly));
+                                start.addActivity(activity);
                                 var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
                                 sound.play();
                             }
@@ -112,6 +112,14 @@ define(['require', 'buzz'], function (require, buzz) {
                 _workspace.setAttribute('class', 'workspace');
                 var _workspace_content = document.createElement("div");
                 _workspace_content.id = 'workspace-content' + activity.id;
+                if (activity.iframe !== null) {
+                    var _iframe = document.createElement('iframe');
+                    _iframe.src = activity.iframe;
+                    _iframe.style.width = '100%';
+                    _iframe.style.border = 0;
+                    _iframe.style.height = ((window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 80) + "px";
+                    _workspace_content.appendChild(_iframe);
+                }
                 _workspace.appendChild(_workspace_content);
                 if (activity.readonly) {
                     var _close_button = document.createElement("button");
@@ -125,6 +133,9 @@ define(['require', 'buzz'], function (require, buzz) {
                     }
                 }, false);
                 document.getElementById("workspaces").appendChild(_workspace);
+                if (activity.iframe === null) {
+                    require(['/activity/' + activity.id], function () { });
+                }
             }
             var workspaces = document.getElementsByClassName('workspace');
             for (var i = 0; i < workspaces.length; i++) {
@@ -133,17 +144,11 @@ define(['require', 'buzz'], function (require, buzz) {
                 })(i);
             }
             document.getElementById("workspace" + activity.id).style.display = "block";
-            require(['/activity/' + activity.id], function () { });
         };
         return Start;
     }());
     var Activity = (function () {
-        function Activity(id, name, title, color, readonly) {
-            this.id = id;
-            this.name = name;
-            this.title = title;
-            this.color = color;
-            this.readonly = readonly;
+        function Activity() {
         }
         return Activity;
     }());

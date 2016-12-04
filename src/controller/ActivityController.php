@@ -20,7 +20,7 @@ class ActivityController extends PlainController
         $data['created_at'] = $activity->getCreatedAt();
         $data['id'] = $id;
 
-        $reference = $this->s('start')->getActivity($activity->getCode());
+        $reference = $this->s('perfumerlabs.start')->getActivity($activity->getCode());
 
         $amd = $reference->amd;
         $amd = explode('.', $amd);
@@ -35,7 +35,7 @@ class ActivityController extends PlainController
         $activity = ActivityQuery::create()->findPk($id);
 
         if ($activity) {
-            $this->s('activity')->close($activity);
+            $this->s('perfumerlabs.activity')->close($activity);
         }
     }
 }
