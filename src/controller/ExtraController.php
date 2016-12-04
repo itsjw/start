@@ -29,10 +29,12 @@ class ExtraController extends ViewController
             }
         }
 
+        $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($this->getUser());
+
         $extra_activity = ActivityQuery::create()
             ->filterByUser($this->getUser())
             ->_or()
-            ->filterByName($this->getUser()->getAllowedActivities(), Criteria::IN)
+            ->filterByName($allowed_activities, Criteria::IN)
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNULL)
             ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
