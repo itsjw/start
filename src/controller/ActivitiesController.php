@@ -24,14 +24,23 @@ class ActivitiesController extends ViewController
         $content = [];
 
         foreach ($activities as $activity) {
-            $content[] = [
+            $Activity = $this->s('perfumerlabs.start')->getActivity($activity->getCode());
+
+            $array = [
                 'id' => $activity->getId(),
                 'name' => $this->getUser()->getUsername(),
                 'title' => $activity->getTitle(),
-                'iframe' => $this->s('perfumerlabs.start')->getActivity($activity->getCode())->iframe,
                 'color' => $this->s('perfumerlabs.start')->getActivity($activity->getCode())->color,
                 'readonly' => $this->s('perfumerlabs.start')->getActivity($activity->getCode())->readonly,
             ];
+
+            if ($Activity->iframe) {
+                $query_string = $activity->getData() ? '?' . http_build_query(unserialize($activity->getData())) : '';
+
+                $array['iframe'] = $Activity->iframe . $query_string;
+            }
+
+            $content[] = $array;
         }
 
         $this->setContent($content);

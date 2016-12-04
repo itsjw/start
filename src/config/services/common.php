@@ -7,6 +7,7 @@ return [
         'after' => function(\Perfumer\Component\Container\Container $container, \Perfumerlabs\Start\Service\Start $start) {
             $start->addActivity(new \Perfumerlabs\Start\Service\Activity\TextActivity());
             $start->addActivity(new \Perfumerlabs\Start\Service\Activity\MarkdownActivity());
+            $start->addActivity(new \Perfumerlabs\Start\Service\Activity\IframeActivity());
         }
     ],
 

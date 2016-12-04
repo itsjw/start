@@ -17,7 +17,7 @@ define(['require', 'buzz'], function (require, buzz) {
                     var activities = data.content;
                     for (var i = 0; i < activities.length; i++) {
                         (function (i) {
-                            start.addActivity(activities[i]);
+                            start.addActivity(new Activity(activities[i]));
                         })(i);
                     }
                 }
@@ -39,7 +39,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         if (data.hasOwnProperty('content') && data.content !== null) {
                             var activity = data.content;
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(activity);
+                                start.addActivity(new Activity(activity));
                                 var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
                                 sound.play();
                             }
@@ -125,13 +125,13 @@ define(['require', 'buzz'], function (require, buzz) {
                     var _close_button = document.createElement("button");
                     _close_button.id = 'close-button' + activity.id;
                     _close_button.innerText = 'Закрыть';
+                    _close_button.addEventListener('click', function () {
+                        if (confirm('Close activity?')) {
+                            start.closeActivity(activity.id);
+                        }
+                    }, false);
                     _workspace.appendChild(_close_button);
                 }
-                _close_button.addEventListener('click', function () {
-                    if (confirm('Close activity?')) {
-                        start.closeActivity(activity.id);
-                    }
-                }, false);
                 document.getElementById("workspaces").appendChild(_workspace);
                 if (activity.iframe === null) {
                     require(['/activity/' + activity.id], function () { });
@@ -148,7 +148,31 @@ define(['require', 'buzz'], function (require, buzz) {
         return Start;
     }());
     var Activity = (function () {
-        function Activity() {
+        function Activity(object) {
+            this.id = null;
+            this.name = null;
+            this.title = null;
+            this.color = null;
+            this.iframe = null;
+            this.readonly = null;
+            if (object.id) {
+                this.id = object.id;
+            }
+            if (object.name) {
+                this.name = object.name;
+            }
+            if (object.title) {
+                this.title = object.title;
+            }
+            if (object.color) {
+                this.color = object.color;
+            }
+            if (object.iframe) {
+                this.iframe = object.iframe;
+            }
+            if (object.id) {
+                this.readonly = object.readonly;
+            }
         }
         return Activity;
     }());

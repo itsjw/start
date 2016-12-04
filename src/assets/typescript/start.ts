@@ -23,7 +23,7 @@ define(['require', 'buzz'], function (require, buzz) {
 
                     for (var i = 0; i < activities.length; i++) {
                         (function(i) {
-                            start.addActivity(activities[i]);
+                            start.addActivity(new Activity(activities[i]));
                         })(i)
                     }
                 } else {
@@ -51,7 +51,7 @@ define(['require', 'buzz'], function (require, buzz) {
                             var activity = data.content;
 
                             if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                                start.addActivity(activity);
+                                start.addActivity(new Activity(activity));
 
                                 var sound = new buzz.sound("http://static.start.dev/start/sound/activity.mp3");
                                 sound.play();
@@ -164,14 +164,14 @@ define(['require', 'buzz'], function (require, buzz) {
                     _close_button.id = 'close-button' + activity.id;
                     _close_button.innerText = 'Закрыть';
 
+                    _close_button.addEventListener('click', function () {
+                        if (confirm('Close activity?')) {
+                            start.closeActivity(activity.id);
+                        }
+                    }, false);
+
                     _workspace.appendChild(_close_button);
                 }
-
-                _close_button.addEventListener('click', function () {
-                    if (confirm('Close activity?')) {
-                        start.closeActivity(activity.id);
-                    }
-                }, false);
 
                 document.getElementById("workspaces").appendChild(_workspace);
 
@@ -193,12 +193,38 @@ define(['require', 'buzz'], function (require, buzz) {
     }
 
     class Activity {
-        id: number;
-        name: string;
-        title: string;
-        color: string;
-        iframe: string;
-        readonly: boolean;
+        id: number = null;
+        name: string = null;
+        title: string = null;
+        color: string = null;
+        iframe: string = null;
+        readonly: boolean = null;
+
+        constructor(object: any) {
+            if (object.id) {
+                this.id = object.id;
+            }
+
+            if (object.name) {
+                this.name = object.name;
+            }
+
+            if (object.title) {
+                this.title = object.title;
+            }
+
+            if (object.color) {
+                this.color = object.color;
+            }
+
+            if (object.iframe) {
+                this.iframe = object.iframe;
+            }
+
+            if (object.id) {
+                this.readonly = object.readonly;
+            }
+        }
     }
 
     return new Start();
