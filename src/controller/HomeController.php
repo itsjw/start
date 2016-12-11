@@ -3,6 +3,7 @@
 namespace Perfumerlabs\Start\Controller;
 
 use Perfumer\Framework\Controller\TemplateController;
+use Perfumerlabs\Start\Model\DutyQuery;
 
 class HomeController extends TemplateController
 {
@@ -11,5 +12,9 @@ class HomeController extends TemplateController
         if (!$this->getAuth()->isLogged()) {
             $this->redirect('/login');
         }
+
+        $duty = DutyQuery::create()->findPk(1);
+        $duty->setData(serialize(['title'=>'Text activity', 'text'=>'lorem ipsum']));
+        $duty->save();
     }
 }

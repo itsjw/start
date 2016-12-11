@@ -33,15 +33,4 @@ class DutyController extends PlainController
 
         $this->getProxy()->forward($amd[0], $amd[1], $amd[2], $data);
     }
-
-    public function post()
-    {
-        $id = (int) $this->i();
-
-        $duty = DutyQuery::create()->findPk($id);
-
-        if ($duty) {
-            $this->s('perfumerlabs.duty')->close($duty);
-        }
-    }
 }

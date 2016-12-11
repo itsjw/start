@@ -57,10 +57,39 @@ define(['require', 'buzz'], function (require, buzz) {
             };
             request.send();
         };
+        Start.prototype.postponeDuty = function (id, period) {
+            var start = this;
+            var request = new XMLHttpRequest();
+            request.open('POST', '/duty/postpone/' + id, true);
+            request.onload = function () {
+                if (request.status >= 200 && request.status < 400) {
+                    document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
+                    document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
+                    for (var i = 0; i < start.duties.length; i++) {
+                        (function (i) {
+                            if (start.duties[i].id === id) {
+                                start.duties.splice(i, 1);
+                            }
+                        })(i);
+                    }
+                    if (start.duties.length > 0) {
+                        start.openWorkspace(start.duties[0]);
+                    }
+                    else {
+                        start.loadExtraDuties();
+                    }
+                }
+                else {
+                }
+            };
+            request.onerror = function () {
+            };
+            request.send(JSON.stringify({ "period": period }));
+        };
         Start.prototype.closeDuty = function (id) {
             var start = this;
             var request = new XMLHttpRequest();
-            request.open('POST', '/duty/' + id, true);
+            request.open('POST', '/duty/close/' + id, true);
             request.onload = function () {
                 if (request.status >= 200 && request.status < 400) {
                     document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
@@ -108,7 +137,7 @@ define(['require', 'buzz'], function (require, buzz) {
             document.getElementById("stickers").appendChild(sticker);
         };
         Start.prototype.setWorkspaceContent = function (id, html) {
-            document.getElementById('workspace-content' + id).innerHTML = html;
+            document.getElementById('duty-area' + id).innerHTML = html;
         };
         Start.prototype.openWorkspace = function (duty) {
             var start = this;
@@ -117,17 +146,38 @@ define(['require', 'buzz'], function (require, buzz) {
                 var _workspace = document.createElement("div");
                 _workspace.id = 'workspace' + duty.id;
                 _workspace.setAttribute('class', 'workspace');
-                var _workspace_content = document.createElement("div");
-                _workspace_content.id = 'workspace-content' + duty.id;
+                var _duty_area = document.createElement("div");
+                _duty_area.id = 'duty-area' + duty.id;
                 if (duty.iframe !== null) {
                     var _iframe = document.createElement('iframe');
                     _iframe.src = duty.iframe;
                     _iframe.style.width = '100%';
                     _iframe.style.border = 0;
                     _iframe.style.height = ((window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 80) + "px";
-                    _workspace_content.appendChild(_iframe);
+                    _duty_area.appendChild(_iframe);
                 }
-                _workspace.appendChild(_workspace_content);
+                _workspace.appendChild(_duty_area);
+                var _postpone_area = document.createElement("div");
+                _postpone_area.id = 'postpone-area' + duty.id;
+                _postpone_area.setAttribute('class', 'postpone-area');
+                var _postpone_area_list = document.createElement("ul");
+                var postpone_options = ['+15 min', '+30 min', '+1 hour', '+2 hour', '+1 day'];
+                for (i = 0; i < postpone_options.length; i++) {
+                    (function (i) {
+                        var _li = document.createElement("li");
+                        var _span = document.createElement("span");
+                        _span.innerText = postpone_options[i];
+                        _span.addEventListener('click', function () {
+                            if (confirm('Postpone duty?')) {
+                                start.postponeDuty(duty.id, postpone_options[i]);
+                            }
+                        }, false);
+                        _li.appendChild(_span);
+                        _postpone_area_list.appendChild(_li);
+                    })(i);
+                }
+                _postpone_area.appendChild(_postpone_area_list);
+                _workspace.appendChild(_postpone_area);
                 if (duty.readonly) {
                     var _close_button = document.createElement("button");
                     _close_button.id = 'close-button' + duty.id;
@@ -139,6 +189,21 @@ define(['require', 'buzz'], function (require, buzz) {
                     }, false);
                     _workspace.appendChild(_close_button);
                 }
+                var _postpone_button = document.createElement("button");
+                _postpone_button.id = 'postpone-button' + duty.id;
+                _postpone_button.innerText = 'Отложить';
+                _postpone_button.addEventListener('click', function (event) {
+                    var duty_area = document.getElementById("duty-area" + duty.id);
+                    if (duty_area.style.display == 'none') {
+                        document.getElementById("duty-area" + duty.id).style.display = "block";
+                        document.getElementById("postpone-area" + duty.id).style.display = "none";
+                    }
+                    else {
+                        document.getElementById("duty-area" + duty.id).style.display = "none";
+                        document.getElementById("postpone-area" + duty.id).style.display = "block";
+                    }
+                }, false);
+                _workspace.appendChild(_postpone_button);
                 document.getElementById("workspaces").appendChild(_workspace);
                 if (duty.iframe === null) {
                     require(['/duty/' + duty.id], function () { });
