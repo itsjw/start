@@ -26,6 +26,10 @@ define(['require', 'buzz'], function (require, buzz) {
                     var data = JSON.parse(request.responseText);
                     var duties = data.content;
 
+                    if (duties.length == 0) {
+                        document.getElementById("no-duties").style.display = 'block';
+                    }
+
                     for (var i = 0; i < duties.length; i++) {
                         (function(i) {
                             start.addDuty(new Duty(duties[i]));
@@ -59,11 +63,17 @@ define(['require', 'buzz'], function (require, buzz) {
                         var duty = data.content;
 
                         if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                            document.getElementById("no-duties").style.display = 'none';
+
                             start.addDuty(new Duty(duty));
 
                             var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
                             sound.play();
                         }
+                    }
+
+                    if (start.duties.length == 0) {
+                        document.getElementById("no-duties").style.display = 'block';
                     }
                 } else {
                 }
