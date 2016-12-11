@@ -49,11 +49,13 @@ class ExtraController extends ViewController
             $extra_duty->setUserId($this->getUser()->getId());
 
             if ($extra_duty->save()) {
+                $activity_properties = $extra_duty->getActivity()->getProperties() ? unserialize($extra_duty->getActivity()->getProperties()) : [];
+
                 $content = [
                     'id' => $extra_duty->getId(),
                     'name' => $this->getUser()->getUsername(),
                     'title' => $extra_duty->getTitle(),
-                    'color' => null,
+                    'color' => isset($activity_properties['color']) ? $activity_properties['color'] : $activity_properties,
                     'readonly' => $extra_duty->getActivity()->isReadonly(),
                 ];
 

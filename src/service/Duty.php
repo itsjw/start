@@ -11,7 +11,7 @@ class Duty
     public function close(\Perfumerlabs\Start\Model\Duty $duty)
     {
         $duty->setClosedAt(new \DateTime());
-        
+
         return (bool) $duty->save();
     }
 

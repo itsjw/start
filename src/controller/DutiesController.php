@@ -25,11 +25,13 @@ class DutiesController extends ViewController
         $content = [];
 
         foreach ($duties as $duty) {
+            $activity_properties = $duty->getActivity()->getProperties() ? unserialize($duty->getActivity()->getProperties()) : [];
+
             $array = [
                 'id' => $duty->getId(),
                 'name' => $this->getUser()->getUsername(),
                 'title' => $duty->getTitle(),
-                'color' => null,
+                'color' => isset($activity_properties['color']) ? $activity_properties['color'] : $activity_properties,
                 'readonly' => $duty->getActivity()->isReadonly(),
             ];
 

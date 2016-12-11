@@ -17,17 +17,4 @@ use Propel\Runtime\Connection\ConnectionInterface;
  */
 class Activity extends BaseActivity
 {
-    public function preSave(ConnectionInterface $con = null)
-    {
-        if ($this->getPriority() > 10) {
-            $this->setPriority(10);
-        }
-
-        if ($this->getPriority() < 1) {
-            $this->setPriority(1);
-        }
-
-        return true;
-    }
-
 }
