@@ -35,9 +35,11 @@ class ActivitiesController extends ViewController
             ];
 
             if ($Activity->iframe) {
-                $query_string = $activity->getData() ? '?' . http_build_query(unserialize($activity->getData())) : '';
+                $data = $activity->getData() ? unserialize($activity->getData()) : [];
+                $data['activity_id'] = $activity->getId();
+                $data['activity_name'] = $Activity->name;
 
-                $array['iframe'] = $Activity->iframe . $query_string;
+                $array['iframe'] = $Activity->iframe . '?' . http_build_query($data);
             }
 
             $content[] = $array;

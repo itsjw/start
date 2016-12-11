@@ -60,9 +60,11 @@ class ExtraController extends ViewController
                 ];
 
                 if ($Activity->iframe) {
-                    $query_string = $extra_activity->getData() ? '?' . http_build_query(unserialize($extra_activity->getData())) : '';
+                    $data = $extra_activity->getData() ? unserialize($extra_activity->getData()) : [];
+                    $data['activity_id'] = $extra_activity->getId();
+                    $data['activity_name'] = $Activity->name;
 
-                    $content['iframe'] = $Activity->iframe . $query_string;
+                    $content['iframe'] = $Activity->iframe . '?' . http_build_query($data);
                 }
 
                 $this->setContent($content);

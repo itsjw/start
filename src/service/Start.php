@@ -33,7 +33,7 @@ class Start
             $time = date('H:i:s');
 
             $schedules = ScheduleQuery::create()
-                ->filterByRole($role)
+                ->filterByRoleId($role->getId())
                 ->filterByDate($date)
                 ->filterByTimeFrom($time, Criteria::LESS_EQUAL)
                 ->filterByTimeTo($time, Criteria::GREATER_EQUAL)
@@ -41,7 +41,7 @@ class Start
 
             if (count($schedules) == 0) {
                 $schedules = ScheduleQuery::create()
-                    ->filterByRole($role)
+                    ->filterByRoleId($role->getId())
                     ->filterByWeekDay($week_day)
                     ->filterByTimeFrom($time, Criteria::LESS_EQUAL)
                     ->filterByTimeTo($time, Criteria::GREATER_EQUAL)
