@@ -222,11 +222,14 @@ define(['require', 'buzz'], function (require, buzz) {
                 }
             }
             var workspaces = document.getElementsByClassName('workspace');
+            var stickers = document.getElementsByClassName('sticker');
             for (var i = 0; i < workspaces.length; i++) {
                 (function (i) {
                     workspaces[i].style.display = "none";
+                    stickers[i].style.background = "white";
                 })(i);
             }
+            document.getElementById("sticker" + duty.id).style.background = "cornsilk";
             document.getElementById("workspace" + duty.id).style.display = "block";
         };
         return Start;
