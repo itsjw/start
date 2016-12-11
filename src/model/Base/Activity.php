@@ -95,6 +95,12 @@ abstract class Activity implements ActiveRecordInterface
     protected $readonly;
 
     /**
+     * The value for the properties field.
+     * @var        string
+     */
+    protected $properties;
+
+    /**
      * @var        ObjectCollection|ChildDuty[] Collection to store aggregation of ChildDuty objects.
      */
     protected $collDuties;
@@ -405,6 +411,16 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [properties] column value.
+     *
+     * @return string
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -513,6 +529,26 @@ abstract class Activity implements ActiveRecordInterface
     } // setReadonly()
 
     /**
+     * Set the value of [properties] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setProperties($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->properties !== $v) {
+            $this->properties = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_PROPERTIES] = true;
+        }
+
+        return $this;
+    } // setProperties()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -566,6 +602,9 @@ abstract class Activity implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readonly = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Properties', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->properties = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -574,7 +613,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -815,6 +854,9 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $modifiedColumns[':p' . $index++]  = 'readonly';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_PROPERTIES)) {
+            $modifiedColumns[':p' . $index++]  = 'properties';
+        }
 
         $sql = sprintf(
             'INSERT INTO activity (%s) VALUES (%s)',
@@ -840,6 +882,9 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'readonly':
                         $stmt->bindValue($identifier, $this->readonly, PDO::PARAM_BOOL);
+                        break;
+                    case 'properties':
+                        $stmt->bindValue($identifier, $this->properties, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -911,6 +956,9 @@ abstract class Activity implements ActiveRecordInterface
             case 4:
                 return $this->getReadonly();
                 break;
+            case 5:
+                return $this->getProperties();
+                break;
             default:
                 return null;
                 break;
@@ -946,6 +994,7 @@ abstract class Activity implements ActiveRecordInterface
             $keys[2] => $this->getAmd(),
             $keys[3] => $this->getIframe(),
             $keys[4] => $this->getReadonly(),
+            $keys[5] => $this->getProperties(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1017,6 +1066,9 @@ abstract class Activity implements ActiveRecordInterface
             case 4:
                 $this->setReadonly($value);
                 break;
+            case 5:
+                $this->setProperties($value);
+                break;
         } // switch()
 
         return $this;
@@ -1057,6 +1109,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setReadonly($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setProperties($arr[$keys[5]]);
         }
     }
 
@@ -1113,6 +1168,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $criteria->add(ActivityTableMap::COL_READONLY, $this->readonly);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_PROPERTIES)) {
+            $criteria->add(ActivityTableMap::COL_PROPERTIES, $this->properties);
         }
 
         return $criteria;
@@ -1204,6 +1262,7 @@ abstract class Activity implements ActiveRecordInterface
         $copyObj->setAmd($this->getAmd());
         $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
+        $copyObj->setProperties($this->getProperties());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1492,6 +1551,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->amd = null;
         $this->iframe = null;
         $this->readonly = null;
+        $this->properties = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

@@ -25,12 +25,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderByAmd($order = Criteria::ASC) Order by the amd column
  * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
+ * @method     ChildActivityQuery orderByProperties($order = Criteria::ASC) Order by the properties column
  *
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByAmd() Group by the amd column
  * @method     ChildActivityQuery groupByIframe() Group by the iframe column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
+ * @method     ChildActivityQuery groupByProperties() Group by the properties column
  *
  * @method     ChildActivityQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildActivityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -49,7 +51,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByAmd(string $amd) Return the first ChildActivity filtered by the amd column
  * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
- * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column *
+ * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
+ * @method     ChildActivity findOneByProperties(string $properties) Return the first ChildActivity filtered by the properties column *
 
  * @method     ChildActivity requirePk($key, ConnectionInterface $con = null) Return the ChildActivity by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -59,6 +62,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneByAmd(string $amd) Return the first ChildActivity filtered by the amd column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByProperties(string $properties) Return the first ChildActivity filtered by the properties column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
@@ -66,6 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findByAmd(string $amd) Return ChildActivity objects filtered by the amd column
  * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
+ * @method     ChildActivity[]|ObjectCollection findByProperties(string $properties) Return ChildActivity objects filtered by the properties column
  * @method     ChildActivity[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -158,7 +163,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, amd, iframe, readonly FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, amd, iframe, readonly, properties FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -401,6 +406,35 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_READONLY, $readonly, $comparison);
+    }
+
+    /**
+     * Filter the query on the properties column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByProperties('fooValue');   // WHERE properties = 'fooValue'
+     * $query->filterByProperties('%fooValue%'); // WHERE properties LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $properties The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByProperties($properties = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($properties)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $properties)) {
+                $properties = str_replace('*', '%', $properties);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_PROPERTIES, $properties, $comparison);
     }
 
     /**

@@ -204,10 +204,12 @@ define(['require', 'buzz'], function (require, buzz) {
                     if (duty_area.style.display == 'none') {
                         document.getElementById("duty-area" + duty.id).style.display = "block";
                         document.getElementById("postpone-area" + duty.id).style.display = "none";
+                        _postpone_button.innerText = 'Отложить';
                     }
                     else {
                         document.getElementById("duty-area" + duty.id).style.display = "none";
                         document.getElementById("postpone-area" + duty.id).style.display = "block";
+                        _postpone_button.innerText = 'Назад';
                     }
                 }, false);
                 _workspace.appendChild(_postpone_button);

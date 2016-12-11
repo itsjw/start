@@ -22,6 +22,7 @@
         <column name="amd" type="varchar" size="255"/>
         <column name="iframe" type="varchar" size="255"/>
         <column name="readonly" type="boolean" required="true" defaultValue="false"/>
+        <column name="properties" type="longvarchar"/>
     </table>
 
     <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">
