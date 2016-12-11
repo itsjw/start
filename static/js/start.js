@@ -13,7 +13,7 @@ define(['require', 'buzz'], function (require, buzz) {
         Start.prototype.loadActivities = function () {
             var start = this;
             var request = new XMLHttpRequest();
-            request.open('GET', '/activities', true);
+            request.open('GET', '/duties', true);
             request.onload = function () {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
@@ -60,7 +60,7 @@ define(['require', 'buzz'], function (require, buzz) {
         Start.prototype.closeActivity = function (id) {
             var start = this;
             var request = new XMLHttpRequest();
-            request.open('POST', '/activity/' + id, true);
+            request.open('POST', '/duty/' + id, true);
             request.onload = function () {
                 if (request.status >= 200 && request.status < 400) {
                     document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));

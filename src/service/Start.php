@@ -5,23 +5,10 @@ namespace Perfumerlabs\Start\Service;
 use App\Model\User;
 use Perfumerlabs\Start\Model\Schedule;
 use Perfumerlabs\Start\Model\ScheduleQuery;
-use Perfumerlabs\Start\Service\Activity\AbstractActivity;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 class Start
 {
-    private $activities = [];
-
-    public function addActivity(AbstractActivity $activity)
-    {
-        $this->activities[$activity->name] = $activity;
-    }
-
-    public function getActivity($name)
-    {
-        return $this->activities[$name];
-    }
-
     public function getAllowedActivities(User $user)
     {
         $roles = $user->getRoles();

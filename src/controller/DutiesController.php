@@ -2,19 +2,20 @@
 
 namespace Perfumerlabs\Start\Controller;
 
-use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
+use Perfumerlabs\Start\Model\DutyQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
-class ActivitiesController extends ViewController
+class DutiesController extends ViewController
 {
     use StatusViewControllerHelpers;
 
     public function get()
     {
-        $activities = ActivityQuery::create()
+        $duties = DutyQuery::create()
+            ->joinWith('Activity')
             ->filterByUserId($this->getUser()->getId())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
@@ -23,23 +24,21 @@ class ActivitiesController extends ViewController
 
         $content = [];
 
-        foreach ($activities as $activity) {
-            $Activity = $this->s('perfumerlabs.start')->getActivity($activity->getName());
-
+        foreach ($duties as $duty) {
             $array = [
-                'id' => $activity->getId(),
+                'id' => $duty->getId(),
                 'name' => $this->getUser()->getUsername(),
-                'title' => $activity->getTitle(),
-                'color' => $Activity->color,
-                'readonly' => $Activity->readonly,
+                'title' => $duty->getTitle(),
+                'color' => null,
+                'readonly' => $duty->getActivity()->isReadonly(),
             ];
 
-            if ($Activity->iframe) {
-                $data = $activity->getData() ? unserialize($activity->getData()) : [];
-                $data['activity_id'] = $activity->getId();
-                $data['activity_name'] = $Activity->name;
+            if ($duty->getActivity()->getIframe()) {
+                $data = $duty->getData() ? unserialize($duty->getData()) : [];
+                $data['activity_id'] = $duty->getId();
+                $data['activity_name'] = $duty->getActivity()->getName();
 
-                $array['iframe'] = $Activity->iframe . '?' . http_build_query($data);
+                $array['iframe'] = $duty->getActivity()->getIframe() . '?' . http_build_query($data);
             }
 
             $content[] = $array;

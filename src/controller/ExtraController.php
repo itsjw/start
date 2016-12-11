@@ -2,11 +2,11 @@
 
 namespace Perfumerlabs\Start\Controller;
 
-use Perfumerlabs\Start\Model\ActivityQuery;
 use App\Model\User;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
+use Perfumerlabs\Start\Model\DutyQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 class ExtraController extends ViewController
@@ -15,7 +15,7 @@ class ExtraController extends ViewController
 
     public function get()
     {
-        $picked_activities = ActivityQuery::create()
+        $picked_duties = DutyQuery::create()
             ->filterByUserId($this->getUser()->getId())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
@@ -23,48 +23,46 @@ class ExtraController extends ViewController
 
         $highest_priority = 0;
 
-        foreach ($picked_activities as $activity) {
-            if ($activity->getPriority() > $highest_priority) {
-                $highest_priority = $activity->getPriority();
+        foreach ($picked_duties as $duty) {
+            if ($duty->getPriority() > $highest_priority) {
+                $highest_priority = $duty->getPriority();
             }
         }
 
         $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($this->getUser());
 
-        $extra_activity = ActivityQuery::create()
+        $extra_duty = DutyQuery::create()
             ->filterByUserId($this->getUser()->getId())
             ->_or()
-            ->filterByName($allowed_activities, Criteria::IN)
+            ->filterByActivityId($allowed_activities, Criteria::IN)
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNULL)
             ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
             ->filterByPriority($highest_priority, Criteria::GREATER_THAN)
-            ->filterById($picked_activities->getPrimaryKeys(), Criteria::NOT_IN)
+            ->filterById($picked_duties->getPrimaryKeys(), Criteria::NOT_IN)
             ->orderByPriority(Criteria::DESC)
             ->orderByCreatedAt()
             ->findOne();
 
-        if ($extra_activity) {
-            $extra_activity->setPickedAt(new \DateTime());
-            $extra_activity->setUserId($this->getUser()->getId());
+        if ($extra_duty) {
+            $extra_duty->setPickedAt(new \DateTime());
+            $extra_duty->setUserId($this->getUser()->getId());
 
-            if ($extra_activity->save()) {
-                $Activity = $this->s('perfumerlabs.start')->getActivity($extra_activity->getName());
-
+            if ($extra_duty->save()) {
                 $content = [
-                    'id' => $extra_activity->getId(),
+                    'id' => $extra_duty->getId(),
                     'name' => $this->getUser()->getUsername(),
-                    'title' => $extra_activity->getTitle(),
-                    'color' => $Activity->color,
-                    'readonly' => $Activity->readonly,
+                    'title' => $extra_duty->getTitle(),
+                    'color' => null,
+                    'readonly' => $extra_duty->getActivity()->isReadonly(),
                 ];
 
-                if ($Activity->iframe) {
-                    $data = $extra_activity->getData() ? unserialize($extra_activity->getData()) : [];
-                    $data['activity_id'] = $extra_activity->getId();
-                    $data['activity_name'] = $Activity->name;
+                if ($extra_duty->getActivity()->getIframe()) {
+                    $data = $extra_duty->getData() ? unserialize($extra_duty->getData()) : [];
+                    $data['activity_id'] = $extra_duty->getId();
+                    $data['activity_name'] = $extra_duty->getActivity()->getName();
 
-                    $content['iframe'] = $Activity->iframe . '?' . http_build_query($data);
+                    $content['iframe'] = $extra_duty->getActivity()->getIframe() . '?' . http_build_query($data);
                 }
 
                 $this->setContent($content);
