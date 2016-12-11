@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="start" defaultIdMethod="native">
-    <table name="activity" phpName="Activity" namespace="\Perfumerlabs\Start\Model">
+    <table name="duty" phpName="Duty" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
-        <column name="name" type="varchar" size="255"/>
+        <column name="activity_id" type="integer"/>
         <column name="priority" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="data" type="longvarchar"/>
@@ -11,6 +11,17 @@
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
         <behavior name="timestampable" />
+        <foreign-key foreignTable="activity" phpName="Activity">
+            <reference local="activity_id" foreign="id"/>
+        </foreign-key>
+    </table>
+
+    <table name="activity" phpName="Activity" namespace="\Perfumerlabs\Start\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255"/>
+        <column name="amd" type="varchar" size="255"/>
+        <column name="iframe" type="varchar" size="255"/>
+        <column name="readonly" type="boolean" required="true" defaultValue="false"/>
     </table>
 
     <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">

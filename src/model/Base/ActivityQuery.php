@@ -10,6 +10,7 @@ use Perfumerlabs\Start\Model\Map\ActivityTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -20,75 +21,51 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildActivityQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
- * @method     ChildActivityQuery orderByTitle($order = Criteria::ASC) Order by the title column
- * @method     ChildActivityQuery orderByData($order = Criteria::ASC) Order by the data column
- * @method     ChildActivityQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
- * @method     ChildActivityQuery orderByPickedAt($order = Criteria::ASC) Order by the picked_at column
- * @method     ChildActivityQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
- * @method     ChildActivityQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
- * @method     ChildActivityQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
+ * @method     ChildActivityQuery orderByAmd($order = Criteria::ASC) Order by the amd column
+ * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
+ * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
  *
  * @method     ChildActivityQuery groupById() Group by the id column
- * @method     ChildActivityQuery groupByUserId() Group by the user_id column
  * @method     ChildActivityQuery groupByName() Group by the name column
- * @method     ChildActivityQuery groupByPriority() Group by the priority column
- * @method     ChildActivityQuery groupByTitle() Group by the title column
- * @method     ChildActivityQuery groupByData() Group by the data column
- * @method     ChildActivityQuery groupByRaisedAt() Group by the raised_at column
- * @method     ChildActivityQuery groupByPickedAt() Group by the picked_at column
- * @method     ChildActivityQuery groupByClosedAt() Group by the closed_at column
- * @method     ChildActivityQuery groupByCreatedAt() Group by the created_at column
- * @method     ChildActivityQuery groupByUpdatedAt() Group by the updated_at column
+ * @method     ChildActivityQuery groupByAmd() Group by the amd column
+ * @method     ChildActivityQuery groupByIframe() Group by the iframe column
+ * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
  *
  * @method     ChildActivityQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildActivityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildActivityQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildActivityQuery leftJoinDuty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Duty relation
+ * @method     ChildActivityQuery rightJoinDuty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Duty relation
+ * @method     ChildActivityQuery innerJoinDuty($relationAlias = null) Adds a INNER JOIN clause to the query using the Duty relation
+ *
+ * @method     \Perfumerlabs\Start\Model\DutyQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildActivity findOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query
  * @method     ChildActivity findOneOrCreate(ConnectionInterface $con = null) Return the first ChildActivity matching the query, or a new ChildActivity object populated from the query conditions when no match is found
  *
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
- * @method     ChildActivity findOneByUserId(int $user_id) Return the first ChildActivity filtered by the user_id column
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
- * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column
- * @method     ChildActivity findOneByTitle(string $title) Return the first ChildActivity filtered by the title column
- * @method     ChildActivity findOneByData(string $data) Return the first ChildActivity filtered by the data column
- * @method     ChildActivity findOneByRaisedAt(string $raised_at) Return the first ChildActivity filtered by the raised_at column
- * @method     ChildActivity findOneByPickedAt(string $picked_at) Return the first ChildActivity filtered by the picked_at column
- * @method     ChildActivity findOneByClosedAt(string $closed_at) Return the first ChildActivity filtered by the closed_at column
- * @method     ChildActivity findOneByCreatedAt(string $created_at) Return the first ChildActivity filtered by the created_at column
- * @method     ChildActivity findOneByUpdatedAt(string $updated_at) Return the first ChildActivity filtered by the updated_at column *
+ * @method     ChildActivity findOneByAmd(string $amd) Return the first ChildActivity filtered by the amd column
+ * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
+ * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column *
 
  * @method     ChildActivity requirePk($key, ConnectionInterface $con = null) Return the ChildActivity by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByUserId(int $user_id) Return the first ChildActivity filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByTitle(string $title) Return the first ChildActivity filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByData(string $data) Return the first ChildActivity filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByRaisedAt(string $raised_at) Return the first ChildActivity filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByPickedAt(string $picked_at) Return the first ChildActivity filtered by the picked_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByClosedAt(string $closed_at) Return the first ChildActivity filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByCreatedAt(string $created_at) Return the first ChildActivity filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByUpdatedAt(string $updated_at) Return the first ChildActivity filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByAmd(string $amd) Return the first ChildActivity filtered by the amd column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
- * @method     ChildActivity[]|ObjectCollection findByUserId(int $user_id) Return ChildActivity objects filtered by the user_id column
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
- * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
- * @method     ChildActivity[]|ObjectCollection findByTitle(string $title) Return ChildActivity objects filtered by the title column
- * @method     ChildActivity[]|ObjectCollection findByData(string $data) Return ChildActivity objects filtered by the data column
- * @method     ChildActivity[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildActivity objects filtered by the raised_at column
- * @method     ChildActivity[]|ObjectCollection findByPickedAt(string $picked_at) Return ChildActivity objects filtered by the picked_at column
- * @method     ChildActivity[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildActivity objects filtered by the closed_at column
- * @method     ChildActivity[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildActivity objects filtered by the created_at column
- * @method     ChildActivity[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildActivity objects filtered by the updated_at column
+ * @method     ChildActivity[]|ObjectCollection findByAmd(string $amd) Return ChildActivity objects filtered by the amd column
+ * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
+ * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
  * @method     ChildActivity[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -181,7 +158,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, name, priority, title, data, raised_at, picked_at, closed_at, created_at, updated_at FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, amd, iframe, readonly FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -313,47 +290,6 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the user_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByUserId(1234); // WHERE user_id = 1234
-     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
-     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
-     * </code>
-     *
-     * @param     mixed $userId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function filterByUserId($userId = null, $comparison = null)
-    {
-        if (is_array($userId)) {
-            $useMinMax = false;
-            if (isset($userId['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($userId['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_USER_ID, $userId, $comparison);
-    }
-
-    /**
      * Filter the query on the name column
      *
      * Example usage:
@@ -383,317 +319,161 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the priority column
+     * Filter the query on the amd column
      *
      * Example usage:
      * <code>
-     * $query->filterByPriority(1234); // WHERE priority = 1234
-     * $query->filterByPriority(array(12, 34)); // WHERE priority IN (12, 34)
-     * $query->filterByPriority(array('min' => 12)); // WHERE priority > 12
+     * $query->filterByAmd('fooValue');   // WHERE amd = 'fooValue'
+     * $query->filterByAmd('%fooValue%'); // WHERE amd LIKE '%fooValue%'
      * </code>
      *
-     * @param     mixed $priority The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function filterByPriority($priority = null, $comparison = null)
-    {
-        if (is_array($priority)) {
-            $useMinMax = false;
-            if (isset($priority['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($priority['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority, $comparison);
-    }
-
-    /**
-     * Filter the query on the title column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
-     * $query->filterByTitle('%fooValue%'); // WHERE title LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $title The value to use as filter.
+     * @param     string $amd The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByTitle($title = null, $comparison = null)
+    public function filterByAmd($amd = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($title)) {
+            if (is_array($amd)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $title)) {
-                $title = str_replace('*', '%', $title);
+            } elseif (preg_match('/[\%\*]/', $amd)) {
+                $amd = str_replace('*', '%', $amd);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_TITLE, $title, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_AMD, $amd, $comparison);
     }
 
     /**
-     * Filter the query on the data column
+     * Filter the query on the iframe column
      *
      * Example usage:
      * <code>
-     * $query->filterByData('fooValue');   // WHERE data = 'fooValue'
-     * $query->filterByData('%fooValue%'); // WHERE data LIKE '%fooValue%'
+     * $query->filterByIframe('fooValue');   // WHERE iframe = 'fooValue'
+     * $query->filterByIframe('%fooValue%'); // WHERE iframe LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $data The value to use as filter.
+     * @param     string $iframe The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByData($data = null, $comparison = null)
+    public function filterByIframe($iframe = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($data)) {
+            if (is_array($iframe)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $data)) {
-                $data = str_replace('*', '%', $data);
+            } elseif (preg_match('/[\%\*]/', $iframe)) {
+                $iframe = str_replace('*', '%', $iframe);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_DATA, $data, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_IFRAME, $iframe, $comparison);
     }
 
     /**
-     * Filter the query on the raised_at column
+     * Filter the query on the readonly column
      *
      * Example usage:
      * <code>
-     * $query->filterByRaisedAt('2011-03-14'); // WHERE raised_at = '2011-03-14'
-     * $query->filterByRaisedAt('now'); // WHERE raised_at = '2011-03-14'
-     * $query->filterByRaisedAt(array('max' => 'yesterday')); // WHERE raised_at > '2011-03-13'
+     * $query->filterByReadonly(true); // WHERE readonly = true
+     * $query->filterByReadonly('yes'); // WHERE readonly = true
      * </code>
      *
-     * @param     mixed $raisedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     boolean|string $readonly The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByRaisedAt($raisedAt = null, $comparison = null)
+    public function filterByReadonly($readonly = null, $comparison = null)
     {
-        if (is_array($raisedAt)) {
-            $useMinMax = false;
-            if (isset($raisedAt['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_RAISED_AT, $raisedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($raisedAt['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_RAISED_AT, $raisedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        if (is_string($readonly)) {
+            $readonly = in_array(strtolower($readonly), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_RAISED_AT, $raisedAt, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_READONLY, $readonly, $comparison);
     }
 
     /**
-     * Filter the query on the picked_at column
+     * Filter the query by a related \Perfumerlabs\Start\Model\Duty object
      *
-     * Example usage:
-     * <code>
-     * $query->filterByPickedAt('2011-03-14'); // WHERE picked_at = '2011-03-14'
-     * $query->filterByPickedAt('now'); // WHERE picked_at = '2011-03-14'
-     * $query->filterByPickedAt(array('max' => 'yesterday')); // WHERE picked_at > '2011-03-13'
-     * </code>
+     * @param \Perfumerlabs\Start\Model\Duty|ObjectCollection $duty the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @param     mixed $pickedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
+     * @return ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByPickedAt($pickedAt = null, $comparison = null)
+    public function filterByDuty($duty, $comparison = null)
     {
-        if (is_array($pickedAt)) {
-            $useMinMax = false;
-            if (isset($pickedAt['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_PICKED_AT, $pickedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($pickedAt['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_PICKED_AT, $pickedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        if ($duty instanceof \Perfumerlabs\Start\Model\Duty) {
+            return $this
+                ->addUsingAlias(ActivityTableMap::COL_ID, $duty->getActivityId(), $comparison);
+        } elseif ($duty instanceof ObjectCollection) {
+            return $this
+                ->useDutyQuery()
+                ->filterByPrimaryKeys($duty->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDuty() only accepts arguments of type \Perfumerlabs\Start\Model\Duty or Collection');
         }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_PICKED_AT, $pickedAt, $comparison);
     }
 
     /**
-     * Filter the query on the closed_at column
+     * Adds a JOIN clause to the query using the Duty relation
      *
-     * Example usage:
-     * <code>
-     * $query->filterByClosedAt('2011-03-14'); // WHERE closed_at = '2011-03-14'
-     * $query->filterByClosedAt('now'); // WHERE closed_at = '2011-03-14'
-     * $query->filterByClosedAt(array('max' => 'yesterday')); // WHERE closed_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $closedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByClosedAt($closedAt = null, $comparison = null)
+    public function joinDuty($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-        if (is_array($closedAt)) {
-            $useMinMax = false;
-            if (isset($closedAt['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_CLOSED_AT, $closedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($closedAt['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_CLOSED_AT, $closedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Duty');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_CLOSED_AT, $closedAt, $comparison);
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Duty');
+        }
+
+        return $this;
     }
 
     /**
-     * Filter the query on the created_at column
+     * Use the Duty relation Duty object
      *
-     * Example usage:
-     * <code>
-     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
-     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
-     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
-     * </code>
+     * @see useQuery()
      *
-     * @param     mixed $createdAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
+     * @return \Perfumerlabs\Start\Model\DutyQuery A secondary query class using the current class as primary query
      */
-    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    public function useDutyQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-        if (is_array($createdAt)) {
-            $useMinMax = false;
-            if (isset($createdAt['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($createdAt['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_CREATED_AT, $createdAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the updated_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
-     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
-     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $updatedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
-    {
-        if (is_array($updatedAt)) {
-            $useMinMax = false;
-            if (isset($updatedAt['min'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($updatedAt['max'])) {
-                $this->addUsingAlias(ActivityTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
+        return $this
+            ->joinDuty($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Duty', '\Perfumerlabs\Start\Model\DutyQuery');
     }
 
     /**
@@ -771,72 +551,6 @@ abstract class ActivityQuery extends ModelCriteria
 
             return $affectedRows;
         });
-    }
-
-    // timestampable behavior
-
-    /**
-     * Filter by the latest updated
-     *
-     * @param      int $nbDays Maximum age of the latest update in days
-     *
-     * @return     $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function recentlyUpdated($nbDays = 7)
-    {
-        return $this->addUsingAlias(ActivityTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by update date desc
-     *
-     * @return     $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function lastUpdatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(ActivityTableMap::COL_UPDATED_AT);
-    }
-
-    /**
-     * Order by update date asc
-     *
-     * @return     $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function firstUpdatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(ActivityTableMap::COL_UPDATED_AT);
-    }
-
-    /**
-     * Order by create date desc
-     *
-     * @return     $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function lastCreatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(ActivityTableMap::COL_CREATED_AT);
-    }
-
-    /**
-     * Filter by the latest created
-     *
-     * @param      int $nbDays Maximum age of in days
-     *
-     * @return     $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function recentlyCreated($nbDays = 7)
-    {
-        return $this->addUsingAlias(ActivityTableMap::COL_CREATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by create date asc
-     *
-     * @return     $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function firstCreatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(ActivityTableMap::COL_CREATED_AT);
     }
 
 } // ActivityQuery
