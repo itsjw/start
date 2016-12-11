@@ -7,7 +7,6 @@ use \PDO;
 use App\Model\Role as ChildRole;
 use App\Model\RoleQuery as ChildRoleQuery;
 use App\Model\Map\RoleTableMap;
-use Perfumerlabs\Start\Model\Schedule;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -37,11 +36,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRoleQuery rightJoinUserRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserRole relation
  * @method     ChildRoleQuery innerJoinUserRole($relationAlias = null) Adds a INNER JOIN clause to the query using the UserRole relation
  *
- * @method     ChildRoleQuery leftJoinSchedule($relationAlias = null) Adds a LEFT JOIN clause to the query using the Schedule relation
- * @method     ChildRoleQuery rightJoinSchedule($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Schedule relation
- * @method     ChildRoleQuery innerJoinSchedule($relationAlias = null) Adds a INNER JOIN clause to the query using the Schedule relation
- *
- * @method     \App\Model\UserRoleQuery|\Perfumerlabs\Start\Model\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildRole findOne(ConnectionInterface $con = null) Return the first ChildRole matching the query
  * @method     ChildRole findOneOrCreate(ConnectionInterface $con = null) Return the first ChildRole matching the query, or a new ChildRole object populated from the query conditions when no match is found
@@ -413,79 +408,6 @@ abstract class RoleQuery extends ModelCriteria
         return $this
             ->joinUserRole($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'UserRole', '\App\Model\UserRoleQuery');
-    }
-
-    /**
-     * Filter the query by a related \Perfumerlabs\Start\Model\Schedule object
-     *
-     * @param \Perfumerlabs\Start\Model\Schedule|ObjectCollection $schedule the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildRoleQuery The current query, for fluid interface
-     */
-    public function filterBySchedule($schedule, $comparison = null)
-    {
-        if ($schedule instanceof \Perfumerlabs\Start\Model\Schedule) {
-            return $this
-                ->addUsingAlias(RoleTableMap::COL_ID, $schedule->getRoleId(), $comparison);
-        } elseif ($schedule instanceof ObjectCollection) {
-            return $this
-                ->useScheduleQuery()
-                ->filterByPrimaryKeys($schedule->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterBySchedule() only accepts arguments of type \Perfumerlabs\Start\Model\Schedule or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the Schedule relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return $this|ChildRoleQuery The current query, for fluid interface
-     */
-    public function joinSchedule($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Schedule');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'Schedule');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the Schedule relation Schedule object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return \Perfumerlabs\Start\Model\ScheduleQuery A secondary query class using the current class as primary query
-     */
-    public function useScheduleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        return $this
-            ->joinSchedule($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Schedule', '\Perfumerlabs\Start\Model\ScheduleQuery');
     }
 
     /**

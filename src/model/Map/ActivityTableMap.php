@@ -178,7 +178,7 @@ class ActivityTableMap extends TableMap
         $this->setPrimaryKeyMethodInfo('activity_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
+        $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
         $this->addColumn('priority', 'Priority', 'INTEGER', false, null, null);
         $this->addColumn('title', 'Title', 'LONGVARCHAR', false, null, null);
@@ -195,13 +195,6 @@ class ActivityTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
     } // buildRelations()
 
     /**

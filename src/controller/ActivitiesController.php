@@ -15,7 +15,7 @@ class ActivitiesController extends ViewController
     public function get()
     {
         $activities = ActivityQuery::create()
-            ->filterByUser($this->getUser())
+            ->filterByUserId($this->getUser()->getId())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
             ->orderByRaisedAt()

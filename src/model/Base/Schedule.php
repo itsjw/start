@@ -5,10 +5,6 @@ namespace Perfumerlabs\Start\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use App\Model\Role;
-use App\Model\RoleQuery;
-use App\Model\User;
-use App\Model\UserQuery;
 use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
 use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
@@ -119,16 +115,6 @@ abstract class Schedule implements ActiveRecordInterface
      * @var        \DateTime
      */
     protected $time_to;
-
-    /**
-     * @var        User
-     */
-    protected $aUser;
-
-    /**
-     * @var        Role
-     */
-    protected $aRole;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -521,10 +507,6 @@ abstract class Schedule implements ActiveRecordInterface
             $this->modifiedColumns[ScheduleTableMap::COL_USER_ID] = true;
         }
 
-        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-            $this->aUser = null;
-        }
-
         return $this;
     } // setUserId()
 
@@ -543,10 +525,6 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->role_id !== $v) {
             $this->role_id = $v;
             $this->modifiedColumns[ScheduleTableMap::COL_ROLE_ID] = true;
-        }
-
-        if ($this->aRole !== null && $this->aRole->getId() !== $v) {
-            $this->aRole = null;
         }
 
         return $this;
@@ -773,12 +751,6 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-            $this->aUser = null;
-        }
-        if ($this->aRole !== null && $this->role_id !== $this->aRole->getId()) {
-            $this->aRole = null;
-        }
     } // ensureConsistency
 
     /**
@@ -818,8 +790,6 @@ abstract class Schedule implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
-            $this->aRole = null;
         } // if (deep)
     }
 
@@ -918,25 +888,6 @@ abstract class Schedule implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
-
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
-
-            if ($this->aRole !== null) {
-                if ($this->aRole->isModified() || $this->aRole->isNew()) {
-                    $affectedRows += $this->aRole->save($con);
-                }
-                $this->setRole($this->aRole);
-            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -1139,11 +1090,10 @@ abstract class Schedule implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
         if (isset($alreadyDumpedObjects['Schedule'][$this->hashCode()])) {
@@ -1186,38 +1136,6 @@ abstract class Schedule implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
 
-        if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'user';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = '_user';
-                        break;
-                    default:
-                        $key = 'User';
-                }
-
-                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->aRole) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'role';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = '_role';
-                        break;
-                    default:
-                        $key = 'Role';
-                }
-
-                $result[$key] = $this->aRole->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -1516,120 +1434,12 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param  User $v
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setUserId(NULL);
-        } else {
-            $this->setUserId($v->getId());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addSchedule($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(ConnectionInterface $con = null)
-    {
-        if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = UserQuery::create()->findPk($this->user_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addSchedules($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
-     * Declares an association between this object and a Role object.
-     *
-     * @param  Role $v
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setRole(Role $v = null)
-    {
-        if ($v === null) {
-            $this->setRoleId(NULL);
-        } else {
-            $this->setRoleId($v->getId());
-        }
-
-        $this->aRole = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the Role object, it will not be re-added.
-        if ($v !== null) {
-            $v->addSchedule($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated Role object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return Role The associated Role object.
-     * @throws PropelException
-     */
-    public function getRole(ConnectionInterface $con = null)
-    {
-        if ($this->aRole === null && ($this->role_id !== null)) {
-            $this->aRole = RoleQuery::create()->findPk($this->role_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aRole->addSchedules($this);
-             */
-        }
-
-        return $this->aRole;
-    }
-
-    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
-        if (null !== $this->aUser) {
-            $this->aUser->removeSchedule($this);
-        }
-        if (null !== $this->aRole) {
-            $this->aRole->removeSchedule($this);
-        }
         $this->id = null;
         $this->user_id = null;
         $this->role_id = null;
@@ -1659,8 +1469,6 @@ abstract class Schedule implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
-        $this->aUser = null;
-        $this->aRole = null;
     }
 
     /**

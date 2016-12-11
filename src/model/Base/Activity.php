@@ -5,8 +5,6 @@ namespace Perfumerlabs\Start\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use App\Model\User;
-use App\Model\UserQuery;
 use Perfumerlabs\Start\Model\Activity as ChildActivity;
 use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
 use Perfumerlabs\Start\Model\Map\ActivityTableMap;
@@ -129,11 +127,6 @@ abstract class Activity implements ActiveRecordInterface
      * @var        \DateTime
      */
     protected $updated_at;
-
-    /**
-     * @var        User
-     */
-    protected $aUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -557,10 +550,6 @@ abstract class Activity implements ActiveRecordInterface
             $this->modifiedColumns[ActivityTableMap::COL_USER_ID] = true;
         }
 
-        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
-            $this->aUser = null;
-        }
-
         return $this;
     } // setUserId()
 
@@ -842,9 +831,6 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
-            $this->aUser = null;
-        }
     } // ensureConsistency
 
     /**
@@ -884,7 +870,6 @@ abstract class Activity implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aUser = null;
         } // if (deep)
     }
 
@@ -995,18 +980,6 @@ abstract class Activity implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
-
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aUser !== null) {
-                if ($this->aUser->isModified() || $this->aUser->isNew()) {
-                    $affectedRows += $this->aUser->save($con);
-                }
-                $this->setUser($this->aUser);
-            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -1236,11 +1209,10 @@ abstract class Activity implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
     {
 
         if (isset($alreadyDumpedObjects['Activity'][$this->hashCode()])) {
@@ -1298,23 +1270,6 @@ abstract class Activity implements ActiveRecordInterface
             $result[$key] = $virtualColumn;
         }
 
-        if ($includeForeignObjects) {
-            if (null !== $this->aUser) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'user';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = '_user';
-                        break;
-                    default:
-                        $key = 'User';
-                }
-
-                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-        }
 
         return $result;
     }
@@ -1639,66 +1594,12 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a User object.
-     *
-     * @param  User $v
-     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setUser(User $v = null)
-    {
-        if ($v === null) {
-            $this->setUserId(NULL);
-        } else {
-            $this->setUserId($v->getId());
-        }
-
-        $this->aUser = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the User object, it will not be re-added.
-        if ($v !== null) {
-            $v->addActivity($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated User object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return User The associated User object.
-     * @throws PropelException
-     */
-    public function getUser(ConnectionInterface $con = null)
-    {
-        if ($this->aUser === null && ($this->user_id !== null)) {
-            $this->aUser = UserQuery::create()->findPk($this->user_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aUser->addActivities($this);
-             */
-        }
-
-        return $this->aUser;
-    }
-
-    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
-        if (null !== $this->aUser) {
-            $this->aUser->removeActivity($this);
-        }
         $this->id = null;
         $this->user_id = null;
         $this->name = null;
@@ -1730,7 +1631,6 @@ abstract class Activity implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
-        $this->aUser = null;
     }
 
     /**

@@ -11,9 +11,6 @@
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
         <behavior name="timestampable" />
-        <foreign-key foreignTable="_user" phpName="User">
-            <reference local="user_id" foreign="id"/>
-        </foreign-key>
     </table>
 
     <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">
@@ -25,11 +22,5 @@
         <column name="_date" type="date" phpName="Date"/>
         <column name="time_from" type="time"/>
         <column name="time_to" type="time"/>
-        <foreign-key foreignTable="_user" phpName="User">
-            <reference local="user_id" foreign="id"/>
-        </foreign-key>
-        <foreign-key foreignTable="_role" phpName="Role">
-            <reference local="role_id" foreign="id"/>
-        </foreign-key>
     </table>
 </database>

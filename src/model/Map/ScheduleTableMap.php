@@ -163,8 +163,8 @@ class ScheduleTableMap extends TableMap
         $this->setPrimaryKeyMethodInfo('schedule_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
-        $this->addForeignKey('role_id', 'RoleId', 'INTEGER', '_role', 'id', false, null, null);
+        $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
+        $this->addColumn('role_id', 'RoleId', 'INTEGER', false, null, null);
         $this->addColumn('activities', 'Activities', 'ARRAY', false, null, null);
         $this->addColumn('week_day', 'WeekDay', 'INTEGER', false, null, null);
         $this->addColumn('_date', 'Date', 'DATE', false, null, null);
@@ -177,20 +177,6 @@ class ScheduleTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
-        $this->addRelation('Role', '\\App\\Model\\Role', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':role_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
     } // buildRelations()
 
     /**

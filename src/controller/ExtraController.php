@@ -16,7 +16,7 @@ class ExtraController extends ViewController
     public function get()
     {
         $picked_activities = ActivityQuery::create()
-            ->filterByUser($this->getUser())
+            ->filterByUserId($this->getUser()->getId())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
             ->find();
@@ -32,7 +32,7 @@ class ExtraController extends ViewController
         $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($this->getUser());
 
         $extra_activity = ActivityQuery::create()
-            ->filterByUser($this->getUser())
+            ->filterByUserId($this->getUser()->getId())
             ->_or()
             ->filterByName($allowed_activities, Criteria::IN)
             ->filterByClosedAt(null, Criteria::ISNULL)
@@ -46,7 +46,7 @@ class ExtraController extends ViewController
 
         if ($extra_activity) {
             $extra_activity->setPickedAt(new \DateTime());
-            $extra_activity->setUser($this->getUser());
+            $extra_activity->setUserId($this->getUser()->getId());
 
             if ($extra_activity->save()) {
                 $Activity = $this->s('perfumerlabs.start')->getActivity($extra_activity->getName());
