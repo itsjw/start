@@ -1,30 +1,30 @@
 define(['require', 'buzz'], function (require, buzz) {
     var Start = (function () {
         function Start() {
-            this.activities = [];
+            this.duties = [];
         }
         Start.prototype.run = function () {
             var start = this;
-            this.loadActivities();
-            document.addEventListener('Start.closeActivity', function (event) {
-                start.closeActivity(event.detail);
+            this.loadDuties();
+            document.addEventListener('Start.closeDuty', function (event) {
+                start.closeDuty(event.detail);
             });
         };
-        Start.prototype.loadActivities = function () {
+        Start.prototype.loadDuties = function () {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('GET', '/duties', true);
             request.onload = function () {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
-                    var activities = data.content;
-                    for (var i = 0; i < activities.length; i++) {
+                    var duties = data.content;
+                    for (var i = 0; i < duties.length; i++) {
                         (function (i) {
-                            start.addActivity(new Activity(activities[i]));
+                            start.addDuty(new Duty(duties[i]));
                         })(i);
                     }
                     setInterval(function () {
-                        start.loadExtraActivities();
+                        start.loadExtraDuties();
                     }, 10000);
                 }
                 else {
@@ -34,7 +34,7 @@ define(['require', 'buzz'], function (require, buzz) {
             };
             request.send();
         };
-        Start.prototype.loadExtraActivities = function () {
+        Start.prototype.loadExtraDuties = function () {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('GET', '/extra', true);
@@ -42,10 +42,10 @@ define(['require', 'buzz'], function (require, buzz) {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
                     if (data.hasOwnProperty('content') && data.content !== null) {
-                        var activity = data.content;
-                        if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                            start.addActivity(new Activity(activity));
-                            var sound = new buzz.sound(DATA.static + "/sound/activity.mp3");
+                        var duty = data.content;
+                        if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                            start.addDuty(new Duty(duty));
+                            var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
                             sound.play();
                         }
                     }
@@ -57,7 +57,7 @@ define(['require', 'buzz'], function (require, buzz) {
             };
             request.send();
         };
-        Start.prototype.closeActivity = function (id) {
+        Start.prototype.closeDuty = function (id) {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('POST', '/duty/' + id, true);
@@ -65,18 +65,18 @@ define(['require', 'buzz'], function (require, buzz) {
                 if (request.status >= 200 && request.status < 400) {
                     document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
                     document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
-                    for (var i = 0; i < start.activities.length; i++) {
+                    for (var i = 0; i < start.duties.length; i++) {
                         (function (i) {
-                            if (start.activities[i].id === id) {
-                                start.activities.splice(i, 1);
+                            if (start.duties[i].id === id) {
+                                start.duties.splice(i, 1);
                             }
                         })(i);
                     }
-                    if (start.activities.length > 0) {
-                        start.openWorkspace(start.activities[0]);
+                    if (start.duties.length > 0) {
+                        start.openWorkspace(start.duties[0]);
                     }
                     else {
-                        start.loadExtraActivities();
+                        start.loadExtraDuties();
                     }
                 }
                 else {
@@ -86,62 +86,62 @@ define(['require', 'buzz'], function (require, buzz) {
             };
             request.send();
         };
-        Start.prototype.addActivity = function (activity) {
-            this.activities.push(activity);
-            this.addSticker(activity);
-            if (this.activities.length === 1) {
-                this.openWorkspace(activity);
+        Start.prototype.addDuty = function (duty) {
+            this.duties.push(duty);
+            this.addSticker(duty);
+            if (this.duties.length === 1) {
+                this.openWorkspace(duty);
             }
         };
-        Start.prototype.addSticker = function (activity) {
+        Start.prototype.addSticker = function (duty) {
             var start = this;
             var sticker = document.createElement("div");
-            if (activity.color != null) {
-                sticker.style['border-left'] = '20px solid ' + activity.color;
+            if (duty.color != null) {
+                sticker.style['border-left'] = '20px solid ' + duty.color;
             }
-            sticker.id = 'sticker' + activity.id;
+            sticker.id = 'sticker' + duty.id;
             sticker.setAttribute('class', 'sticker');
-            sticker.innerHTML = "\n                <div style=\"color: #cccccc; font-size: smaller\">" + activity.name + "</div>\n                <div style=\"margin-top: 5px\">" + activity.title + "</div>\n            ";
+            sticker.innerHTML = "\n                <div style=\"color: #cccccc; font-size: smaller\">" + duty.name + "</div>\n                <div style=\"margin-top: 5px\">" + duty.title + "</div>\n            ";
             sticker.addEventListener('click', function () {
-                start.openWorkspace(activity);
+                start.openWorkspace(duty);
             }, false);
             document.getElementById("stickers").appendChild(sticker);
         };
         Start.prototype.setWorkspaceContent = function (id, html) {
             document.getElementById('workspace-content' + id).innerHTML = html;
         };
-        Start.prototype.openWorkspace = function (activity) {
+        Start.prototype.openWorkspace = function (duty) {
             var start = this;
-            var workspace = document.getElementById("workspace" + activity.id);
+            var workspace = document.getElementById("workspace" + duty.id);
             if (workspace == null) {
                 var _workspace = document.createElement("div");
-                _workspace.id = 'workspace' + activity.id;
+                _workspace.id = 'workspace' + duty.id;
                 _workspace.setAttribute('class', 'workspace');
                 var _workspace_content = document.createElement("div");
-                _workspace_content.id = 'workspace-content' + activity.id;
-                if (activity.iframe !== null) {
+                _workspace_content.id = 'workspace-content' + duty.id;
+                if (duty.iframe !== null) {
                     var _iframe = document.createElement('iframe');
-                    _iframe.src = activity.iframe;
+                    _iframe.src = duty.iframe;
                     _iframe.style.width = '100%';
                     _iframe.style.border = 0;
                     _iframe.style.height = ((window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 80) + "px";
                     _workspace_content.appendChild(_iframe);
                 }
                 _workspace.appendChild(_workspace_content);
-                if (activity.readonly) {
+                if (duty.readonly) {
                     var _close_button = document.createElement("button");
-                    _close_button.id = 'close-button' + activity.id;
+                    _close_button.id = 'close-button' + duty.id;
                     _close_button.innerText = 'Закрыть';
                     _close_button.addEventListener('click', function () {
-                        if (confirm('Close activity?')) {
-                            start.closeActivity(activity.id);
+                        if (confirm('Close duty?')) {
+                            start.closeDuty(duty.id);
                         }
                     }, false);
                     _workspace.appendChild(_close_button);
                 }
                 document.getElementById("workspaces").appendChild(_workspace);
-                if (activity.iframe === null) {
-                    require(['/activity/' + activity.id], function () { });
+                if (duty.iframe === null) {
+                    require(['/duty/' + duty.id], function () { });
                 }
             }
             var workspaces = document.getElementsByClassName('workspace');
@@ -150,12 +150,12 @@ define(['require', 'buzz'], function (require, buzz) {
                     workspaces[i].style.display = "none";
                 })(i);
             }
-            document.getElementById("workspace" + activity.id).style.display = "block";
+            document.getElementById("workspace" + duty.id).style.display = "block";
         };
         return Start;
     }());
-    var Activity = (function () {
-        function Activity(object) {
+    var Duty = (function () {
+        function Duty(object) {
             this.id = null;
             this.name = null;
             this.title = null;
@@ -181,7 +181,7 @@ define(['require', 'buzz'], function (require, buzz) {
                 this.readonly = object.readonly;
             }
         }
-        return Activity;
+        return Duty;
     }());
     return new Start();
 });

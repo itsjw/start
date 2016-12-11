@@ -1,22 +1,22 @@
 define(['require', 'buzz'], function (require, buzz) {
     class Start {
-        private activities: Array;
+        private duties: Array;
 
         constructor() {
-            this.activities = [];
+            this.duties = [];
         }
 
         public run() {
             var start = this;
 
-            this.loadActivities();
+            this.loadDuties();
 
-            document.addEventListener('Start.closeActivity', function(event) {
-                start.closeActivity(event.detail);
+            document.addEventListener('Start.closeDuty', function(event) {
+                start.closeDuty(event.detail);
             });
         }
 
-        public loadActivities() {
+        public loadDuties() {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('GET', '/duties', true);
@@ -24,16 +24,16 @@ define(['require', 'buzz'], function (require, buzz) {
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
-                    var activities = data.content;
+                    var duties = data.content;
 
-                    for (var i = 0; i < activities.length; i++) {
+                    for (var i = 0; i < duties.length; i++) {
                         (function(i) {
-                            start.addActivity(new Activity(activities[i]));
+                            start.addDuty(new Duty(duties[i]));
                         })(i)
                     }
 
                     setInterval(function() {
-                        start.loadExtraActivities();
+                        start.loadExtraDuties();
                     }, 10000);
                 } else {
                 }
@@ -45,7 +45,7 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send();
         }
 
-        public loadExtraActivities() {
+        public loadExtraDuties() {
             var start = this;
 
             var request = new XMLHttpRequest();
@@ -56,12 +56,12 @@ define(['require', 'buzz'], function (require, buzz) {
                     var data = JSON.parse(request.responseText);
 
                     if (data.hasOwnProperty('content') && data.content !== null) {
-                        var activity = data.content;
+                        var duty = data.content;
 
-                        if (typeof activity === 'object' && Object.keys(activity).length !== 0) {
-                            start.addActivity(new Activity(activity));
+                        if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                            start.addDuty(new Duty(duty));
 
-                            var sound = new buzz.sound(DATA.static + "/sound/activity.mp3");
+                            var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
                             sound.play();
                         }
                     }
@@ -75,7 +75,7 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send();
         }
 
-        public closeActivity(id: number) {
+        public closeDuty(id: number) {
             var start = this;
             var request = new XMLHttpRequest();
             request.open('POST', '/duty/' + id, true);
@@ -85,18 +85,18 @@ define(['require', 'buzz'], function (require, buzz) {
                     document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
                     document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
 
-                    for (var i = 0;  i < start.activities.length; i++) {
+                    for (var i = 0;  i < start.duties.length; i++) {
                         (function(i) {
-                            if(start.activities[i].id === id) {
-                                start.activities.splice(i, 1);
+                            if(start.duties[i].id === id) {
+                                start.duties.splice(i, 1);
                             }
                         })(i)
                     }
 
-                    if (start.activities.length > 0) {
-                        start.openWorkspace(start.activities[0]);
+                    if (start.duties.length > 0) {
+                        start.openWorkspace(start.duties[0]);
                     } else {
-                        start.loadExtraActivities();
+                        start.loadExtraDuties();
                     }
                 } else {
                 }
@@ -108,33 +108,33 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send();
         }
 
-        public addActivity(activity: Activity) {
-            this.activities.push(activity);
-            this.addSticker(activity);
+        public addDuty(duty: Duty) {
+            this.duties.push(duty);
+            this.addSticker(duty);
 
-            if (this.activities.length === 1) {
-                this.openWorkspace(activity);
+            if (this.duties.length === 1) {
+                this.openWorkspace(duty);
             }
         }
 
-        public addSticker(activity: Activity) {
+        public addSticker(duty: Duty) {
             var start = this;
 
             var sticker = document.createElement("div");
 
-            if (activity.color != null) {
-                sticker.style['border-left'] = '20px solid ' + activity.color;
+            if (duty.color != null) {
+                sticker.style['border-left'] = '20px solid ' + duty.color;
             }
 
-            sticker.id = 'sticker' + activity.id;
+            sticker.id = 'sticker' + duty.id;
             sticker.setAttribute('class', 'sticker');
             sticker.innerHTML = `
-                <div style="color: #cccccc; font-size: smaller">` + activity.name + `</div>
-                <div style="margin-top: 5px">` + activity.title + `</div>
+                <div style="color: #cccccc; font-size: smaller">` + duty.name + `</div>
+                <div style="margin-top: 5px">` + duty.title + `</div>
             `;
 
             sticker.addEventListener('click', function () {
-                start.openWorkspace(activity);
+                start.openWorkspace(duty);
             }, false);
 
             document.getElementById("stickers").appendChild(sticker);
@@ -144,21 +144,21 @@ define(['require', 'buzz'], function (require, buzz) {
             document.getElementById('workspace-content' + id).innerHTML = html;
         }
 
-        public openWorkspace(activity: Activity) {
+        public openWorkspace(duty: Duty) {
             var start = this;
-            var workspace = document.getElementById("workspace" + activity.id);
+            var workspace = document.getElementById("workspace" + duty.id);
 
             if (workspace == null) {
                 var _workspace = document.createElement("div");
-                _workspace.id = 'workspace' + activity.id;
+                _workspace.id = 'workspace' + duty.id;
                 _workspace.setAttribute('class', 'workspace');
 
                 var _workspace_content = document.createElement("div");
-                _workspace_content.id = 'workspace-content' + activity.id;
+                _workspace_content.id = 'workspace-content' + duty.id;
 
-                if (activity.iframe !== null) {
+                if (duty.iframe !== null) {
                     var _iframe = document.createElement('iframe');
-                    _iframe.src = activity.iframe;
+                    _iframe.src = duty.iframe;
                     _iframe.style.width = '100%';
                     _iframe.style.border = 0;
                     _iframe.style.height = ((window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 80) + "px";
@@ -168,14 +168,14 @@ define(['require', 'buzz'], function (require, buzz) {
 
                 _workspace.appendChild(_workspace_content);
 
-                if (activity.readonly) {
+                if (duty.readonly) {
                     var _close_button = document.createElement("button");
-                    _close_button.id = 'close-button' + activity.id;
+                    _close_button.id = 'close-button' + duty.id;
                     _close_button.innerText = 'Закрыть';
 
                     _close_button.addEventListener('click', function () {
-                        if (confirm('Close activity?')) {
-                            start.closeActivity(activity.id);
+                        if (confirm('Close duty?')) {
+                            start.closeDuty(duty.id);
                         }
                     }, false);
 
@@ -184,8 +184,8 @@ define(['require', 'buzz'], function (require, buzz) {
 
                 document.getElementById("workspaces").appendChild(_workspace);
 
-                if (activity.iframe === null) {
-                    require(['/activity/' + activity.id], function() {});
+                if (duty.iframe === null) {
+                    require(['/duty/' + duty.id], function() {});
                 }
             }
 
@@ -197,11 +197,11 @@ define(['require', 'buzz'], function (require, buzz) {
                 })(i)
             }
 
-            document.getElementById("workspace" + activity.id).style.display = "block";
+            document.getElementById("workspace" + duty.id).style.display = "block";
         }
     }
 
-    class Activity {
+    class Duty {
         id: number = null;
         name: string = null;
         title: string = null;

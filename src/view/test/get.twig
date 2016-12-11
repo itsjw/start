@@ -11,7 +11,7 @@
 <button id="button">Close activity #3</button>
 <script>
     document.getElementById('button').addEventListener('click', function() {
-        var event = new CustomEvent('Start.closeActivity', {'detail': 3});
+        var event = new CustomEvent('Start.closeDuty', {'detail': 3});
 
         parent.document.dispatchEvent(event);
     });
