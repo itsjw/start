@@ -9,5 +9,10 @@ return [
     'perfumerlabs.duty' => [
         'shared' => true,
         'class' => 'Perfumerlabs\\Start\\Service\\Duty'
+    ],
+
+    'perfumerlabs.duty_formatter' => [
+        'shared' => true,
+        'class' => 'Perfumerlabs\\Start\\Service\\DutyFormatter'
     ]
 ];

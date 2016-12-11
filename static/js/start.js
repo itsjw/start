@@ -153,6 +153,9 @@ define(['require', 'buzz'], function (require, buzz) {
                 var _workspace = document.createElement("div");
                 _workspace.id = 'workspace' + duty.id;
                 _workspace.setAttribute('class', 'workspace');
+                var _buttons_area = document.createElement("div");
+                _buttons_area.setAttribute('class', 'buttons-area');
+                _workspace.appendChild(_buttons_area);
                 var _duty_area = document.createElement("div");
                 _duty_area.id = 'duty-area' + duty.id;
                 if (duty.iframe !== null) {
@@ -194,7 +197,7 @@ define(['require', 'buzz'], function (require, buzz) {
                             start.closeDuty(duty.id);
                         }
                     }, false);
-                    _workspace.appendChild(_close_button);
+                    _buttons_area.appendChild(_close_button);
                 }
                 var _postpone_button = document.createElement("button");
                 _postpone_button.id = 'postpone-button' + duty.id;
@@ -212,7 +215,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         _postpone_button.innerText = 'Назад';
                     }
                 }, false);
-                _workspace.appendChild(_postpone_button);
+                _buttons_area.appendChild(_postpone_button);
                 document.getElementById("workspaces").appendChild(_workspace);
                 if (duty.iframe === null) {
                     require(['/duty/' + duty.id], function () { });

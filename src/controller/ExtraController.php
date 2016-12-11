@@ -49,23 +49,7 @@ class ExtraController extends ViewController
             $extra_duty->setUserId($this->getUser()->getId());
 
             if ($extra_duty->save()) {
-                $activity_properties = $extra_duty->getActivity()->getProperties() ? unserialize($extra_duty->getActivity()->getProperties()) : [];
-
-                $content = [
-                    'id' => $extra_duty->getId(),
-                    'name' => $this->getUser()->getUsername(),
-                    'title' => $extra_duty->getTitle(),
-                    'color' => isset($activity_properties['color']) ? $activity_properties['color'] : $activity_properties,
-                    'readonly' => $extra_duty->getActivity()->isReadonly(),
-                ];
-
-                if ($extra_duty->getActivity()->getIframe()) {
-                    $data = $extra_duty->getData() ? unserialize($extra_duty->getData()) : [];
-                    $data['activity_id'] = $extra_duty->getId();
-                    $data['activity_name'] = $extra_duty->getActivity()->getName();
-
-                    $content['iframe'] = $extra_duty->getActivity()->getIframe() . '?' . http_build_query($data);
-                }
+                $content = $this->s('perfumerlabs.duty_formatter')->format($extra_duty, $this->getUser());
 
                 $this->setContent($content);
             }

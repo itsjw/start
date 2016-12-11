@@ -25,25 +25,7 @@ class DutiesController extends ViewController
         $content = [];
 
         foreach ($duties as $duty) {
-            $activity_properties = $duty->getActivity()->getProperties() ? unserialize($duty->getActivity()->getProperties()) : [];
-
-            $array = [
-                'id' => $duty->getId(),
-                'name' => $this->getUser()->getUsername(),
-                'title' => $duty->getTitle(),
-                'color' => isset($activity_properties['color']) ? $activity_properties['color'] : $activity_properties,
-                'readonly' => $duty->getActivity()->isReadonly(),
-            ];
-
-            if ($duty->getActivity()->getIframe()) {
-                $data = $duty->getData() ? unserialize($duty->getData()) : [];
-                $data['activity_id'] = $duty->getId();
-                $data['activity_name'] = $duty->getActivity()->getName();
-
-                $array['iframe'] = $duty->getActivity()->getIframe() . '?' . http_build_query($data);
-            }
-
-            $content[] = $array;
+            $content[] = $this->s('perfumerlabs.duty_formatter')->format($duty, $this->getUser());
         }
 
         $this->setContent($content);
