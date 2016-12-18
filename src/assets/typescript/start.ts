@@ -12,22 +12,35 @@ define(['require', 'buzz'], function (require, buzz) {
             this.loadDuties();
 
             document.addEventListener('Start.closeDuty', function(event) {
-                start.closeDuty(event.detail);
+                if (typeof Android !== 'undefined') {
+                    Android.closeDuty(event.detail);
+                } else {
+                    start.closeDuty(event.detail);
+                }
             });
         }
 
         public loadDuties() {
             var start = this;
             var request = new XMLHttpRequest();
-            request.open('GET', '/duties', true);
+            var url;
+
+            if (typeof DATA._id !== 'undefined') {
+                url = '/duties?_id=' + DATA._id;
+            } else {
+                url = '/duties';
+            }
+
+            request.open('GET', url, true);
 
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     var data = JSON.parse(request.responseText);
                     var duties = data.content;
+                    var no_duties = document.getElementById("no-duties");
 
-                    if (duties.length == 0) {
-                        document.getElementById("no-duties").style.display = 'block';
+                    if (duties.length == 0 && no_duties) {
+                        no_duties.style.display = 'block';
                     }
 
                     for (var i = 0; i < duties.length; i++) {
@@ -36,9 +49,11 @@ define(['require', 'buzz'], function (require, buzz) {
                         })(i)
                     }
 
-                    setInterval(function() {
-                        start.loadExtraDuties();
-                    }, 10000);
+                    if (typeof DATA._id === 'undefined') {
+                        setInterval(function() {
+                            start.loadExtraDuties();
+                        }, 10000);
+                    }
                 } else {
                 }
             };
@@ -161,6 +176,12 @@ define(['require', 'buzz'], function (require, buzz) {
         }
 
         public addSticker(duty: Duty) {
+            var stickers_container = document.getElementById("stickers");
+
+            if (stickers_container == null) {
+                return;
+            }
+
             var start = this;
 
             var sticker = document.createElement("div");
@@ -291,11 +312,19 @@ define(['require', 'buzz'], function (require, buzz) {
             for (var i = 0; i < workspaces.length; i++) {
                 (function(i) {
                     workspaces[i].style.display = "none";
-                    stickers[i].style.background = "white";
+
+                    if (typeof stickers[i] !== 'undefined') {
+                        stickers[i].style.background = "white";
+                    }
                 })(i)
             }
 
-            document.getElementById("sticker" + duty.id).style.background = "cornsilk";
+            var active_sticker = document.getElementById("sticker" + duty.id);
+
+            if (active_sticker !== null) {
+                document.getElementById("sticker" + duty.id).style.background = "cornsilk";
+            }
+
             document.getElementById("workspace" + duty.id).style.display = "block";
         }
     }
