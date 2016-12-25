@@ -18,6 +18,7 @@ define(['require', 'buzz'], function (require, buzz) {
             });
             this.search_input.addEventListener('focus', function (event) {
                 document.getElementById('stickers').style.display = 'none';
+                document.getElementById('no-duties').style.display = 'none';
                 start.searching.style.display = 'block';
                 if (!start.searching.innerHTML) {
                     document.getElementById('search-help').style.display = 'block';
@@ -29,6 +30,9 @@ define(['require', 'buzz'], function (require, buzz) {
                     document.getElementById('stickers').style.display = 'block';
                     document.getElementById('search-help').style.display = 'none';
                     start.searching.style.display = 'none';
+                    if (start.duties.length == 0) {
+                        document.getElementById("no-duties").style.display = 'block';
+                    }
                 }
             });
             this.search_input.addEventListener('keyup', function (event) {
@@ -134,7 +138,7 @@ define(['require', 'buzz'], function (require, buzz) {
                             sound.play();
                         }
                     }
-                    if (start.duties.length == 0) {
+                    if (start.duties.length == 0 && document.getElementById('stickers').style.display != 'none') {
                         document.getElementById("no-duties").style.display = 'block';
                     }
                 }

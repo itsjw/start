@@ -30,7 +30,7 @@
         #navbar > a {color: #07c; text-decoration: none}
         #navbar > a:visited {color: #07c}
         #no-duties { text-align: center; display: none }
-        #no-duties > div { font-size: 30px; margin-top: 30%; color: #cccccc }
+        #no-duties > div { font-size: 30px; margin-top: 20%; color: #cccccc }
         .buttons-area > button { margin-right: 10px }
         .sticker { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
         .sticker.active { background: cornsilk }
@@ -46,10 +46,6 @@
 </div>
 
 <div id="dashboard" style="width: 1200px; margin: 0 auto">
-    <div id="no-duties">
-        <div>У вас пока нет задач</div>
-    </div>
-
     <div id="stickers-column" style="width: 500px; float: left">
         <div style="margin-bottom: 10px">
             <input id="search" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
@@ -66,6 +62,10 @@
     </div>
 
     <div style="clear: both"></div>
+
+    <div id="no-duties">
+        <div>У вас пока нет задач</div>
+    </div>
 </div>
 </body>
 </html>
