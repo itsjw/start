@@ -31,4 +31,21 @@ class Duty
             return (bool) $duty->save();
         }
     }
+
+    /**
+     * @param \App\Model\User $user
+     * @param \Perfumerlabs\Start\Model\Duty $duty
+     * @return bool
+     */
+    public function pick(\App\Model\User $user,  \Perfumerlabs\Start\Model\Duty $duty)
+    {
+        if ($duty->getClosedAt() !== null || $duty->getPickedAt() !== null) {
+            return false;
+        } else {
+            $duty->setPickedAt(new \DateTime());
+            $duty->setUserId($user->getId());
+
+            return (bool) $duty->save();
+        }
+    }
 }
