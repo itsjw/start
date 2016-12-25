@@ -218,7 +218,7 @@ define(['require', 'buzz'], function (require, buzz) {
         }
 
         public pickDuty(duty: Duty) {
-            if (!confirm('Pick duty?')) {
+            if (!confirm('Приступить к задаче?')) {
                 return;
             }
 
@@ -402,7 +402,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         _span.innerText = postpone_options[i];
 
                         _span.addEventListener('click', function () {
-                            if (confirm('Postpone duty?')) {
+                            if (confirm('Отложить задачу?')) {
                                 start.postponeDuty(duty.id, postpone_options[i]);
                             }
                         }, false);
@@ -422,7 +422,7 @@ define(['require', 'buzz'], function (require, buzz) {
                     _close_button.innerText = 'Закрыть';
 
                     _close_button.addEventListener('click', function () {
-                        if (confirm('Close duty?')) {
+                        if (confirm('Закрыть задачу?')) {
                             start.closeDuty(duty.id);
                         }
                     }, false);

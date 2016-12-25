@@ -175,7 +175,7 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send(JSON.stringify({ "period": period }));
         };
         Start.prototype.pickDuty = function (duty) {
-            if (!confirm('Pick duty?')) {
+            if (!confirm('Приступить к задаче?')) {
                 return;
             }
             var start = this;
@@ -322,7 +322,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         var _span = document.createElement("span");
                         _span.innerText = postpone_options[i];
                         _span.addEventListener('click', function () {
-                            if (confirm('Postpone duty?')) {
+                            if (confirm('Отложить задачу?')) {
                                 start.postponeDuty(duty.id, postpone_options[i]);
                             }
                         }, false);
@@ -337,7 +337,7 @@ define(['require', 'buzz'], function (require, buzz) {
                     _close_button.id = 'close-button' + duty.id;
                     _close_button.innerText = 'Закрыть';
                     _close_button.addEventListener('click', function () {
-                        if (confirm('Close duty?')) {
+                        if (confirm('Закрыть задачу?')) {
                             start.closeDuty(duty.id);
                         }
                     }, false);
