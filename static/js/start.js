@@ -362,7 +362,7 @@ define(['require', 'buzz'], function (require, buzz) {
                 _buttons_area.appendChild(_postpone_button);
                 document.getElementById("workspaces").appendChild(_workspace);
                 if (duty.iframe === null) {
-                    require(['/duty/' + duty.id], function () { });
+                    require(['/duty/' + duty.id + '?' + Math.random().toString(36).substr(2, 5)], function () { });
                 }
             }
             var workspaces = document.getElementsByClassName('workspace');
