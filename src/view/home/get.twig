@@ -25,6 +25,7 @@
         });
     </script>
     <style>
+        * {box-sizing: border-box}
         #navbar {border-bottom: 1px solid #eeeeee; text-align: right; margin-bottom: 10px; padding: 5px}
         #navbar > a {color: #07c; text-decoration: none}
         #navbar > a:visited {color: #07c}
@@ -49,7 +50,16 @@
         <div>У вас пока нет задач</div>
     </div>
 
-    <div id="stickers" style="width: 500px; float: left">
+    <div id="stickers-column" style="width: 500px; float: left">
+        <div style="margin-bottom: 10px">
+            <input id="search" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
+        </div>
+
+        <div id="stickers"></div>
+
+        <div id="searching" style="display: none"></div>
+
+        <div id="search-help" style="display: none; color: #ccc">Начните вводить текст</div>
     </div>
 
     <div id="workspaces" style="width: 690px; float: right">

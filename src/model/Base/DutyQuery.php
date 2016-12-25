@@ -29,6 +29,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
  * @method     ChildDutyQuery orderByPickedAt($order = Criteria::ASC) Order by the picked_at column
  * @method     ChildDutyQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
+ * @method     ChildDutyQuery orderByTags($order = Criteria::ASC) Order by the tags column
  * @method     ChildDutyQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildDutyQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -41,6 +42,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery groupByRaisedAt() Group by the raised_at column
  * @method     ChildDutyQuery groupByPickedAt() Group by the picked_at column
  * @method     ChildDutyQuery groupByClosedAt() Group by the closed_at column
+ * @method     ChildDutyQuery groupByTags() Group by the tags column
  * @method     ChildDutyQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildDutyQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -66,6 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty findOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column
  * @method     ChildDuty findOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column
  * @method     ChildDuty findOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column
+ * @method     ChildDuty findOneByTags(array $tags) Return the first ChildDuty filtered by the tags column
  * @method     ChildDuty findOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column
  * @method     ChildDuty findOneByUpdatedAt(string $updated_at) Return the first ChildDuty filtered by the updated_at column *
 
@@ -81,6 +84,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty requireOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildDuty requireOneByTags(array $tags) Return the first ChildDuty filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByUpdatedAt(string $updated_at) Return the first ChildDuty filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -94,6 +98,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildDuty objects filtered by the raised_at column
  * @method     ChildDuty[]|ObjectCollection findByPickedAt(string $picked_at) Return ChildDuty objects filtered by the picked_at column
  * @method     ChildDuty[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildDuty objects filtered by the closed_at column
+ * @method     ChildDuty[]|ObjectCollection findByTags(array $tags) Return ChildDuty objects filtered by the tags column
  * @method     ChildDuty[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildDuty objects filtered by the created_at column
  * @method     ChildDuty[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildDuty objects filtered by the updated_at column
  * @method     ChildDuty[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -188,7 +193,7 @@ abstract class DutyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, activity_id, priority, title, data, raised_at, picked_at, closed_at, created_at, updated_at FROM duty WHERE id = :p0';
+        $sql = 'SELECT id, user_id, activity_id, priority, title, data, raised_at, picked_at, closed_at, tags, created_at, updated_at FROM duty WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -629,6 +634,87 @@ abstract class DutyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DutyTableMap::COL_CLOSED_AT, $closedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the tags column
+     *
+     * @param     array $tags The values to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByTags($tags = null, $comparison = null)
+    {
+        $key = $this->getAliasedColName(DutyTableMap::COL_TAGS);
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            foreach ($tags as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_SOME) {
+            foreach ($tags as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addOr($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            foreach ($tags as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::NOT_LIKE);
+                }
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DutyTableMap::COL_TAGS, $tags, $comparison);
+    }
+
+    /**
+     * Filter the query on the tags column
+     * @param     mixed $tags The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByTag($tags = null, $comparison = null)
+    {
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            if (is_scalar($tags)) {
+                $tags = '%| ' . $tags . ' |%';
+                $comparison = Criteria::LIKE;
+            }
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            $tags = '%| ' . $tags . ' |%';
+            $comparison = Criteria::NOT_LIKE;
+            $key = $this->getAliasedColName(DutyTableMap::COL_TAGS);
+            if ($this->containsKey($key)) {
+                $this->addAnd($key, $tags, $comparison);
+            } else {
+                $this->addAnd($key, $tags, $comparison);
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DutyTableMap::COL_TAGS, $tags, $comparison);
     }
 
     /**

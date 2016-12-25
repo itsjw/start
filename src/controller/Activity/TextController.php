@@ -6,11 +6,11 @@ use Perfumer\Framework\Controller\TemplateController;
 
 class TextController extends TemplateController
 {
-    public function amd($title, $text, $created_at, $id)
+    public function amd($data, $created_at, $id)
     {
         $this->getView()->addVars([
-            'title' => $title,
-            'text' => $text,
+            'title' => $data['title'] ?? '',
+            'text' => $data['text'] ?? '',
             'created_at' => $created_at,
             'id' => $id
         ]);

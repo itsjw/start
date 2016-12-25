@@ -10,6 +10,7 @@
         <column name="raised_at" type="timestamp"/>
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
+        <column name="tags" type="array"/>
         <behavior name="timestampable" />
         <foreign-key foreignTable="activity" phpName="Activity">
             <reference local="activity_id" foreign="id"/>

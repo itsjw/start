@@ -27,10 +27,12 @@ class DutyController extends PlainController
         $amd = $duty->getActivity()->getAmd();
         $amd = explode('.', $amd);
 
-        $data = $duty->getData() === null ? [] : unserialize($duty->getData());
-        $data['created_at'] = $duty->getCreatedAt();
-        $data['id'] = $id;
+        $arguments = [
+            'data' => $duty->getData() === null ? [] : unserialize($duty->getData()),
+            'created_at' => $duty->getCreatedAt(),
+            'id' => $id
+        ];
 
-        $this->getProxy()->forward($amd[0], $amd[1], $amd[2], $data);
+        $this->getProxy()->forward($amd[0], $amd[1], $amd[2], $arguments);
     }
 }

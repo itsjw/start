@@ -119,6 +119,19 @@ abstract class Duty implements ActiveRecordInterface
     protected $closed_at;
 
     /**
+     * The value for the tags field.
+     * @var        array
+     */
+    protected $tags;
+
+    /**
+     * The unserialized $tags value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var object
+     */
+    protected $tags_unserialized;
+
+    /**
      * The value for the created_at field.
      * @var        \DateTime
      */
@@ -481,6 +494,35 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
+     * Get the [tags] column value.
+     *
+     * @return array
+     */
+    public function getTags()
+    {
+        if (null === $this->tags_unserialized) {
+            $this->tags_unserialized = array();
+        }
+        if (!$this->tags_unserialized && null !== $this->tags) {
+            $tags_unserialized = substr($this->tags, 2, -2);
+            $this->tags_unserialized = $tags_unserialized ? explode(' | ', $tags_unserialized) : array();
+        }
+
+        return $this->tags_unserialized;
+    }
+
+    /**
+     * Test the presence of a value in the [tags] array column value.
+     * @param      mixed $value
+     *
+     * @return boolean
+     */
+    public function hasTag($value)
+    {
+        return in_array($value, $this->getTags());
+    } // hasTag()
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -705,6 +747,57 @@ abstract class Duty implements ActiveRecordInterface
     } // setClosedAt()
 
     /**
+     * Set the value of [tags] column.
+     *
+     * @param array $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     */
+    public function setTags($v)
+    {
+        if ($this->tags_unserialized !== $v) {
+            $this->tags_unserialized = $v;
+            $this->tags = '| ' . implode(' | ', $v) . ' |';
+            $this->modifiedColumns[DutyTableMap::COL_TAGS] = true;
+        }
+
+        return $this;
+    } // setTags()
+
+    /**
+     * Adds a value to the [tags] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     */
+    public function addTag($value)
+    {
+        $currentArray = $this->getTags();
+        $currentArray []= $value;
+        $this->setTags($currentArray);
+
+        return $this;
+    } // addTag()
+
+    /**
+     * Removes a value from the [tags] array column value.
+     * @param  mixed $value
+     *
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     */
+    public function removeTag($value)
+    {
+        $targetArray = array();
+        foreach ($this->getTags() as $element) {
+            if ($element != $value) {
+                $targetArray []= $element;
+            }
+        }
+        $this->setTags($targetArray);
+
+        return $this;
+    } // removeTag()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTime value.
@@ -807,10 +900,14 @@ abstract class Duty implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->tags = $col;
+            $this->tags_unserialized = null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -820,7 +917,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = DutyTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 12; // 12 = DutyTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Duty'), 0, $e);
@@ -1081,6 +1178,9 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_CLOSED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'closed_at';
         }
+        if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
+            $modifiedColumns[':p' . $index++]  = 'tags';
+        }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -1124,6 +1224,9 @@ abstract class Duty implements ActiveRecordInterface
                         break;
                     case 'closed_at':
                         $stmt->bindValue($identifier, $this->closed_at ? $this->closed_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        break;
+                    case 'tags':
+                        $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1214,9 +1317,12 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getClosedAt();
                 break;
             case 9:
-                return $this->getCreatedAt();
+                return $this->getTags();
                 break;
             case 10:
+                return $this->getCreatedAt();
+                break;
+            case 11:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1258,8 +1364,9 @@ abstract class Duty implements ActiveRecordInterface
             $keys[6] => $this->getRaisedAt(),
             $keys[7] => $this->getPickedAt(),
             $keys[8] => $this->getClosedAt(),
-            $keys[9] => $this->getCreatedAt(),
-            $keys[10] => $this->getUpdatedAt(),
+            $keys[9] => $this->getTags(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
         );
 
         $utc = new \DateTimeZone('utc');
@@ -1281,16 +1388,16 @@ abstract class Duty implements ActiveRecordInterface
             $result[$keys[8]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
 
-        if ($result[$keys[9]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[9]];
-            $result[$keys[9]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
-        }
-
         if ($result[$keys[10]] instanceof \DateTime) {
             // When changing timezone we don't want to change existing instances
             $dateTime = clone $result[$keys[10]];
             $result[$keys[10]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+        }
+
+        if ($result[$keys[11]] instanceof \DateTime) {
+            // When changing timezone we don't want to change existing instances
+            $dateTime = clone $result[$keys[11]];
+            $result[$keys[11]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1376,9 +1483,16 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setClosedAt($value);
                 break;
             case 9:
-                $this->setCreatedAt($value);
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setTags($value);
                 break;
             case 10:
+                $this->setCreatedAt($value);
+                break;
+            case 11:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1435,10 +1549,13 @@ abstract class Duty implements ActiveRecordInterface
             $this->setClosedAt($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setCreatedAt($arr[$keys[9]]);
+            $this->setTags($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setUpdatedAt($arr[$keys[10]]);
+            $this->setCreatedAt($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setUpdatedAt($arr[$keys[11]]);
         }
     }
 
@@ -1507,6 +1624,9 @@ abstract class Duty implements ActiveRecordInterface
         }
         if ($this->isColumnModified(DutyTableMap::COL_CLOSED_AT)) {
             $criteria->add(DutyTableMap::COL_CLOSED_AT, $this->closed_at);
+        }
+        if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
+            $criteria->add(DutyTableMap::COL_TAGS, $this->tags);
         }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $criteria->add(DutyTableMap::COL_CREATED_AT, $this->created_at);
@@ -1608,6 +1728,7 @@ abstract class Duty implements ActiveRecordInterface
         $copyObj->setRaisedAt($this->getRaisedAt());
         $copyObj->setPickedAt($this->getPickedAt());
         $copyObj->setClosedAt($this->getClosedAt());
+        $copyObj->setTags($this->getTags());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
@@ -1708,6 +1829,8 @@ abstract class Duty implements ActiveRecordInterface
         $this->raised_at = null;
         $this->picked_at = null;
         $this->closed_at = null;
+        $this->tags = null;
+        $this->tags_unserialized = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

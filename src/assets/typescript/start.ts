@@ -1,6 +1,9 @@
 define(['require', 'buzz'], function (require, buzz) {
     class Start {
         private duties: Array;
+        private search_input;
+        private searching;
+        private search_request;
 
         constructor() {
             this.duties = [];
@@ -8,6 +11,9 @@ define(['require', 'buzz'], function (require, buzz) {
 
         public run() {
             var start = this;
+
+            this.search_input = document.getElementById('search');
+            this.searching = document.getElementById('searching');
 
             this.loadDuties();
 
@@ -18,9 +24,43 @@ define(['require', 'buzz'], function (require, buzz) {
                     start.closeDuty(event.detail);
                 }
             });
+
+            this.search_input.addEventListener('focus', function(event) {
+                document.getElementById('stickers').style.display = 'none';
+                start.searching.style.display = 'block';
+
+                if (!start.searching.innerHTML) {
+                    document.getElementById('search-help').style.display = 'block';
+                }
+            });
+
+            this.search_input.addEventListener('blur', function(event) {
+                var query = start.search_input.value;
+
+                if (!query) {
+                    document.getElementById('stickers').style.display = 'block';
+                    document.getElementById('search-help').style.display = 'none';
+                    start.searching.style.display = 'none';
+                }
+            });
+
+            this.search_input.addEventListener('keyup', function(event) {
+                var query = start.search_input.value;
+                start.searchDuties(query);
+            });
+
+            this.search_input.addEventListener('paste', function(event) {
+                var query = start.search_input.value;
+                start.searchDuties(query);
+            });
         }
 
-        public loadDuties() {
+        public loadDuties(open = null, reload = false) {
+            if (reload) {
+                this.duties = [];
+                document.getElementById('stickers').innerHTML = '';
+            }
+
             var start = this;
             var request = new XMLHttpRequest();
             var url;
@@ -45,8 +85,13 @@ define(['require', 'buzz'], function (require, buzz) {
 
                     for (var i = 0; i < duties.length; i++) {
                         (function(i) {
-                            start.addDuty(new Duty(duties[i]));
+                            var auto_view = open == null;
+                            start.addDuty(new Duty(duties[i]), 'current', auto_view);
                         })(i)
+                    }
+
+                    if (typeof open == 'object') {
+                        start.viewDuty(open);
                     }
 
                     if (typeof DATA._id === 'undefined') {
@@ -62,6 +107,45 @@ define(['require', 'buzz'], function (require, buzz) {
             };
 
             request.send();
+        }
+
+        public searchDuties(query) {
+            var start = this;
+
+            if (this.search_request) {
+                this.search_request.abort();
+            }
+
+            this.search_request = new XMLHttpRequest();
+
+            document.getElementById('searching').innerHTML = '';
+
+            this.search_request.open('GET', '/search?query=' + query, true);
+
+            this.search_request.onload = function() {
+                if (start.search_request.status >= 200 && start.search_request.status < 400) {
+                    var data = JSON.parse(start.search_request.responseText);
+                    var duties = data.content;
+
+                    for (var i = 0; i < duties.length; i++) {
+                        (function(i) {
+                            start.addDuty(new Duty(duties[i]), 'search');
+                        })(i)
+                    }
+
+                    if (!start.searching.innerHTML) {
+                        document.getElementById('search-help').style.display = 'block';
+                    } else {
+                        document.getElementById('search-help').style.display = 'none';
+                    }
+                } else {
+                }
+            };
+
+            this.search_request.onerror = function() {
+            };
+
+            this.search_request.send();
         }
 
         public loadExtraDuties() {
@@ -80,7 +164,7 @@ define(['require', 'buzz'], function (require, buzz) {
                         if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
                             document.getElementById("no-duties").style.display = 'none';
 
-                            start.addDuty(new Duty(duty));
+                            start.addDuty(new Duty(duty), 'current');
 
                             var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
                             sound.play();
@@ -133,6 +217,32 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send(JSON.stringify({"period": period}));
         }
 
+        public pickDuty(duty: Duty) {
+            if (!confirm('Pick duty?')) {
+                return;
+            }
+
+            var start = this;
+            var request = new XMLHttpRequest();
+            request.open('POST', '/duty/pick/' + duty.id, true);
+
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    start.loadDuties(duty, true);
+                    start.search_input.value = '';
+                    start.searching.style.display = 'none';
+                    document.getElementById('stickers').style.display = 'block';
+                    start.searching.innerHTML = '';
+                } else {
+                }
+            };
+
+            request.onerror = function() {
+            };
+
+            request.send();
+        }
+
         public closeDuty(id: number) {
             var start = this;
             var request = new XMLHttpRequest();
@@ -166,17 +276,52 @@ define(['require', 'buzz'], function (require, buzz) {
             request.send();
         }
 
-        public addDuty(duty: Duty) {
-            this.duties.push(duty);
-            this.addSticker(duty);
+        public viewDuty(duty = null) {
+            if (duty == null && this.duties.length > 0) {
+                duty = this.duties[0];
+            }
 
-            if (this.duties.length === 1) {
+            if (duty == null) {
+                return;
+            }
+
+            var stickers = document.getElementsByClassName('sticker');
+
+            for (var i = 0; i < stickers.length; i++) {
+                (function(i) {
+                    if (typeof stickers[i] !== 'undefined') {
+                        stickers[i].style.background = "white";
+                    }
+                })(i)
+            }
+
+            var active_sticker = document.getElementById("sticker" + duty.id);
+
+            if (active_sticker !== null) {
+                document.getElementById("sticker" + duty.id).style.background = "cornsilk";
+            }
+
+            this.openWorkspace(duty);
+        }
+
+        public addDuty(duty: Duty, area: string, auto_view = true) {
+            this.addSticker(duty, area);
+
+            if (area == 'current') {
+                this.duties.push(duty);
+            }
+
+            if (auto_view && area == 'current' && this.duties.length === 1) {
                 this.openWorkspace(duty);
             }
         }
 
-        public addSticker(duty: Duty) {
-            var stickers_container = document.getElementById("stickers");
+        public addSticker(duty: Duty, area: string) {
+            if (area == 'current') {
+                var stickers_container = document.getElementById("stickers");
+            } else {
+                var stickers_container = document.getElementById("searching");
+            }
 
             if (stickers_container == null) {
                 return;
@@ -197,11 +342,17 @@ define(['require', 'buzz'], function (require, buzz) {
                 <div style="margin-top: 5px">` + duty.title + `</div>
             `;
 
-            sticker.addEventListener('click', function () {
-                start.openWorkspace(duty);
-            }, false);
+            if (area == 'current') {
+                sticker.addEventListener('click', function () {
+                    start.openWorkspace(duty);
+                }, false);
+            } else {
+                sticker.addEventListener('click', function () {
+                    start.pickDuty(duty);
+                }, false);
+            }
 
-            document.getElementById("stickers").appendChild(sticker);
+            stickers_container.appendChild(sticker);
         }
 
         public setWorkspaceContent(id: number, html: string) {
