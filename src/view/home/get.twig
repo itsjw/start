@@ -12,6 +12,7 @@
         #navbar {border-bottom: 1px solid #eeeeee; text-align: right; margin-bottom: 10px; padding: 5px}
         #navbar > a {color: #07c; text-decoration: none}
         #navbar > a:visited {color: #07c}
+        #dashboard { margin: 0 auto }
         #no-duties { text-align: center; display: none }
         #no-duties > div { font-size: 30px; margin-top: 20%; color: #cccccc }
         .buttons-area > button { margin-right: 10px }
@@ -24,6 +25,31 @@
         button { border-radius: 5px;  border: 1px solid #ccc;  background: white;  padding: 5px;  cursor: pointer; }
         button:hover { border-color: #07c; background: #07c; color: white }
         button:focus { outline: 0; }
+
+        @media screen and (max-width: 799px) {
+            #dashboard { width: 100% }
+            #stickers-column, #workspaces { width: 100% }
+            .visible { display: block }
+            .invisible { display: none }
+        }
+
+        @media screen and (min-width: 800px) {
+            #dashboard { width: 100% }
+            #stickers-column { width: 30%; float: left }
+            #workspaces { width: 69%; float: right }
+            #workspaces .back-button { display: none }
+            .visible { display: block }
+            .invisible { display: block }
+        }
+
+        @media screen and (min-width: 1200px) {
+            #dashboard { width: 1200px }
+            #stickers-column { width: 30%; float: left }
+            #workspaces { width: 69%; float: right }
+            #workspaces .back-button { display: none }
+            .visible { display: block }
+            .invisible { display: block }
+        }
     </style>
 </head>
 
@@ -32,8 +58,8 @@
     <a href="{{ url('logout') }}">Выход</a>
 </div>
 
-<div id="dashboard" style="width: 1200px; margin: 0 auto">
-    <div id="stickers-column" style="width: 500px; float: left">
+<div id="dashboard">
+    <div id="stickers-column" class="visible">
         <div style="margin-bottom: 10px">
             <input id="search" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
         </div>
@@ -45,7 +71,7 @@
         <div id="search-help" style="display: none; color: #ccc">Начните вводить текст</div>
     </div>
 
-    <div id="workspaces" style="width: 690px; float: right">
+    <div id="workspaces" class="invisible">
     </div>
 
     <div style="clear: both"></div>

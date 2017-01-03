@@ -198,6 +198,9 @@ class Start {
                 document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
                 document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
 
+                document.getElementById('stickers-column').className = "visible";
+                document.getElementById('workspaces').className = "invisible";
+                
                 for (var i = 0;  i < start.duties.length; i++) {
                     (function(i) {
                         if(start.duties[i].id === id) {
@@ -237,6 +240,8 @@ class Start {
                 start.searching.style.display = 'none';
                 document.getElementById('stickers').style.display = 'block';
                 start.searching.innerHTML = '';
+                document.getElementById('stickers-column').className = "invisible";
+                document.getElementById('workspaces').className = "visible";
             } else {
             }
         };
@@ -256,6 +261,9 @@ class Start {
             if (request.status >= 200 && request.status < 400) {
                 document.getElementById("workspaces").removeChild(document.getElementById("workspace" + id));
                 document.getElementById("stickers").removeChild(document.getElementById("sticker" + id));
+
+                document.getElementById('stickers-column').className = "visible";
+                document.getElementById('workspaces').className = "invisible";
 
                 for (var i = 0;  i < start.duties.length; i++) {
                     (function(i) {
@@ -348,6 +356,8 @@ class Start {
 
         if (area == 'current') {
             sticker.addEventListener('click', function () {
+                document.getElementById('stickers-column').className = "invisible";
+                document.getElementById('workspaces').className = "visible";
                 start.openWorkspace(duty);
             }, false);
         } else {
@@ -427,6 +437,18 @@ class Start {
             _postpone_area.appendChild(_postpone_area_list);
             _workspace.appendChild(_postpone_area);
 
+            var _back_button = document.createElement("button");
+            _back_button.id = 'back-button' + duty.id;
+            _back_button.className = 'back-button';
+            _back_button.innerText = 'Назад';
+
+            _back_button.addEventListener('click', function () {
+                document.getElementById('stickers-column').className = "visible";
+                document.getElementById('workspaces').className = "invisible";
+            }, false);
+
+            _buttons_area.appendChild(_back_button);
+
             if (duty.readonly) {
                 var _close_button = document.createElement("button");
                 _close_button.id = 'close-button' + duty.id;
@@ -455,7 +477,7 @@ class Start {
                 } else {
                     document.getElementById("duty-area" + duty.id).style.display = "none";
                     document.getElementById("postpone-area" + duty.id).style.display = "block";
-                    _postpone_button.innerText = 'Назад';
+                    _postpone_button.innerText = 'Отмена';
                 }
             }, false);
 
