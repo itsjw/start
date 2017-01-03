@@ -59,7 +59,7 @@ class ActivityTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ActivityTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 6;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
@@ -82,11 +82,6 @@ class ActivityTableMap extends TableMap
     const COL_NAME = 'activity.name';
 
     /**
-     * the column name for the amd field
-     */
-    const COL_AMD = 'activity.amd';
-
-    /**
      * the column name for the iframe field
      */
     const COL_IFRAME = 'activity.iframe';
@@ -97,9 +92,9 @@ class ActivityTableMap extends TableMap
     const COL_READONLY = 'activity.readonly';
 
     /**
-     * the column name for the properties field
+     * the column name for the color field
      */
-    const COL_PROPERTIES = 'activity.properties';
+    const COL_COLOR = 'activity.color';
 
     /**
      * The default string format for model objects of the related table
@@ -113,11 +108,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Amd', 'Iframe', 'Readonly', 'Properties', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'amd', 'iframe', 'readonly', 'properties', ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_AMD, ActivityTableMap::COL_IFRAME, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_PROPERTIES, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'amd', 'iframe', 'readonly', 'properties', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Iframe', 'Readonly', 'Color', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'iframe', 'readonly', 'color', ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_IFRAME, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_COLOR, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'iframe', 'readonly', 'color', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -127,11 +122,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Amd' => 2, 'Iframe' => 3, 'Readonly' => 4, 'Properties' => 5, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'amd' => 2, 'iframe' => 3, 'readonly' => 4, 'properties' => 5, ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_AMD => 2, ActivityTableMap::COL_IFRAME => 3, ActivityTableMap::COL_READONLY => 4, ActivityTableMap::COL_PROPERTIES => 5, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'amd' => 2, 'iframe' => 3, 'readonly' => 4, 'properties' => 5, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Iframe' => 2, 'Readonly' => 3, 'Color' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'iframe' => 2, 'readonly' => 3, 'color' => 4, ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_IFRAME => 2, ActivityTableMap::COL_READONLY => 3, ActivityTableMap::COL_COLOR => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'iframe' => 2, 'readonly' => 3, 'color' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -154,10 +149,9 @@ class ActivityTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
-        $this->addColumn('amd', 'Amd', 'VARCHAR', false, 255, null);
         $this->addColumn('iframe', 'Iframe', 'VARCHAR', false, 255, null);
         $this->addColumn('readonly', 'Readonly', 'BOOLEAN', true, null, false);
-        $this->addColumn('properties', 'Properties', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('color', 'Color', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -317,17 +311,15 @@ class ActivityTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(ActivityTableMap::COL_ID);
             $criteria->addSelectColumn(ActivityTableMap::COL_NAME);
-            $criteria->addSelectColumn(ActivityTableMap::COL_AMD);
             $criteria->addSelectColumn(ActivityTableMap::COL_IFRAME);
             $criteria->addSelectColumn(ActivityTableMap::COL_READONLY);
-            $criteria->addSelectColumn(ActivityTableMap::COL_PROPERTIES);
+            $criteria->addSelectColumn(ActivityTableMap::COL_COLOR);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.amd');
             $criteria->addSelectColumn($alias . '.iframe');
             $criteria->addSelectColumn($alias . '.readonly');
-            $criteria->addSelectColumn($alias . '.properties');
+            $criteria->addSelectColumn($alias . '.color');
         }
     }
 

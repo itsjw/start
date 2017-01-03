@@ -2,8 +2,6 @@
     "name": "perfumerlabs/start",
     "dependencies": {
         "normalize-css": "5.0.0",
-        "requirejs-text": "2.0.15",
-        "require-css": "0.1.8",
         "buzz": "1.2.0"
     }
 }

@@ -14,23 +14,21 @@ class DutyFormatter
      */
     public function format(Duty $duty, User $user)
     {
-        $activity_properties = $duty->getActivity()->getProperties() ? unserialize($duty->getActivity()->getProperties()) : [];
-
         $array = [
             'id' => $duty->getId(),
             'name' => $user->getUsername(),
             'title' => $duty->getTitle(),
-            'color' => isset($activity_properties['color']) ? $activity_properties['color'] : '',
+            'color' => $duty->getActivity()->getColor(),
             'readonly' => $duty->getActivity()->isReadonly(),
         ];
 
-        if ($duty->getActivity()->getIframe()) {
-            $data = $duty->getData() ? unserialize($duty->getData()) : [];
-            $data['_id'] = $duty->getId();
-            $data['_activity'] = $duty->getActivity()->getName();
+        $iframe = $duty->getActivity()->getIframe() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getName();
 
-            $array['iframe'] = $duty->getActivity()->getIframe() . '?' . http_build_query($data);
+        if ($duty->getQuery()) {
+            $iframe .= '&' . $duty->getQuery();
         }
+
+        $array['iframe'] = $iframe;
 
         return $array;
     }

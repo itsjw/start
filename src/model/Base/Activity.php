@@ -76,12 +76,6 @@ abstract class Activity implements ActiveRecordInterface
     protected $name;
 
     /**
-     * The value for the amd field.
-     * @var        string
-     */
-    protected $amd;
-
-    /**
      * The value for the iframe field.
      * @var        string
      */
@@ -95,10 +89,10 @@ abstract class Activity implements ActiveRecordInterface
     protected $readonly;
 
     /**
-     * The value for the properties field.
+     * The value for the color field.
      * @var        string
      */
-    protected $properties;
+    protected $color;
 
     /**
      * @var        ObjectCollection|ChildDuty[] Collection to store aggregation of ChildDuty objects.
@@ -371,16 +365,6 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [amd] column value.
-     *
-     * @return string
-     */
-    public function getAmd()
-    {
-        return $this->amd;
-    }
-
-    /**
      * Get the [iframe] column value.
      *
      * @return string
@@ -411,13 +395,13 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [properties] column value.
+     * Get the [color] column value.
      *
      * @return string
      */
-    public function getProperties()
+    public function getColor()
     {
-        return $this->properties;
+        return $this->color;
     }
 
     /**
@@ -459,26 +443,6 @@ abstract class Activity implements ActiveRecordInterface
 
         return $this;
     } // setName()
-
-    /**
-     * Set the value of [amd] column.
-     *
-     * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
-     */
-    public function setAmd($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->amd !== $v) {
-            $this->amd = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_AMD] = true;
-        }
-
-        return $this;
-    } // setAmd()
 
     /**
      * Set the value of [iframe] column.
@@ -529,24 +493,24 @@ abstract class Activity implements ActiveRecordInterface
     } // setReadonly()
 
     /**
-     * Set the value of [properties] column.
+     * Set the value of [color] column.
      *
      * @param string $v new value
      * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
-    public function setProperties($v)
+    public function setColor($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->properties !== $v) {
-            $this->properties = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_PROPERTIES] = true;
+        if ($this->color !== $v) {
+            $this->color = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_COLOR] = true;
         }
 
         return $this;
-    } // setProperties()
+    } // setColor()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -594,17 +558,14 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ActivityTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Amd', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->amd = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Iframe', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Iframe', TableMap::TYPE_PHPNAME, $indexType)];
             $this->iframe = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readonly = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Properties', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->properties = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->color = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -613,7 +574,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -845,17 +806,14 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_AMD)) {
-            $modifiedColumns[':p' . $index++]  = 'amd';
-        }
         if ($this->isColumnModified(ActivityTableMap::COL_IFRAME)) {
             $modifiedColumns[':p' . $index++]  = 'iframe';
         }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $modifiedColumns[':p' . $index++]  = 'readonly';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_PROPERTIES)) {
-            $modifiedColumns[':p' . $index++]  = 'properties';
+        if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
+            $modifiedColumns[':p' . $index++]  = 'color';
         }
 
         $sql = sprintf(
@@ -874,17 +832,14 @@ abstract class Activity implements ActiveRecordInterface
                     case 'name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'amd':
-                        $stmt->bindValue($identifier, $this->amd, PDO::PARAM_STR);
-                        break;
                     case 'iframe':
                         $stmt->bindValue($identifier, $this->iframe, PDO::PARAM_STR);
                         break;
                     case 'readonly':
                         $stmt->bindValue($identifier, $this->readonly, PDO::PARAM_BOOL);
                         break;
-                    case 'properties':
-                        $stmt->bindValue($identifier, $this->properties, PDO::PARAM_STR);
+                    case 'color':
+                        $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -948,16 +903,13 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getName();
                 break;
             case 2:
-                return $this->getAmd();
-                break;
-            case 3:
                 return $this->getIframe();
                 break;
-            case 4:
+            case 3:
                 return $this->getReadonly();
                 break;
-            case 5:
-                return $this->getProperties();
+            case 4:
+                return $this->getColor();
                 break;
             default:
                 return null;
@@ -991,10 +943,9 @@ abstract class Activity implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getAmd(),
-            $keys[3] => $this->getIframe(),
-            $keys[4] => $this->getReadonly(),
-            $keys[5] => $this->getProperties(),
+            $keys[2] => $this->getIframe(),
+            $keys[3] => $this->getReadonly(),
+            $keys[4] => $this->getColor(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1058,16 +1009,13 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setName($value);
                 break;
             case 2:
-                $this->setAmd($value);
-                break;
-            case 3:
                 $this->setIframe($value);
                 break;
-            case 4:
+            case 3:
                 $this->setReadonly($value);
                 break;
-            case 5:
-                $this->setProperties($value);
+            case 4:
+                $this->setColor($value);
                 break;
         } // switch()
 
@@ -1102,16 +1050,13 @@ abstract class Activity implements ActiveRecordInterface
             $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setAmd($arr[$keys[2]]);
+            $this->setIframe($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setIframe($arr[$keys[3]]);
+            $this->setReadonly($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setReadonly($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setProperties($arr[$keys[5]]);
+            $this->setColor($arr[$keys[4]]);
         }
     }
 
@@ -1160,17 +1105,14 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_NAME)) {
             $criteria->add(ActivityTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_AMD)) {
-            $criteria->add(ActivityTableMap::COL_AMD, $this->amd);
-        }
         if ($this->isColumnModified(ActivityTableMap::COL_IFRAME)) {
             $criteria->add(ActivityTableMap::COL_IFRAME, $this->iframe);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $criteria->add(ActivityTableMap::COL_READONLY, $this->readonly);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_PROPERTIES)) {
-            $criteria->add(ActivityTableMap::COL_PROPERTIES, $this->properties);
+        if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
+            $criteria->add(ActivityTableMap::COL_COLOR, $this->color);
         }
 
         return $criteria;
@@ -1259,10 +1201,9 @@ abstract class Activity implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
-        $copyObj->setAmd($this->getAmd());
         $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
-        $copyObj->setProperties($this->getProperties());
+        $copyObj->setColor($this->getColor());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1548,10 +1489,9 @@ abstract class Activity implements ActiveRecordInterface
     {
         $this->id = null;
         $this->name = null;
-        $this->amd = null;
         $this->iframe = null;
         $this->readonly = null;
-        $this->properties = null;
+        $this->color = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

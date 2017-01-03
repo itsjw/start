@@ -97,9 +97,9 @@ class DutyTableMap extends TableMap
     const COL_TITLE = 'duty.title';
 
     /**
-     * the column name for the data field
+     * the column name for the query field
      */
-    const COL_DATA = 'duty.data';
+    const COL_QUERY = 'duty.query';
 
     /**
      * the column name for the raised_at field
@@ -143,10 +143,10 @@ class DutyTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'ActivityId', 'Priority', 'Title', 'Data', 'RaisedAt', 'PickedAt', 'ClosedAt', 'Tags', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'activityId', 'priority', 'title', 'data', 'raisedAt', 'pickedAt', 'closedAt', 'tags', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(DutyTableMap::COL_ID, DutyTableMap::COL_USER_ID, DutyTableMap::COL_ACTIVITY_ID, DutyTableMap::COL_PRIORITY, DutyTableMap::COL_TITLE, DutyTableMap::COL_DATA, DutyTableMap::COL_RAISED_AT, DutyTableMap::COL_PICKED_AT, DutyTableMap::COL_CLOSED_AT, DutyTableMap::COL_TAGS, DutyTableMap::COL_CREATED_AT, DutyTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'activity_id', 'priority', 'title', 'data', 'raised_at', 'picked_at', 'closed_at', 'tags', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'UserId', 'ActivityId', 'Priority', 'Title', 'Query', 'RaisedAt', 'PickedAt', 'ClosedAt', 'Tags', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'userId', 'activityId', 'priority', 'title', 'query', 'raisedAt', 'pickedAt', 'closedAt', 'tags', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(DutyTableMap::COL_ID, DutyTableMap::COL_USER_ID, DutyTableMap::COL_ACTIVITY_ID, DutyTableMap::COL_PRIORITY, DutyTableMap::COL_TITLE, DutyTableMap::COL_QUERY, DutyTableMap::COL_RAISED_AT, DutyTableMap::COL_PICKED_AT, DutyTableMap::COL_CLOSED_AT, DutyTableMap::COL_TAGS, DutyTableMap::COL_CREATED_AT, DutyTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'user_id', 'activity_id', 'priority', 'title', 'query', 'raised_at', 'picked_at', 'closed_at', 'tags', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
@@ -157,10 +157,10 @@ class DutyTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'ActivityId' => 2, 'Priority' => 3, 'Title' => 4, 'Data' => 5, 'RaisedAt' => 6, 'PickedAt' => 7, 'ClosedAt' => 8, 'Tags' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'activityId' => 2, 'priority' => 3, 'title' => 4, 'data' => 5, 'raisedAt' => 6, 'pickedAt' => 7, 'closedAt' => 8, 'tags' => 9, 'createdAt' => 10, 'updatedAt' => 11, ),
-        self::TYPE_COLNAME       => array(DutyTableMap::COL_ID => 0, DutyTableMap::COL_USER_ID => 1, DutyTableMap::COL_ACTIVITY_ID => 2, DutyTableMap::COL_PRIORITY => 3, DutyTableMap::COL_TITLE => 4, DutyTableMap::COL_DATA => 5, DutyTableMap::COL_RAISED_AT => 6, DutyTableMap::COL_PICKED_AT => 7, DutyTableMap::COL_CLOSED_AT => 8, DutyTableMap::COL_TAGS => 9, DutyTableMap::COL_CREATED_AT => 10, DutyTableMap::COL_UPDATED_AT => 11, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'activity_id' => 2, 'priority' => 3, 'title' => 4, 'data' => 5, 'raised_at' => 6, 'picked_at' => 7, 'closed_at' => 8, 'tags' => 9, 'created_at' => 10, 'updated_at' => 11, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'ActivityId' => 2, 'Priority' => 3, 'Title' => 4, 'Query' => 5, 'RaisedAt' => 6, 'PickedAt' => 7, 'ClosedAt' => 8, 'Tags' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'activityId' => 2, 'priority' => 3, 'title' => 4, 'query' => 5, 'raisedAt' => 6, 'pickedAt' => 7, 'closedAt' => 8, 'tags' => 9, 'createdAt' => 10, 'updatedAt' => 11, ),
+        self::TYPE_COLNAME       => array(DutyTableMap::COL_ID => 0, DutyTableMap::COL_USER_ID => 1, DutyTableMap::COL_ACTIVITY_ID => 2, DutyTableMap::COL_PRIORITY => 3, DutyTableMap::COL_TITLE => 4, DutyTableMap::COL_QUERY => 5, DutyTableMap::COL_RAISED_AT => 6, DutyTableMap::COL_PICKED_AT => 7, DutyTableMap::COL_CLOSED_AT => 8, DutyTableMap::COL_TAGS => 9, DutyTableMap::COL_CREATED_AT => 10, DutyTableMap::COL_UPDATED_AT => 11, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'activity_id' => 2, 'priority' => 3, 'title' => 4, 'query' => 5, 'raised_at' => 6, 'picked_at' => 7, 'closed_at' => 8, 'tags' => 9, 'created_at' => 10, 'updated_at' => 11, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
@@ -187,7 +187,7 @@ class DutyTableMap extends TableMap
         $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
         $this->addColumn('priority', 'Priority', 'INTEGER', false, null, null);
         $this->addColumn('title', 'Title', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('data', 'Data', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('query', 'Query', 'LONGVARCHAR', false, null, null);
         $this->addColumn('raised_at', 'RaisedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('picked_at', 'PickedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('closed_at', 'ClosedAt', 'TIMESTAMP', false, null, null);
@@ -369,7 +369,7 @@ class DutyTableMap extends TableMap
             $criteria->addSelectColumn(DutyTableMap::COL_ACTIVITY_ID);
             $criteria->addSelectColumn(DutyTableMap::COL_PRIORITY);
             $criteria->addSelectColumn(DutyTableMap::COL_TITLE);
-            $criteria->addSelectColumn(DutyTableMap::COL_DATA);
+            $criteria->addSelectColumn(DutyTableMap::COL_QUERY);
             $criteria->addSelectColumn(DutyTableMap::COL_RAISED_AT);
             $criteria->addSelectColumn(DutyTableMap::COL_PICKED_AT);
             $criteria->addSelectColumn(DutyTableMap::COL_CLOSED_AT);
@@ -382,7 +382,7 @@ class DutyTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.activity_id');
             $criteria->addSelectColumn($alias . '.priority');
             $criteria->addSelectColumn($alias . '.title');
-            $criteria->addSelectColumn($alias . '.data');
+            $criteria->addSelectColumn($alias . '.query');
             $criteria->addSelectColumn($alias . '.raised_at');
             $criteria->addSelectColumn($alias . '.picked_at');
             $criteria->addSelectColumn($alias . '.closed_at');

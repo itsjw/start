@@ -22,17 +22,15 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ChildActivityQuery orderByAmd($order = Criteria::ASC) Order by the amd column
  * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
- * @method     ChildActivityQuery orderByProperties($order = Criteria::ASC) Order by the properties column
+ * @method     ChildActivityQuery orderByColor($order = Criteria::ASC) Order by the color column
  *
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
- * @method     ChildActivityQuery groupByAmd() Group by the amd column
  * @method     ChildActivityQuery groupByIframe() Group by the iframe column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
- * @method     ChildActivityQuery groupByProperties() Group by the properties column
+ * @method     ChildActivityQuery groupByColor() Group by the color column
  *
  * @method     ChildActivityQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildActivityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -49,28 +47,25 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
- * @method     ChildActivity findOneByAmd(string $amd) Return the first ChildActivity filtered by the amd column
  * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
  * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
- * @method     ChildActivity findOneByProperties(string $properties) Return the first ChildActivity filtered by the properties column *
+ * @method     ChildActivity findOneByColor(string $color) Return the first ChildActivity filtered by the color column *
 
  * @method     ChildActivity requirePk($key, ConnectionInterface $con = null) Return the ChildActivity by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByAmd(string $amd) Return the first ChildActivity filtered by the amd column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByProperties(string $properties) Return the first ChildActivity filtered by the properties column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByColor(string $color) Return the first ChildActivity filtered by the color column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
- * @method     ChildActivity[]|ObjectCollection findByAmd(string $amd) Return ChildActivity objects filtered by the amd column
  * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
- * @method     ChildActivity[]|ObjectCollection findByProperties(string $properties) Return ChildActivity objects filtered by the properties column
+ * @method     ChildActivity[]|ObjectCollection findByColor(string $color) Return ChildActivity objects filtered by the color column
  * @method     ChildActivity[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -163,7 +158,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, amd, iframe, readonly, properties FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, iframe, readonly, color FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -324,35 +319,6 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the amd column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByAmd('fooValue');   // WHERE amd = 'fooValue'
-     * $query->filterByAmd('%fooValue%'); // WHERE amd LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $amd The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function filterByAmd($amd = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($amd)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $amd)) {
-                $amd = str_replace('*', '%', $amd);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_AMD, $amd, $comparison);
-    }
-
-    /**
      * Filter the query on the iframe column
      *
      * Example usage:
@@ -409,32 +375,32 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the properties column
+     * Filter the query on the color column
      *
      * Example usage:
      * <code>
-     * $query->filterByProperties('fooValue');   // WHERE properties = 'fooValue'
-     * $query->filterByProperties('%fooValue%'); // WHERE properties LIKE '%fooValue%'
+     * $query->filterByColor('fooValue');   // WHERE color = 'fooValue'
+     * $query->filterByColor('%fooValue%'); // WHERE color LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $properties The value to use as filter.
+     * @param     string $color The value to use as filter.
      *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByProperties($properties = null, $comparison = null)
+    public function filterByColor($color = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($properties)) {
+            if (is_array($color)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $properties)) {
-                $properties = str_replace('*', '%', $properties);
+            } elseif (preg_match('/[\%\*]/', $color)) {
+                $color = str_replace('*', '%', $color);
                 $comparison = Criteria::LIKE;
             }
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_PROPERTIES, $properties, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_COLOR, $color, $comparison);
     }
 
     /**
