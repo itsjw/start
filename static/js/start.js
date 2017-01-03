@@ -316,15 +316,22 @@ var Start = (function () {
             _postpone_area.id = 'postpone-area' + duty.id;
             _postpone_area.setAttribute('class', 'postpone-area');
             var _postpone_area_list = document.createElement("ul");
-            var postpone_options = ['+15 min', '+30 min', '+1 hour', '+2 hour', '+1 day'];
-            for (i = 0; i < postpone_options.length; i++) {
+            var postpone_options = {
+                '+15 min': 'На 15 минут',
+                '+30 min': 'На 30 минут',
+                '+1 hour': 'На 1 час',
+                '+2 hour': 'На 2 часа',
+                '+1 day': 'На 1 день',
+            };
+            var postpone_options_keys = Object.keys(postpone_options);
+            for (i = 0; i < postpone_options_keys.length; i++) {
                 (function (i) {
                     var _li = document.createElement("li");
                     var _span = document.createElement("span");
-                    _span.innerText = postpone_options[i];
+                    _span.innerText = postpone_options[postpone_options_keys[i]];
                     _span.addEventListener('click', function () {
                         if (confirm('Отложить задачу?')) {
-                            start.postponeDuty(duty.id, postpone_options[i]);
+                            start.postponeDuty(duty.id, postpone_options_keys[i]);
                         }
                     }, false);
                     _li.appendChild(_span);
