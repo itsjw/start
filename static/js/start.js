@@ -322,6 +322,7 @@ var Start = (function () {
                 '+1 hour': 'На 1 час',
                 '+2 hour': 'На 2 часа',
                 '+1 day': 'На 1 день',
+                '+2 day': 'На 2 дня'
             };
             var postpone_options_keys = Object.keys(postpone_options);
             for (i = 0; i < postpone_options_keys.length; i++) {
