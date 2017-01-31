@@ -267,7 +267,7 @@ class Start {
 
                 for (var i = 0;  i < start.duties.length; i++) {
                     (function(i) {
-                        if(start.duties[i].id === id) {
+                        if(start.duties[i].id == id) {
                             start.duties.splice(i, 1);
                         }
                     })(i)
