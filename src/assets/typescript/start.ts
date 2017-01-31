@@ -200,7 +200,7 @@ class Start {
 
                 document.getElementById('stickers-column').className = "visible";
                 document.getElementById('workspaces').className = "invisible";
-                
+
                 for (var i = 0;  i < start.duties.length; i++) {
                     (function(i) {
                         if(start.duties[i].id === id) {
@@ -349,10 +349,17 @@ class Start {
 
         sticker.id = 'sticker' + duty.id;
         sticker.setAttribute('class', 'sticker');
-        sticker.innerHTML = `
+
+        var inner_html = `
             <div style="color: #cccccc; font-size: smaller">` + duty.name + `</div>
             <div style="margin-top: 5px">` + duty.title + `</div>
         `;
+
+        if (duty.tags.length > 0) {
+            inner_html += `<div style="margin-top: 5px; font-size: smaller">` + duty.tags.join(', ') + `</div>`;
+        }
+
+        sticker.innerHTML = inner_html;
 
         if (area == 'current') {
             sticker.addEventListener('click', function () {
@@ -514,6 +521,7 @@ class Duty {
     name: string = null;
     title: string = null;
     color: string = null;
+    tags: Array = [];
     iframe: string = null;
     readonly: boolean = null;
 
@@ -532,6 +540,10 @@ class Duty {
 
         if (object.color) {
             this.color = object.color;
+        }
+
+        if (object.tags) {
+            this.tags = object.tags;
         }
 
         if (object.iframe) {

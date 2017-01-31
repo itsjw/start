@@ -20,6 +20,7 @@ class DutyFormatter
             'title' => $duty->getTitle(),
             'color' => $duty->getActivity()->getColor(),
             'readonly' => $duty->getActivity()->isReadonly(),
+            'tags' => $duty->getTags() ?: []
         ];
 
         $iframe = $duty->getActivity()->getIframe() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getName();
