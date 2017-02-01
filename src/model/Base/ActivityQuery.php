@@ -25,12 +25,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
  * @method     ChildActivityQuery orderByColor($order = Criteria::ASC) Order by the color column
+ * @method     ChildActivityQuery orderByToolbar($order = Criteria::ASC) Order by the toolbar column
  *
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByIframe() Group by the iframe column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
  * @method     ChildActivityQuery groupByColor() Group by the color column
+ * @method     ChildActivityQuery groupByToolbar() Group by the toolbar column
  *
  * @method     ChildActivityQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildActivityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -49,7 +51,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
  * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
- * @method     ChildActivity findOneByColor(string $color) Return the first ChildActivity filtered by the color column *
+ * @method     ChildActivity findOneByColor(string $color) Return the first ChildActivity filtered by the color column
+ * @method     ChildActivity findOneByToolbar(string $toolbar) Return the first ChildActivity filtered by the toolbar column *
 
  * @method     ChildActivity requirePk($key, ConnectionInterface $con = null) Return the ChildActivity by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -59,6 +62,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByColor(string $color) Return the first ChildActivity filtered by the color column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByToolbar(string $toolbar) Return the first ChildActivity filtered by the toolbar column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
@@ -66,6 +70,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
  * @method     ChildActivity[]|ObjectCollection findByColor(string $color) Return ChildActivity objects filtered by the color column
+ * @method     ChildActivity[]|ObjectCollection findByToolbar(string $toolbar) Return ChildActivity objects filtered by the toolbar column
  * @method     ChildActivity[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -158,7 +163,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, iframe, readonly, color FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, iframe, readonly, color, toolbar FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -401,6 +406,35 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_COLOR, $color, $comparison);
+    }
+
+    /**
+     * Filter the query on the toolbar column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByToolbar('fooValue');   // WHERE toolbar = 'fooValue'
+     * $query->filterByToolbar('%fooValue%'); // WHERE toolbar LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $toolbar The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByToolbar($toolbar = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($toolbar)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $toolbar)) {
+                $toolbar = str_replace('*', '%', $toolbar);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_TOOLBAR, $toolbar, $comparison);
     }
 
     /**

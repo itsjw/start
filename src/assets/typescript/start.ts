@@ -57,6 +57,20 @@ class Start {
             var query = start.search_input.value;
             start.searchDuties(query);
         });
+
+        var toolbars = document.getElementsByClassName('create-duty');
+
+        for (var i = 0; i < toolbars.length; i++) {
+            (function(i) {
+                if (typeof toolbars[i] !== 'undefined') {
+                    toolbars[i].addEventListener('click', function(event) {
+                        if (confirm('Создать задачу?')) {
+                            start.createDuty(toolbars[i].dataset.id);
+                        }
+                    });
+                }
+            })(i)
+        }
     }
 
     public loadDuties(open = null, reload = false) {
@@ -186,6 +200,34 @@ class Start {
         };
 
         request.send();
+    }
+
+    public createDuty(activity_id: number) {
+        var start = this;
+        var request = new XMLHttpRequest();
+        request.open('POST', '/duty/create', true);
+
+        request.onload = function() {
+            if (request.status >= 200 && request.status < 400) {
+                var data = JSON.parse(request.responseText);
+
+                if (data.hasOwnProperty('content') && data.content !== null) {
+                    var duty = data.content;
+
+                    if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                        document.getElementById("no-duties").style.display = 'none';
+
+                        start.addDuty(new Duty(duty), 'current');
+                    }
+                }
+            } else {
+            }
+        };
+
+        request.onerror = function() {
+        };
+
+        request.send(JSON.stringify({"activity_id": activity_id}));
     }
 
     public postponeDuty(id: number, period: string) {

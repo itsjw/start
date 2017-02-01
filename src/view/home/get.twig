@@ -9,9 +9,11 @@
 
     <style>
         * {box-sizing: border-box}
-        #navbar {border-bottom: 1px solid #eeeeee; text-align: right; margin-bottom: 10px; padding: 5px}
-        #navbar > a {color: #07c; text-decoration: none}
-        #navbar > a:visited {color: #07c}
+        #navbar {border-bottom: 1px solid #eeeeee; margin-bottom: 10px; padding: 5px}
+        #navbar > .navbar-left { float: left }
+        #navbar > .navbar-right { float: right }
+        #navbar a, #navbar span {color: #07c; text-decoration: none; cursor: pointer}
+        #navbar a:visited {color: #07c}
         #dashboard { margin: 0 auto }
         #no-duties { text-align: center; display: none }
         #no-duties > div { font-size: 30px; margin-top: 20%; color: #cccccc }
@@ -55,7 +57,17 @@
 
 <body>
 <div id="navbar">
-    <a href="{{ url('logout') }}">Выход</a>
+    <div class="navbar-left">
+        {% for toolbar in toolbars %}
+            <span class="create-duty" data-id="{{ toolbar.id }}">{{ toolbar.toolbar }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="navbar-right">
+        <a href="{{ url('logout') }}">Выход</a>
+    </div>
+
+    <div style="clear: both"></div>
 </div>
 
 <div id="dashboard">

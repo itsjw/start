@@ -95,6 +95,12 @@ abstract class Activity implements ActiveRecordInterface
     protected $color;
 
     /**
+     * The value for the toolbar field.
+     * @var        string
+     */
+    protected $toolbar;
+
+    /**
      * @var        ObjectCollection|ChildDuty[] Collection to store aggregation of ChildDuty objects.
      */
     protected $collDuties;
@@ -405,6 +411,16 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [toolbar] column value.
+     *
+     * @return string
+     */
+    public function getToolbar()
+    {
+        return $this->toolbar;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -513,6 +529,26 @@ abstract class Activity implements ActiveRecordInterface
     } // setColor()
 
     /**
+     * Set the value of [toolbar] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setToolbar($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->toolbar !== $v) {
+            $this->toolbar = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_TOOLBAR] = true;
+        }
+
+        return $this;
+    } // setToolbar()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -566,6 +602,9 @@ abstract class Activity implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->toolbar = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -574,7 +613,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 5; // 5 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -815,6 +854,9 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $modifiedColumns[':p' . $index++]  = 'color';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_TOOLBAR)) {
+            $modifiedColumns[':p' . $index++]  = 'toolbar';
+        }
 
         $sql = sprintf(
             'INSERT INTO activity (%s) VALUES (%s)',
@@ -840,6 +882,9 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'color':
                         $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
+                        break;
+                    case 'toolbar':
+                        $stmt->bindValue($identifier, $this->toolbar, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -911,6 +956,9 @@ abstract class Activity implements ActiveRecordInterface
             case 4:
                 return $this->getColor();
                 break;
+            case 5:
+                return $this->getToolbar();
+                break;
             default:
                 return null;
                 break;
@@ -946,6 +994,7 @@ abstract class Activity implements ActiveRecordInterface
             $keys[2] => $this->getIframe(),
             $keys[3] => $this->getReadonly(),
             $keys[4] => $this->getColor(),
+            $keys[5] => $this->getToolbar(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1017,6 +1066,9 @@ abstract class Activity implements ActiveRecordInterface
             case 4:
                 $this->setColor($value);
                 break;
+            case 5:
+                $this->setToolbar($value);
+                break;
         } // switch()
 
         return $this;
@@ -1057,6 +1109,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setColor($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setToolbar($arr[$keys[5]]);
         }
     }
 
@@ -1113,6 +1168,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $criteria->add(ActivityTableMap::COL_COLOR, $this->color);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_TOOLBAR)) {
+            $criteria->add(ActivityTableMap::COL_TOOLBAR, $this->toolbar);
         }
 
         return $criteria;
@@ -1204,6 +1262,7 @@ abstract class Activity implements ActiveRecordInterface
         $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
         $copyObj->setColor($this->getColor());
+        $copyObj->setToolbar($this->getToolbar());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1492,6 +1551,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->iframe = null;
         $this->readonly = null;
         $this->color = null;
+        $this->toolbar = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

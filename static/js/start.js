@@ -42,6 +42,18 @@ var Start = (function () {
             var query = start.search_input.value;
             start.searchDuties(query);
         });
+        var toolbars = document.getElementsByClassName('create-duty');
+        for (var i = 0; i < toolbars.length; i++) {
+            (function (i) {
+                if (typeof toolbars[i] !== 'undefined') {
+                    toolbars[i].addEventListener('click', function (event) {
+                        if (confirm('Создать задачу?')) {
+                            start.createDuty(toolbars[i].dataset.id);
+                        }
+                    });
+                }
+            })(i);
+        }
     };
     Start.prototype.loadDuties = function (open, reload) {
         if (open === void 0) { open = null; }
@@ -147,6 +159,28 @@ var Start = (function () {
         request.onerror = function () {
         };
         request.send();
+    };
+    Start.prototype.createDuty = function (activity_id) {
+        var start = this;
+        var request = new XMLHttpRequest();
+        request.open('POST', '/duty/create', true);
+        request.onload = function () {
+            if (request.status >= 200 && request.status < 400) {
+                var data = JSON.parse(request.responseText);
+                if (data.hasOwnProperty('content') && data.content !== null) {
+                    var duty = data.content;
+                    if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                        document.getElementById("no-duties").style.display = 'none';
+                        start.addDuty(new Duty(duty), 'current');
+                    }
+                }
+            }
+            else {
+            }
+        };
+        request.onerror = function () {
+        };
+        request.send(JSON.stringify({ "activity_id": activity_id }));
     };
     Start.prototype.postponeDuty = function (id, period) {
         var start = this;
