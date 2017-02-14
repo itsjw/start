@@ -9,6 +9,7 @@ use App\Model\ApplicationQuery as ChildApplicationQuery;
 use App\Model\Session as ChildSession;
 use App\Model\SessionQuery as ChildSessionQuery;
 use App\Model\Map\ApplicationTableMap;
+use App\Model\Map\SessionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -27,8 +28,8 @@ use Propel\Runtime\Parser\AbstractParser;
  *
  *
  *
-* @package    propel.generator..Base
-*/
+ * @package    propel.generator..Base
+ */
 abstract class Application implements ActiveRecordInterface
 {
     /**
@@ -65,18 +66,21 @@ abstract class Application implements ActiveRecordInterface
 
     /**
      * The value for the id field.
+     *
      * @var        int
      */
     protected $id;
 
     /**
      * The value for the name field.
+     *
      * @var        string
      */
     protected $name;
 
     /**
      * The value for the token field.
+     *
      * @var        string
      */
     protected $token;
@@ -315,7 +319,15 @@ abstract class Application implements ActiveRecordInterface
     {
         $this->clearAllReferences();
 
-        return array_keys(get_object_vars($this));
+        $cls = new \ReflectionClass($this);
+        $propertyNames = [];
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+
+        foreach($serializableProperties as $property) {
+            $propertyNames[] = $property->getName();
+        }
+
+        return $propertyNames;
     }
 
     /**
@@ -576,13 +588,17 @@ abstract class Application implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(ApplicationTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
-            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
             } else {
@@ -678,7 +694,7 @@ abstract class Application implements ActiveRecordInterface
         if (null === $this->id) {
             try {
                 $dataFetcher = $con->query("SELECT nextval('_application_id_seq')");
-                $this->id = $dataFetcher->fetchColumn();
+                $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
             }
@@ -1147,7 +1163,10 @@ abstract class Application implements ActiveRecordInterface
         if (null !== $this->collSessions && !$overrideExisting) {
             return;
         }
-        $this->collSessions = new ObjectCollection();
+
+        $collectionClassName = SessionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collSessions = new $collectionClassName;
         $this->collSessions->setModel('\App\Model\Session');
     }
 
@@ -1292,6 +1311,10 @@ abstract class Application implements ActiveRecordInterface
 
         if (!$this->collSessions->contains($l)) {
             $this->doAddSession($l);
+
+            if ($this->sessionsScheduledForDeletion and $this->sessionsScheduledForDeletion->contains($l)) {
+                $this->sessionsScheduledForDeletion->remove($this->sessionsScheduledForDeletion->search($l));
+            }
         }
 
         return $this;
@@ -1381,6 +1404,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
         return true;
     }
 
@@ -1390,7 +1416,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
     }
 
     /**
@@ -1400,6 +1428,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
         return true;
     }
 
@@ -1409,7 +1440,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
     }
 
     /**
@@ -1419,6 +1452,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
         return true;
     }
 
@@ -1428,7 +1464,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
     }
 
     /**
@@ -1438,6 +1476,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
         return true;
     }
 
@@ -1447,7 +1488,9 @@ abstract class Application implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
     }
 
 

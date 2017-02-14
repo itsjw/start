@@ -38,9 +38,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildActivityQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildActivityQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildActivityQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildActivityQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildActivityQuery leftJoinDuty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Duty relation
  * @method     ChildActivityQuery rightJoinDuty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Duty relation
  * @method     ChildActivityQuery innerJoinDuty($relationAlias = null) Adds a INNER JOIN clause to the query using the Duty relation
+ *
+ * @method     ChildActivityQuery joinWithDuty($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Duty relation
+ *
+ * @method     ChildActivityQuery leftJoinWithDuty() Adds a LEFT JOIN clause and with to the query using the Duty relation
+ * @method     ChildActivityQuery rightJoinWithDuty() Adds a RIGHT JOIN clause and with to the query using the Duty relation
+ * @method     ChildActivityQuery innerJoinWithDuty() Adds a INNER JOIN clause and with to the query using the Duty relation
  *
  * @method     \Perfumerlabs\Start\Model\DutyQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -133,21 +143,27 @@ abstract class ActivityQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = ActivityTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
-            // the object is already in the instance pool
-            return $obj;
-        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection(ActivityTableMap::DATABASE_NAME);
         }
+
         $this->basePreSelect($con);
-        if ($this->formatter || $this->modelAlias || $this->with || $this->select
-         || $this->selectColumns || $this->asColumns || $this->selectModifiers
-         || $this->map || $this->having || $this->joins) {
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
             return $this->findPkComplex($key, $con);
-        } else {
-            return $this->findPkSimple($key, $con);
         }
+
+        if ((null !== ($obj = ActivityTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
     }
 
     /**
@@ -177,7 +193,7 @@ abstract class ActivityQuery extends ModelCriteria
             /** @var ChildActivity $obj */
             $obj = new ChildActivity();
             $obj->hydrate($row);
-            ActivityTableMap::addInstanceToPool($obj, (string) $key);
+            ActivityTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -300,11 +316,10 @@ abstract class ActivityQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
@@ -314,9 +329,6 @@ abstract class ActivityQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($name)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -329,11 +341,10 @@ abstract class ActivityQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByIframe('fooValue');   // WHERE iframe = 'fooValue'
-     * $query->filterByIframe('%fooValue%'); // WHERE iframe LIKE '%fooValue%'
+     * $query->filterByIframe('%fooValue%', Criteria::LIKE); // WHERE iframe LIKE '%fooValue%'
      * </code>
      *
      * @param     string $iframe The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
@@ -343,9 +354,6 @@ abstract class ActivityQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($iframe)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $iframe)) {
-                $iframe = str_replace('*', '%', $iframe);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -385,11 +393,10 @@ abstract class ActivityQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByColor('fooValue');   // WHERE color = 'fooValue'
-     * $query->filterByColor('%fooValue%'); // WHERE color LIKE '%fooValue%'
+     * $query->filterByColor('%fooValue%', Criteria::LIKE); // WHERE color LIKE '%fooValue%'
      * </code>
      *
      * @param     string $color The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
@@ -399,9 +406,6 @@ abstract class ActivityQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($color)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $color)) {
-                $color = str_replace('*', '%', $color);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -414,11 +418,10 @@ abstract class ActivityQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByToolbar('fooValue');   // WHERE toolbar = 'fooValue'
-     * $query->filterByToolbar('%fooValue%'); // WHERE toolbar LIKE '%fooValue%'
+     * $query->filterByToolbar('%fooValue%', Criteria::LIKE); // WHERE toolbar LIKE '%fooValue%'
      * </code>
      *
      * @param     string $toolbar The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
@@ -428,9 +431,6 @@ abstract class ActivityQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($toolbar)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $toolbar)) {
-                $toolbar = str_replace('*', '%', $toolbar);
-                $comparison = Criteria::LIKE;
             }
         }
 

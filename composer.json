@@ -12,12 +12,12 @@
     ],
     "require": {
         "perfumer/framework": "0.1.0",
-        "propel/propel": "2.0.0-alpha5",
+        "propel/propel": "2.0.0-alpha7",
         "pwfisher/command-line-php": "dev-master",
-        "symfony/console": "~2",
-        "symfony/http-foundation": "~2",
-        "symfony/translation": "~2",
-        "symfony/validator": "~2",
+        "symfony/console": "~3",
+        "symfony/http-foundation": "~3",
+        "symfony/translation": "~3",
+        "symfony/validator": "~3",
         "tedivm/stash": "~0.13.0",
         "twig/twig": "~1",
         "erusev/parsedown": "1.6.0"

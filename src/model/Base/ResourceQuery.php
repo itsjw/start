@@ -31,6 +31,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildResourceQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildResourceQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildResourceQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildResourceQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildResourceQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildResource findOne(ConnectionInterface $con = null) Return the first ChildResource matching the query
  * @method     ChildResource findOneOrCreate(ConnectionInterface $con = null) Return the first ChildResource matching the query, or a new ChildResource object populated from the query conditions when no match is found
  *
@@ -111,21 +115,27 @@ abstract class ResourceQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = ResourceTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
-            // the object is already in the instance pool
-            return $obj;
-        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection(ResourceTableMap::DATABASE_NAME);
         }
+
         $this->basePreSelect($con);
-        if ($this->formatter || $this->modelAlias || $this->with || $this->select
-         || $this->selectColumns || $this->asColumns || $this->selectModifiers
-         || $this->map || $this->having || $this->joins) {
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
             return $this->findPkComplex($key, $con);
-        } else {
-            return $this->findPkSimple($key, $con);
         }
+
+        if ((null !== ($obj = ResourceTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
     }
 
     /**
@@ -155,7 +165,7 @@ abstract class ResourceQuery extends ModelCriteria
             /** @var ChildResource $obj */
             $obj = new ChildResource();
             $obj->hydrate($row);
-            ResourceTableMap::addInstanceToPool($obj, (string) $key);
+            ResourceTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -278,11 +288,10 @@ abstract class ResourceQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildResourceQuery The current query, for fluid interface
@@ -292,9 +301,6 @@ abstract class ResourceQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($name)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -307,11 +313,10 @@ abstract class ResourceQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByValue('fooValue');   // WHERE value = 'fooValue'
-     * $query->filterByValue('%fooValue%'); // WHERE value LIKE '%fooValue%'
+     * $query->filterByValue('%fooValue%', Criteria::LIKE); // WHERE value LIKE '%fooValue%'
      * </code>
      *
      * @param     string $value The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildResourceQuery The current query, for fluid interface
@@ -321,9 +326,6 @@ abstract class ResourceQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($value)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $value)) {
-                $value = str_replace('*', '%', $value);
-                $comparison = Criteria::LIKE;
             }
         }
 

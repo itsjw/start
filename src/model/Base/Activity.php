@@ -9,6 +9,7 @@ use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
 use Perfumerlabs\Start\Model\Duty as ChildDuty;
 use Perfumerlabs\Start\Model\DutyQuery as ChildDutyQuery;
 use Perfumerlabs\Start\Model\Map\ActivityTableMap;
+use Perfumerlabs\Start\Model\Map\DutyTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -27,8 +28,8 @@ use Propel\Runtime\Parser\AbstractParser;
  *
  *
  *
-* @package    propel.generator..Base
-*/
+ * @package    propel.generator..Base
+ */
 abstract class Activity implements ActiveRecordInterface
 {
     /**
@@ -65,24 +66,28 @@ abstract class Activity implements ActiveRecordInterface
 
     /**
      * The value for the id field.
+     *
      * @var        int
      */
     protected $id;
 
     /**
      * The value for the name field.
+     *
      * @var        string
      */
     protected $name;
 
     /**
      * The value for the iframe field.
+     *
      * @var        string
      */
     protected $iframe;
 
     /**
      * The value for the readonly field.
+     *
      * Note: this column has a database default value of: false
      * @var        boolean
      */
@@ -90,12 +95,14 @@ abstract class Activity implements ActiveRecordInterface
 
     /**
      * The value for the color field.
+     *
      * @var        string
      */
     protected $color;
 
     /**
      * The value for the toolbar field.
+     *
      * @var        string
      */
     protected $toolbar;
@@ -347,7 +354,15 @@ abstract class Activity implements ActiveRecordInterface
     {
         $this->clearAllReferences();
 
-        return array_keys(get_object_vars($this));
+        $cls = new \ReflectionClass($this);
+        $propertyNames = [];
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+
+        foreach($serializableProperties as $property) {
+            $propertyNames[] = $property->getName();
+        }
+
+        return $propertyNames;
     }
 
     /**
@@ -729,13 +744,17 @@ abstract class Activity implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(ActivityTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
-            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
             } else {
@@ -831,7 +850,7 @@ abstract class Activity implements ActiveRecordInterface
         if (null === $this->id) {
             try {
                 $dataFetcher = $con->query("SELECT nextval('activity_id_seq')");
-                $this->id = $dataFetcher->fetchColumn();
+                $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
             }
@@ -1360,7 +1379,10 @@ abstract class Activity implements ActiveRecordInterface
         if (null !== $this->collDuties && !$overrideExisting) {
             return;
         }
-        $this->collDuties = new ObjectCollection();
+
+        $collectionClassName = DutyTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collDuties = new $collectionClassName;
         $this->collDuties->setModel('\Perfumerlabs\Start\Model\Duty');
     }
 
@@ -1505,6 +1527,10 @@ abstract class Activity implements ActiveRecordInterface
 
         if (!$this->collDuties->contains($l)) {
             $this->doAddDuty($l);
+
+            if ($this->dutiesScheduledForDeletion and $this->dutiesScheduledForDeletion->contains($l)) {
+                $this->dutiesScheduledForDeletion->remove($this->dutiesScheduledForDeletion->search($l));
+            }
         }
 
         return $this;
@@ -1598,6 +1624,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
         return true;
     }
 
@@ -1607,7 +1636,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
     }
 
     /**
@@ -1617,6 +1648,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
         return true;
     }
 
@@ -1626,7 +1660,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
     }
 
     /**
@@ -1636,6 +1672,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
         return true;
     }
 
@@ -1645,7 +1684,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
     }
 
     /**
@@ -1655,6 +1696,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
         return true;
     }
 
@@ -1664,7 +1708,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
     }
 
 

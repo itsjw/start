@@ -28,8 +28,8 @@ use Propel\Runtime\Util\PropelDateTime;
  *
  *
  *
-* @package    propel.generator..Base
-*/
+ * @package    propel.generator..Base
+ */
 abstract class Duty implements ActiveRecordInterface
 {
     /**
@@ -66,60 +66,70 @@ abstract class Duty implements ActiveRecordInterface
 
     /**
      * The value for the id field.
+     *
      * @var        int
      */
     protected $id;
 
     /**
      * The value for the user_id field.
+     *
      * @var        int
      */
     protected $user_id;
 
     /**
      * The value for the activity_id field.
+     *
      * @var        int
      */
     protected $activity_id;
 
     /**
      * The value for the priority field.
+     *
      * @var        int
      */
     protected $priority;
 
     /**
      * The value for the title field.
+     *
      * @var        string
      */
     protected $title;
 
     /**
      * The value for the query field.
+     *
      * @var        string
      */
     protected $query;
 
     /**
      * The value for the raised_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $raised_at;
 
     /**
      * The value for the picked_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $picked_at;
 
     /**
      * The value for the closed_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $closed_at;
 
     /**
      * The value for the tags field.
+     *
      * @var        array
      */
     protected $tags;
@@ -133,13 +143,15 @@ abstract class Duty implements ActiveRecordInterface
 
     /**
      * The value for the created_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $created_at;
 
     /**
      * The value for the updated_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $updated_at;
 
@@ -370,7 +382,15 @@ abstract class Duty implements ActiveRecordInterface
     {
         $this->clearAllReferences();
 
-        return array_keys(get_object_vars($this));
+        $cls = new \ReflectionClass($this);
+        $propertyNames = [];
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+
+        foreach($serializableProperties as $property) {
+            $propertyNames[] = $property->getName();
+        }
+
+        return $propertyNames;
     }
 
     /**
@@ -449,7 +469,7 @@ abstract class Duty implements ActiveRecordInterface
         if ($format === null) {
             return $this->raised_at;
         } else {
-            return $this->raised_at instanceof \DateTime ? $this->raised_at->format($format) : null;
+            return $this->raised_at instanceof \DateTimeInterface ? $this->raised_at->format($format) : null;
         }
     }
 
@@ -469,7 +489,7 @@ abstract class Duty implements ActiveRecordInterface
         if ($format === null) {
             return $this->picked_at;
         } else {
-            return $this->picked_at instanceof \DateTime ? $this->picked_at->format($format) : null;
+            return $this->picked_at instanceof \DateTimeInterface ? $this->picked_at->format($format) : null;
         }
     }
 
@@ -489,7 +509,7 @@ abstract class Duty implements ActiveRecordInterface
         if ($format === null) {
             return $this->closed_at;
         } else {
-            return $this->closed_at instanceof \DateTime ? $this->closed_at->format($format) : null;
+            return $this->closed_at instanceof \DateTimeInterface ? $this->closed_at->format($format) : null;
         }
     }
 
@@ -505,7 +525,7 @@ abstract class Duty implements ActiveRecordInterface
         }
         if (!$this->tags_unserialized && null !== $this->tags) {
             $tags_unserialized = substr($this->tags, 2, -2);
-            $this->tags_unserialized = $tags_unserialized ? explode(' | ', $tags_unserialized) : array();
+            $this->tags_unserialized = '' !== $tags_unserialized ? explode(' | ', $tags_unserialized) : array();
         }
 
         return $this->tags_unserialized;
@@ -538,7 +558,7 @@ abstract class Duty implements ActiveRecordInterface
         if ($format === null) {
             return $this->created_at;
         } else {
-            return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
         }
     }
 
@@ -558,7 +578,7 @@ abstract class Duty implements ActiveRecordInterface
         if ($format === null) {
             return $this->updated_at;
         } else {
-            return $this->updated_at instanceof \DateTime ? $this->updated_at->format($format) : null;
+            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
         }
     }
 
@@ -689,7 +709,7 @@ abstract class Duty implements ActiveRecordInterface
     /**
      * Sets the value of [raised_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
      */
@@ -697,7 +717,7 @@ abstract class Duty implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->raised_at !== null || $dt !== null) {
-            if ($this->raised_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->raised_at->format("Y-m-d H:i:s")) {
+            if ($this->raised_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->raised_at->format("Y-m-d H:i:s.u")) {
                 $this->raised_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[DutyTableMap::COL_RAISED_AT] = true;
             }
@@ -709,7 +729,7 @@ abstract class Duty implements ActiveRecordInterface
     /**
      * Sets the value of [picked_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
      */
@@ -717,7 +737,7 @@ abstract class Duty implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->picked_at !== null || $dt !== null) {
-            if ($this->picked_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->picked_at->format("Y-m-d H:i:s")) {
+            if ($this->picked_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->picked_at->format("Y-m-d H:i:s.u")) {
                 $this->picked_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[DutyTableMap::COL_PICKED_AT] = true;
             }
@@ -729,7 +749,7 @@ abstract class Duty implements ActiveRecordInterface
     /**
      * Sets the value of [closed_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
      */
@@ -737,7 +757,7 @@ abstract class Duty implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->closed_at !== null || $dt !== null) {
-            if ($this->closed_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->closed_at->format("Y-m-d H:i:s")) {
+            if ($this->closed_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->closed_at->format("Y-m-d H:i:s.u")) {
                 $this->closed_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[DutyTableMap::COL_CLOSED_AT] = true;
             }
@@ -800,7 +820,7 @@ abstract class Duty implements ActiveRecordInterface
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
      */
@@ -808,7 +828,7 @@ abstract class Duty implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
                 $this->created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[DutyTableMap::COL_CREATED_AT] = true;
             }
@@ -820,7 +840,7 @@ abstract class Duty implements ActiveRecordInterface
     /**
      * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
      */
@@ -828,7 +848,7 @@ abstract class Duty implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->updated_at->format("Y-m-d H:i:s")) {
+            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
                 $this->updated_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[DutyTableMap::COL_UPDATED_AT] = true;
             }
@@ -1035,28 +1055,32 @@ abstract class Duty implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(DutyTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
-            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
 
                 if (!$this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(time());
+                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
                 if (!$this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(time());
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             } else {
                 $ret = $ret && $this->preUpdate($con);
                 // timestampable behavior
                 if ($this->isModified() && !$this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(time());
+                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             }
             if ($ret) {
@@ -1143,7 +1167,7 @@ abstract class Duty implements ActiveRecordInterface
         if (null === $this->id) {
             try {
                 $dataFetcher = $con->query("SELECT nextval('duty_id_seq')");
-                $this->id = $dataFetcher->fetchColumn();
+                $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
             }
@@ -1217,22 +1241,22 @@ abstract class Duty implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->query, PDO::PARAM_STR);
                         break;
                     case 'raised_at':
-                        $stmt->bindValue($identifier, $this->raised_at ? $this->raised_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->raised_at ? $this->raised_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'picked_at':
-                        $stmt->bindValue($identifier, $this->picked_at ? $this->picked_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->picked_at ? $this->picked_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'closed_at':
-                        $stmt->bindValue($identifier, $this->closed_at ? $this->closed_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->closed_at ? $this->closed_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'tags':
                         $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
                         break;
                     case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1368,36 +1392,24 @@ abstract class Duty implements ActiveRecordInterface
             $keys[10] => $this->getCreatedAt(),
             $keys[11] => $this->getUpdatedAt(),
         );
-
-        $utc = new \DateTimeZone('utc');
         if ($result[$keys[6]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[6]];
-            $result[$keys[6]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
         }
 
         if ($result[$keys[7]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[7]];
-            $result[$keys[7]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         if ($result[$keys[8]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[8]];
-            $result[$keys[8]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
         }
 
         if ($result[$keys[10]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[10]];
-            $result[$keys[10]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
 
         if ($result[$keys[11]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[11]];
-            $result[$keys[11]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[11]] = $result[$keys[11]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1887,6 +1899,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
         return true;
     }
 
@@ -1896,7 +1911,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
     }
 
     /**
@@ -1906,6 +1923,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
         return true;
     }
 
@@ -1915,7 +1935,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
     }
 
     /**
@@ -1925,6 +1947,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
         return true;
     }
 
@@ -1934,7 +1959,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
     }
 
     /**
@@ -1944,6 +1971,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
         return true;
     }
 
@@ -1953,7 +1983,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
     }
 
 

@@ -25,8 +25,8 @@ use Propel\Runtime\Util\PropelDateTime;
  *
  *
  *
-* @package    propel.generator..Base
-*/
+ * @package    propel.generator..Base
+ */
 abstract class Schedule implements ActiveRecordInterface
 {
     /**
@@ -63,24 +63,28 @@ abstract class Schedule implements ActiveRecordInterface
 
     /**
      * The value for the id field.
+     *
      * @var        int
      */
     protected $id;
 
     /**
      * The value for the user_id field.
+     *
      * @var        int
      */
     protected $user_id;
 
     /**
      * The value for the role_id field.
+     *
      * @var        int
      */
     protected $role_id;
 
     /**
      * The value for the activities field.
+     *
      * @var        array
      */
     protected $activities;
@@ -94,25 +98,29 @@ abstract class Schedule implements ActiveRecordInterface
 
     /**
      * The value for the week_day field.
+     *
      * @var        int
      */
     protected $week_day;
 
     /**
      * The value for the _date field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $_date;
 
     /**
      * The value for the time_from field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $time_from;
 
     /**
      * The value for the time_to field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $time_to;
 
@@ -338,7 +346,15 @@ abstract class Schedule implements ActiveRecordInterface
     {
         $this->clearAllReferences();
 
-        return array_keys(get_object_vars($this));
+        $cls = new \ReflectionClass($this);
+        $propertyNames = [];
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+
+        foreach($serializableProperties as $property) {
+            $propertyNames[] = $property->getName();
+        }
+
+        return $propertyNames;
     }
 
     /**
@@ -383,7 +399,7 @@ abstract class Schedule implements ActiveRecordInterface
         }
         if (!$this->activities_unserialized && null !== $this->activities) {
             $activities_unserialized = substr($this->activities, 2, -2);
-            $this->activities_unserialized = $activities_unserialized ? explode(' | ', $activities_unserialized) : array();
+            $this->activities_unserialized = '' !== $activities_unserialized ? explode(' | ', $activities_unserialized) : array();
         }
 
         return $this->activities_unserialized;
@@ -426,7 +442,7 @@ abstract class Schedule implements ActiveRecordInterface
         if ($format === null) {
             return $this->_date;
         } else {
-            return $this->_date instanceof \DateTime ? $this->_date->format($format) : null;
+            return $this->_date instanceof \DateTimeInterface ? $this->_date->format($format) : null;
         }
     }
 
@@ -446,7 +462,7 @@ abstract class Schedule implements ActiveRecordInterface
         if ($format === null) {
             return $this->time_from;
         } else {
-            return $this->time_from instanceof \DateTime ? $this->time_from->format($format) : null;
+            return $this->time_from instanceof \DateTimeInterface ? $this->time_from->format($format) : null;
         }
     }
 
@@ -466,7 +482,7 @@ abstract class Schedule implements ActiveRecordInterface
         if ($format === null) {
             return $this->time_to;
         } else {
-            return $this->time_to instanceof \DateTime ? $this->time_to->format($format) : null;
+            return $this->time_to instanceof \DateTimeInterface ? $this->time_to->format($format) : null;
         }
     }
 
@@ -604,7 +620,7 @@ abstract class Schedule implements ActiveRecordInterface
     /**
      * Sets the value of [_date] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
@@ -624,7 +640,7 @@ abstract class Schedule implements ActiveRecordInterface
     /**
      * Sets the value of [time_from] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
@@ -632,7 +648,7 @@ abstract class Schedule implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->time_from !== null || $dt !== null) {
-            if ($this->time_from === null || $dt === null || $dt->format("H:i:s") !== $this->time_from->format("H:i:s")) {
+            if ($this->time_from === null || $dt === null || $dt->format("H:i:s.u") !== $this->time_from->format("H:i:s.u")) {
                 $this->time_from = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[ScheduleTableMap::COL_TIME_FROM] = true;
             }
@@ -644,7 +660,7 @@ abstract class Schedule implements ActiveRecordInterface
     /**
      * Sets the value of [time_to] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
@@ -652,7 +668,7 @@ abstract class Schedule implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->time_to !== null || $dt !== null) {
-            if ($this->time_to === null || $dt === null || $dt->format("H:i:s") !== $this->time_to->format("H:i:s")) {
+            if ($this->time_to === null || $dt === null || $dt->format("H:i:s.u") !== $this->time_to->format("H:i:s.u")) {
                 $this->time_to = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[ScheduleTableMap::COL_TIME_TO] = true;
             }
@@ -843,13 +859,17 @@ abstract class Schedule implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
-            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
             } else {
@@ -927,7 +947,7 @@ abstract class Schedule implements ActiveRecordInterface
         if (null === $this->id) {
             try {
                 $dataFetcher = $con->query("SELECT nextval('schedule_id_seq')");
-                $this->id = $dataFetcher->fetchColumn();
+                $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
             }
@@ -986,13 +1006,13 @@ abstract class Schedule implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->week_day, PDO::PARAM_INT);
                         break;
                     case '_date':
-                        $stmt->bindValue($identifier, $this->_date ? $this->_date->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->_date ? $this->_date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'time_from':
-                        $stmt->bindValue($identifier, $this->time_from ? $this->time_from->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->time_from ? $this->time_from->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'time_to':
-                        $stmt->bindValue($identifier, $this->time_to ? $this->time_to->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->time_to ? $this->time_to->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1111,24 +1131,16 @@ abstract class Schedule implements ActiveRecordInterface
             $keys[6] => $this->getTimeFrom(),
             $keys[7] => $this->getTimeTo(),
         );
-
-        $utc = new \DateTimeZone('utc');
         if ($result[$keys[5]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[5]];
-            $result[$keys[5]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         if ($result[$keys[6]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[6]];
-            $result[$keys[6]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
         }
 
         if ($result[$keys[7]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[7]];
-            $result[$keys[7]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1488,6 +1500,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
         return true;
     }
 
@@ -1497,7 +1512,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
     }
 
     /**
@@ -1507,6 +1524,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
         return true;
     }
 
@@ -1516,7 +1536,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
     }
 
     /**
@@ -1526,6 +1548,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
         return true;
     }
 
@@ -1535,7 +1560,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
     }
 
     /**
@@ -1545,6 +1572,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
         return true;
     }
 
@@ -1554,7 +1584,9 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
     }
 
 

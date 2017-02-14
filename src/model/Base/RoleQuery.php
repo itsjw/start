@@ -32,9 +32,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRoleQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildRoleQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildRoleQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildRoleQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildRoleQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildRoleQuery leftJoinUserRole($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserRole relation
  * @method     ChildRoleQuery rightJoinUserRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserRole relation
  * @method     ChildRoleQuery innerJoinUserRole($relationAlias = null) Adds a INNER JOIN clause to the query using the UserRole relation
+ *
+ * @method     ChildRoleQuery joinWithUserRole($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the UserRole relation
+ *
+ * @method     ChildRoleQuery leftJoinWithUserRole() Adds a LEFT JOIN clause and with to the query using the UserRole relation
+ * @method     ChildRoleQuery rightJoinWithUserRole() Adds a RIGHT JOIN clause and with to the query using the UserRole relation
+ * @method     ChildRoleQuery innerJoinWithUserRole() Adds a INNER JOIN clause and with to the query using the UserRole relation
  *
  * @method     \App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -118,21 +128,27 @@ abstract class RoleQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = RoleTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
-            // the object is already in the instance pool
-            return $obj;
-        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection(RoleTableMap::DATABASE_NAME);
         }
+
         $this->basePreSelect($con);
-        if ($this->formatter || $this->modelAlias || $this->with || $this->select
-         || $this->selectColumns || $this->asColumns || $this->selectModifiers
-         || $this->map || $this->having || $this->joins) {
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
             return $this->findPkComplex($key, $con);
-        } else {
-            return $this->findPkSimple($key, $con);
         }
+
+        if ((null !== ($obj = RoleTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
     }
 
     /**
@@ -162,7 +178,7 @@ abstract class RoleQuery extends ModelCriteria
             /** @var ChildRole $obj */
             $obj = new ChildRole();
             $obj->hydrate($row);
-            RoleTableMap::addInstanceToPool($obj, (string) $key);
+            RoleTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -285,11 +301,10 @@ abstract class RoleQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+     * $query->filterByName('%fooValue%', Criteria::LIKE); // WHERE name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildRoleQuery The current query, for fluid interface
@@ -299,9 +314,6 @@ abstract class RoleQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($name)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -314,11 +326,10 @@ abstract class RoleQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByPermission('fooValue');   // WHERE permission = 'fooValue'
-     * $query->filterByPermission('%fooValue%'); // WHERE permission LIKE '%fooValue%'
+     * $query->filterByPermission('%fooValue%', Criteria::LIKE); // WHERE permission LIKE '%fooValue%'
      * </code>
      *
      * @param     string $permission The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildRoleQuery The current query, for fluid interface
@@ -328,9 +339,6 @@ abstract class RoleQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($permission)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $permission)) {
-                $permission = str_replace('*', '%', $permission);
-                $comparison = Criteria::LIKE;
             }
         }
 

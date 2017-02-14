@@ -50,9 +50,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildDutyQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildDutyQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildDutyQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildDutyQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildDutyQuery leftJoinActivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the Activity relation
  * @method     ChildDutyQuery rightJoinActivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Activity relation
  * @method     ChildDutyQuery innerJoinActivity($relationAlias = null) Adds a INNER JOIN clause to the query using the Activity relation
+ *
+ * @method     ChildDutyQuery joinWithActivity($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Activity relation
+ *
+ * @method     ChildDutyQuery leftJoinWithActivity() Adds a LEFT JOIN clause and with to the query using the Activity relation
+ * @method     ChildDutyQuery rightJoinWithActivity() Adds a RIGHT JOIN clause and with to the query using the Activity relation
+ * @method     ChildDutyQuery innerJoinWithActivity() Adds a INNER JOIN clause and with to the query using the Activity relation
  *
  * @method     \Perfumerlabs\Start\Model\ActivityQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -163,21 +173,27 @@ abstract class DutyQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = DutyTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
-            // the object is already in the instance pool
-            return $obj;
-        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection(DutyTableMap::DATABASE_NAME);
         }
+
         $this->basePreSelect($con);
-        if ($this->formatter || $this->modelAlias || $this->with || $this->select
-         || $this->selectColumns || $this->asColumns || $this->selectModifiers
-         || $this->map || $this->having || $this->joins) {
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
             return $this->findPkComplex($key, $con);
-        } else {
-            return $this->findPkSimple($key, $con);
         }
+
+        if ((null !== ($obj = DutyTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
     }
 
     /**
@@ -207,7 +223,7 @@ abstract class DutyQuery extends ModelCriteria
             /** @var ChildDuty $obj */
             $obj = new ChildDuty();
             $obj->hydrate($row);
-            DutyTableMap::addInstanceToPool($obj, (string) $key);
+            DutyTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -455,11 +471,10 @@ abstract class DutyQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByTitle('fooValue');   // WHERE title = 'fooValue'
-     * $query->filterByTitle('%fooValue%'); // WHERE title LIKE '%fooValue%'
+     * $query->filterByTitle('%fooValue%', Criteria::LIKE); // WHERE title LIKE '%fooValue%'
      * </code>
      *
      * @param     string $title The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildDutyQuery The current query, for fluid interface
@@ -469,9 +484,6 @@ abstract class DutyQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($title)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $title)) {
-                $title = str_replace('*', '%', $title);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -484,11 +496,10 @@ abstract class DutyQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByQuery('fooValue');   // WHERE query = 'fooValue'
-     * $query->filterByQuery('%fooValue%'); // WHERE query LIKE '%fooValue%'
+     * $query->filterByQuery('%fooValue%', Criteria::LIKE); // WHERE query LIKE '%fooValue%'
      * </code>
      *
      * @param     string $query The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildDutyQuery The current query, for fluid interface
@@ -498,9 +509,6 @@ abstract class DutyQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($query)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $query)) {
-                $query = str_replace('*', '%', $query);
-                $comparison = Criteria::LIKE;
             }
         }
 

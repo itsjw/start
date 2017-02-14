@@ -40,9 +40,19 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSessionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildSessionQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     ChildSessionQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
+ * @method     ChildSessionQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
+ * @method     ChildSessionQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
  * @method     ChildSessionQuery leftJoinApplication($relationAlias = null) Adds a LEFT JOIN clause to the query using the Application relation
  * @method     ChildSessionQuery rightJoinApplication($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Application relation
  * @method     ChildSessionQuery innerJoinApplication($relationAlias = null) Adds a INNER JOIN clause to the query using the Application relation
+ *
+ * @method     ChildSessionQuery joinWithApplication($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Application relation
+ *
+ * @method     ChildSessionQuery leftJoinWithApplication() Adds a LEFT JOIN clause and with to the query using the Application relation
+ * @method     ChildSessionQuery rightJoinWithApplication() Adds a RIGHT JOIN clause and with to the query using the Application relation
+ * @method     ChildSessionQuery innerJoinWithApplication() Adds a INNER JOIN clause and with to the query using the Application relation
  *
  * @method     \App\Model\ApplicationQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
@@ -138,21 +148,27 @@ abstract class SessionQuery extends ModelCriteria
         if ($key === null) {
             return null;
         }
-        if ((null !== ($obj = SessionTableMap::getInstanceFromPool((string) $key))) && !$this->formatter) {
-            // the object is already in the instance pool
-            return $obj;
-        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getReadConnection(SessionTableMap::DATABASE_NAME);
         }
+
         $this->basePreSelect($con);
-        if ($this->formatter || $this->modelAlias || $this->with || $this->select
-         || $this->selectColumns || $this->asColumns || $this->selectModifiers
-         || $this->map || $this->having || $this->joins) {
+
+        if (
+            $this->formatter || $this->modelAlias || $this->with || $this->select
+            || $this->selectColumns || $this->asColumns || $this->selectModifiers
+            || $this->map || $this->having || $this->joins
+        ) {
             return $this->findPkComplex($key, $con);
-        } else {
-            return $this->findPkSimple($key, $con);
         }
+
+        if ((null !== ($obj = SessionTableMap::getInstanceFromPool(null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key)))) {
+            // the object is already in the instance pool
+            return $obj;
+        }
+
+        return $this->findPkSimple($key, $con);
     }
 
     /**
@@ -182,7 +198,7 @@ abstract class SessionQuery extends ModelCriteria
             /** @var ChildSession $obj */
             $obj = new ChildSession();
             $obj->hydrate($row);
-            SessionTableMap::addInstanceToPool($obj, (string) $key);
+            SessionTableMap::addInstanceToPool($obj, null === $key || is_scalar($key) || is_callable([$key, '__toString']) ? (string) $key : $key);
         }
         $stmt->closeCursor();
 
@@ -305,11 +321,10 @@ abstract class SessionQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByToken('fooValue');   // WHERE token = 'fooValue'
-     * $query->filterByToken('%fooValue%'); // WHERE token LIKE '%fooValue%'
+     * $query->filterByToken('%fooValue%', Criteria::LIKE); // WHERE token LIKE '%fooValue%'
      * </code>
      *
      * @param     string $token The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSessionQuery The current query, for fluid interface
@@ -319,9 +334,6 @@ abstract class SessionQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($token)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $token)) {
-                $token = str_replace('*', '%', $token);
-                $comparison = Criteria::LIKE;
             }
         }
 
@@ -375,11 +387,10 @@ abstract class SessionQuery extends ModelCriteria
      * Example usage:
      * <code>
      * $query->filterByModelName('fooValue');   // WHERE model_name = 'fooValue'
-     * $query->filterByModelName('%fooValue%'); // WHERE model_name LIKE '%fooValue%'
+     * $query->filterByModelName('%fooValue%', Criteria::LIKE); // WHERE model_name LIKE '%fooValue%'
      * </code>
      *
      * @param     string $modelName The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSessionQuery The current query, for fluid interface
@@ -389,9 +400,6 @@ abstract class SessionQuery extends ModelCriteria
         if (null === $comparison) {
             if (is_array($modelName)) {
                 $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $modelName)) {
-                $modelName = str_replace('*', '%', $modelName);
-                $comparison = Criteria::LIKE;
             }
         }
 

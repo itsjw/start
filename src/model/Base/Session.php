@@ -27,8 +27,8 @@ use Propel\Runtime\Util\PropelDateTime;
  *
  *
  *
-* @package    propel.generator..Base
-*/
+ * @package    propel.generator..Base
+ */
 abstract class Session implements ActiveRecordInterface
 {
     /**
@@ -65,43 +65,50 @@ abstract class Session implements ActiveRecordInterface
 
     /**
      * The value for the id field.
+     *
      * @var        int
      */
     protected $id;
 
     /**
      * The value for the token field.
+     *
      * @var        string
      */
     protected $token;
 
     /**
      * The value for the model_id field.
+     *
      * @var        int
      */
     protected $model_id;
 
     /**
      * The value for the model_name field.
+     *
      * @var        string
      */
     protected $model_name;
 
     /**
      * The value for the expired_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $expired_at;
 
     /**
      * The value for the application_id field.
+     *
      * @var        int
      */
     protected $application_id;
 
     /**
      * The value for the created_at field.
-     * @var        \DateTime
+     *
+     * @var        DateTime
      */
     protected $created_at;
 
@@ -332,7 +339,15 @@ abstract class Session implements ActiveRecordInterface
     {
         $this->clearAllReferences();
 
-        return array_keys(get_object_vars($this));
+        $cls = new \ReflectionClass($this);
+        $propertyNames = [];
+        $serializableProperties = array_diff($cls->getProperties(), $cls->getProperties(\ReflectionProperty::IS_STATIC));
+
+        foreach($serializableProperties as $property) {
+            $propertyNames[] = $property->getName();
+        }
+
+        return $propertyNames;
     }
 
     /**
@@ -391,7 +406,7 @@ abstract class Session implements ActiveRecordInterface
         if ($format === null) {
             return $this->expired_at;
         } else {
-            return $this->expired_at instanceof \DateTime ? $this->expired_at->format($format) : null;
+            return $this->expired_at instanceof \DateTimeInterface ? $this->expired_at->format($format) : null;
         }
     }
 
@@ -421,7 +436,7 @@ abstract class Session implements ActiveRecordInterface
         if ($format === null) {
             return $this->created_at;
         } else {
-            return $this->created_at instanceof \DateTime ? $this->created_at->format($format) : null;
+            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
         }
     }
 
@@ -508,7 +523,7 @@ abstract class Session implements ActiveRecordInterface
     /**
      * Sets the value of [expired_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\App\Model\Session The current object (for fluent API support)
      */
@@ -516,7 +531,7 @@ abstract class Session implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->expired_at !== null || $dt !== null) {
-            if ($this->expired_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->expired_at->format("Y-m-d H:i:s")) {
+            if ($this->expired_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->expired_at->format("Y-m-d H:i:s.u")) {
                 $this->expired_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[SessionTableMap::COL_EXPIRED_AT] = true;
             }
@@ -552,7 +567,7 @@ abstract class Session implements ActiveRecordInterface
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
-     * @param  mixed $v string, integer (timestamp), or \DateTime value.
+     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\App\Model\Session The current object (for fluent API support)
      */
@@ -560,7 +575,7 @@ abstract class Session implements ActiveRecordInterface
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
         if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s") !== $this->created_at->format("Y-m-d H:i:s")) {
+            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
                 $this->created_at = $dt === null ? null : clone $dt;
                 $this->modifiedColumns[SessionTableMap::COL_CREATED_AT] = true;
             }
@@ -751,19 +766,23 @@ abstract class Session implements ActiveRecordInterface
             throw new PropelException("You cannot save an object that has been deleted.");
         }
 
+        if ($this->alreadyInSave) {
+            return 0;
+        }
+
         if ($con === null) {
             $con = Propel::getServiceContainer()->getWriteConnection(SessionTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
-            $isInsert = $this->isNew();
             $ret = $this->preSave($con);
+            $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
 
                 if (!$this->isColumnModified(SessionTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(time());
+                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
             } else {
                 $ret = $ret && $this->preUpdate($con);
@@ -852,7 +871,7 @@ abstract class Session implements ActiveRecordInterface
         if (null === $this->id) {
             try {
                 $dataFetcher = $con->query("SELECT nextval('_session_id_seq')");
-                $this->id = $dataFetcher->fetchColumn();
+                $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
             }
@@ -905,13 +924,13 @@ abstract class Session implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->model_name, PDO::PARAM_STR);
                         break;
                     case 'expired_at':
-                        $stmt->bindValue($identifier, $this->expired_at ? $this->expired_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->expired_at ? $this->expired_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'application_id':
                         $stmt->bindValue($identifier, $this->application_id, PDO::PARAM_INT);
                         break;
                     case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1027,18 +1046,12 @@ abstract class Session implements ActiveRecordInterface
             $keys[5] => $this->getApplicationId(),
             $keys[6] => $this->getCreatedAt(),
         );
-
-        $utc = new \DateTimeZone('utc');
         if ($result[$keys[4]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[4]];
-            $result[$keys[4]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
         }
 
         if ($result[$keys[6]] instanceof \DateTime) {
-            // When changing timezone we don't want to change existing instances
-            $dateTime = clone $result[$keys[6]];
-            $result[$keys[6]] = $dateTime->setTimezone($utc)->format('Y-m-d\TH:i:s\Z');
+            $result[$keys[6]] = $result[$keys[6]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1454,6 +1467,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function preSave(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preSave')) {
+            return parent::preSave($con);
+        }
         return true;
     }
 
@@ -1463,7 +1479,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postSave')) {
+            parent::postSave($con);
+        }
     }
 
     /**
@@ -1473,6 +1491,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function preInsert(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preInsert')) {
+            return parent::preInsert($con);
+        }
         return true;
     }
 
@@ -1482,7 +1503,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postInsert')) {
+            parent::postInsert($con);
+        }
     }
 
     /**
@@ -1492,6 +1515,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function preUpdate(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preUpdate')) {
+            return parent::preUpdate($con);
+        }
         return true;
     }
 
@@ -1501,7 +1527,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postUpdate')) {
+            parent::postUpdate($con);
+        }
     }
 
     /**
@@ -1511,6 +1539,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function preDelete(ConnectionInterface $con = null)
     {
+        if (is_callable('parent::preDelete')) {
+            return parent::preDelete($con);
+        }
         return true;
     }
 
@@ -1520,7 +1551,9 @@ abstract class Session implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
+        if (is_callable('parent::postDelete')) {
+            parent::postDelete($con);
+        }
     }
 
 
