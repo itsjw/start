@@ -343,13 +343,20 @@ class Start {
                 comment_area.style.display = 'none';
                 comment_text_area.innerText = comment;
                 comment_button.innerText = 'Комментарий';
-                comment_button.className = ''
+                comment_button.className = '';
+                duty.comment = comment;
 
                 if (!comment) {
                     comment_text_area.style.display = 'none';
                 } else {
                     comment_text_area.style.display = 'block';
                 }
+
+                if (duty.readonly) {
+                    document.getElementById("close-button" + duty.id).style.display = "initial";
+                }
+
+                document.getElementById("postpone-button" + duty.id).style.display = "initial";
             } else {
                 alert('Не удалось сохранить комментарий');
             }
@@ -571,7 +578,9 @@ class Start {
                         comment_area.style.display = 'block';
                         comment_text_area.style.display = 'none';
                         _comment_button.innerText = 'Сохранить';
-                        _comment_button.className = 'primary'
+                        _comment_button.className = 'primary';
+                        document.getElementById("postpone-button" + duty.id).style.display = "none";
+                        document.getElementById("close-button" + duty.id).style.display = "none";
                     } else {
                         start.commentDuty(duty, comment_textarea.value);
                     }
@@ -604,10 +613,26 @@ class Start {
                 if (duty_area.style.display == 'none') {
                     document.getElementById("duty-area" + duty.id).style.display = "block";
                     document.getElementById("postpone-area" + duty.id).style.display = "none";
+
+                    if (duty.comment) {
+                        document.getElementById("comment-text-area" + duty.id).style.display = "block";
+                    }
+
+                    if (duty.readonly) {
+                        document.getElementById("close-button" + duty.id).style.display = "initial";
+                    }
+
+                    if (duty.writable) {
+                        document.getElementById("comment-button" + duty.id).style.display = "initial";
+                    }
+
                     _postpone_button.innerText = 'Отложить';
                 } else {
                     document.getElementById("duty-area" + duty.id).style.display = "none";
                     document.getElementById("postpone-area" + duty.id).style.display = "block";
+                    document.getElementById("comment-text-area" + duty.id).style.display = "none";
+                    document.getElementById("comment-button" + duty.id).style.display = "none";
+                    document.getElementById("close-button" + duty.id).style.display = "none";
                     _postpone_button.innerText = 'Отмена';
                 }
             }, false);
