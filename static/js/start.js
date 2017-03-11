@@ -349,6 +349,14 @@ var Start = (function () {
             var _buttons_area = document.createElement("div");
             _buttons_area.setAttribute('class', 'buttons-area');
             _workspace.appendChild(_buttons_area);
+            var _comment_area = document.createElement("div");
+            _comment_area.id = 'comment-area' + duty.id;
+            _comment_area.setAttribute('class', 'comment-area');
+            _comment_area.style.display = 'none';
+            var _comment_textarea = document.createElement("textarea");
+            _comment_textarea.placeholder = 'Комментарий';
+            _comment_area.appendChild(_comment_textarea);
+            _workspace.appendChild(_comment_area);
             var _duty_area = document.createElement("div");
             _duty_area.id = 'duty-area' + duty.id;
             var _iframe = document.createElement('iframe');
@@ -396,6 +404,23 @@ var Start = (function () {
                 document.getElementById('workspaces').className = "invisible";
             }, false);
             _buttons_area.appendChild(_back_button);
+            if (duty.writable) {
+                var _comment_button = document.createElement("button");
+                _comment_button.id = 'comment-button' + duty.id;
+                _comment_button.innerText = 'Комментарий';
+                _comment_button.addEventListener('click', function () {
+                    var comment_area = document.getElementById("comment-area" + duty.id);
+                    if (comment_area.style.display == 'none') {
+                        comment_area.style.display = 'block';
+                        _comment_button.innerText = 'Отмена';
+                    }
+                    else {
+                        comment_area.style.display = 'none';
+                        _comment_button.innerText = 'Комментарий';
+                    }
+                }, false);
+                _buttons_area.appendChild(_comment_button);
+            }
             if (duty.readonly) {
                 var _close_button = document.createElement("button");
                 _close_button.id = 'close-button' + duty.id;
@@ -453,6 +478,7 @@ var Duty = (function () {
         this.tags = [];
         this.iframe = null;
         this.readonly = null;
+        this.writable = null;
         if (object.id) {
             this.id = object.id;
         }
@@ -471,8 +497,11 @@ var Duty = (function () {
         if (object.iframe) {
             this.iframe = object.iframe;
         }
-        if (object.id) {
+        if (object.readonly) {
             this.readonly = object.readonly;
+        }
+        if (object.writable) {
+            this.writable = object.writable;
         }
     }
     return Duty;
