@@ -26,7 +26,6 @@ class CreateController extends ViewController
         $duty->setTitle($activity->getToolbar());
         $duty->setRaisedAt(new \DateTime());
         $duty->setPickedAt(new \DateTime());
-        $duty->setPriority(1);
         $duty->save();
 
         $content = $this->s('perfumerlabs.duty_formatter')->format($duty, $this->getUser());

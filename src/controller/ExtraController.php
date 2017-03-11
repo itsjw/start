@@ -32,15 +32,18 @@ class ExtraController extends ViewController
         $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($this->getUser());
 
         $extra_duty = DutyQuery::create()
+            ->joinWith('Activity')
             ->filterByUserId($this->getUser()->getId())
             ->_or()
             ->filterByActivityId($allowed_activities, Criteria::IN)
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNULL)
             ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
-            ->filterByPriority($highest_priority, Criteria::GREATER_THAN)
             ->filterById($picked_duties->getPrimaryKeys(), Criteria::NOT_IN)
-            ->orderByPriority(Criteria::DESC)
+            ->useActivityQuery()
+                ->filterByPriority($highest_priority, Criteria::GREATER_THAN)
+                ->orderByPriority(Criteria::DESC)
+            ->endUse()
             ->orderByCreatedAt()
             ->findOne();
 

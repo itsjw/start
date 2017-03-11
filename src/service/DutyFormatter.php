@@ -20,6 +20,7 @@ class DutyFormatter
             'title' => $duty->getTitle(),
             'color' => $duty->getActivity()->getColor(),
             'readonly' => $duty->getActivity()->isReadonly(),
+            'writable' => $duty->getActivity()->isWritable(),
             'tags' => $duty->getTags() ?: []
         ];
 

@@ -24,7 +24,7 @@ class LoginController extends TemplateController
             if ($this->getAuth()->isLogged()) {
                 $this->redirect('/home');
             } else {
-                $this->forward('login', 'get');
+                $this->redirect('/login');
             }
         }
     }
