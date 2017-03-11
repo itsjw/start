@@ -25,6 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery orderByActivityId($order = Criteria::ASC) Order by the activity_id column
  * @method     ChildDutyQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildDutyQuery orderByQuery($order = Criteria::ASC) Order by the query column
+ * @method     ChildDutyQuery orderByComment($order = Criteria::ASC) Order by the comment column
  * @method     ChildDutyQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
  * @method     ChildDutyQuery orderByPickedAt($order = Criteria::ASC) Order by the picked_at column
  * @method     ChildDutyQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
@@ -37,6 +38,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery groupByActivityId() Group by the activity_id column
  * @method     ChildDutyQuery groupByTitle() Group by the title column
  * @method     ChildDutyQuery groupByQuery() Group by the query column
+ * @method     ChildDutyQuery groupByComment() Group by the comment column
  * @method     ChildDutyQuery groupByRaisedAt() Group by the raised_at column
  * @method     ChildDutyQuery groupByPickedAt() Group by the picked_at column
  * @method     ChildDutyQuery groupByClosedAt() Group by the closed_at column
@@ -72,6 +74,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty findOneByActivityId(int $activity_id) Return the first ChildDuty filtered by the activity_id column
  * @method     ChildDuty findOneByTitle(string $title) Return the first ChildDuty filtered by the title column
  * @method     ChildDuty findOneByQuery(string $query) Return the first ChildDuty filtered by the query column
+ * @method     ChildDuty findOneByComment(string $comment) Return the first ChildDuty filtered by the comment column
  * @method     ChildDuty findOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column
  * @method     ChildDuty findOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column
  * @method     ChildDuty findOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column
@@ -87,6 +90,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty requireOneByActivityId(int $activity_id) Return the first ChildDuty filtered by the activity_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByTitle(string $title) Return the first ChildDuty filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByQuery(string $query) Return the first ChildDuty filtered by the query column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildDuty requireOneByComment(string $comment) Return the first ChildDuty filtered by the comment column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -100,6 +104,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty[]|ObjectCollection findByActivityId(int $activity_id) Return ChildDuty objects filtered by the activity_id column
  * @method     ChildDuty[]|ObjectCollection findByTitle(string $title) Return ChildDuty objects filtered by the title column
  * @method     ChildDuty[]|ObjectCollection findByQuery(string $query) Return ChildDuty objects filtered by the query column
+ * @method     ChildDuty[]|ObjectCollection findByComment(string $comment) Return ChildDuty objects filtered by the comment column
  * @method     ChildDuty[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildDuty objects filtered by the raised_at column
  * @method     ChildDuty[]|ObjectCollection findByPickedAt(string $picked_at) Return ChildDuty objects filtered by the picked_at column
  * @method     ChildDuty[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildDuty objects filtered by the closed_at column
@@ -204,7 +209,7 @@ abstract class DutyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, activity_id, title, query, raised_at, picked_at, closed_at, tags, created_at, updated_at FROM duty WHERE id = :p0';
+        $sql = 'SELECT id, user_id, activity_id, title, query, comment, raised_at, picked_at, closed_at, tags, created_at, updated_at FROM duty WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -467,6 +472,31 @@ abstract class DutyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DutyTableMap::COL_QUERY, $query, $comparison);
+    }
+
+    /**
+     * Filter the query on the comment column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByComment('fooValue');   // WHERE comment = 'fooValue'
+     * $query->filterByComment('%fooValue%', Criteria::LIKE); // WHERE comment LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $comment The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByComment($comment = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($comment)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DutyTableMap::COL_COMMENT, $comment, $comparison);
     }
 
     /**

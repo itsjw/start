@@ -6,6 +6,7 @@
         <column name="activity_id" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="query" type="longvarchar"/>
+        <column name="comment" type="longvarchar"/>
         <column name="raised_at" type="timestamp"/>
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
