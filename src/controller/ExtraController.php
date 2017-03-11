@@ -16,6 +16,7 @@ class ExtraController extends ViewController
     public function get()
     {
         $picked_duties = DutyQuery::create()
+            ->joinWith('Activity')
             ->filterByUserId($this->getUser()->getId())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
@@ -24,8 +25,10 @@ class ExtraController extends ViewController
         $highest_priority = 0;
 
         foreach ($picked_duties as $duty) {
-            if ($duty->getPriority() > $highest_priority) {
-                $highest_priority = $duty->getPriority();
+            $duty_priority = $duty->getActivity()->getPriority();
+
+            if ($duty_priority > $highest_priority) {
+                $highest_priority = $duty_priority;
             }
         }
 

@@ -17,12 +17,20 @@ class PostponeController extends PlainController
     {
         $id = (int) $this->i();
         $period = (string) $this->f('period');
+        $datetime = (string) $this->f('datetime');
+        $date = null;
 
-        $date = (new \DateTime())->modify($period);
+        if ($period) {
+            $date = (new \DateTime())->modify($period);
+        }
+
+        if ($datetime) {
+            $date = new \DateTime($datetime);
+        }
 
         $duty = DutyQuery::create()->findPk($id);
 
-        if ($duty) {
+        if ($duty && $date) {
             $this->s('perfumerlabs.duty')->postpone($duty, $date);
         }
     }

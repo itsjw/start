@@ -230,7 +230,7 @@ class Start {
         request.send(JSON.stringify({"activity_id": activity_id}));
     }
 
-    public postponeDuty(id: number, period: string) {
+    public postponeDuty(id: number, period?: string, datetime?: string) {
         var start = this;
         var request = new XMLHttpRequest();
         request.open('POST', '/duty/postpone/' + id, true);
@@ -263,7 +263,17 @@ class Start {
         request.onerror = function() {
         };
 
-        request.send(JSON.stringify({"period": period}));
+        var body = {};
+
+        if (period) {
+            body.period = period;
+        }
+
+        if (datetime) {
+            body.datetime = datetime;
+        }
+
+        request.send(JSON.stringify(body));
     }
 
     public pickDuty(duty: Duty) {
@@ -548,6 +558,30 @@ class Start {
                     _postpone_area_list.appendChild(_li);
                 })(i)
             }
+
+            var _input_date = document.createElement("input");
+            _input_date.type = 'date';
+
+            var _input_time = document.createElement("input");
+            _input_time.type = 'time';
+            _input_time.value = '09:00';
+
+            var _datetime_save_button = document.createElement("button");
+            _datetime_save_button.innerText = 'Сохранить';
+            _datetime_save_button.className = 'primary';
+
+            _datetime_save_button.addEventListener('click', function () {
+                if (_input_date.value && _input_time.value && confirm('Отложить задачу?')) {
+                    start.postponeDuty(duty.id, null, _input_date.value + " " + _input_time.value);
+                }
+            }, false);
+
+            var _li = document.createElement("li");
+            _li.appendChild(_input_date);
+            _li.appendChild(_input_time);
+            _li.appendChild(_datetime_save_button);
+
+            _postpone_area_list.appendChild(_li);
 
             _postpone_area.appendChild(_postpone_area_list);
             _workspace.appendChild(_postpone_area);
