@@ -48,4 +48,14 @@ class Duty
             return (bool) $duty->save();
         }
     }
+
+    /**
+     * @param \Perfumerlabs\Start\Model\Duty $duty
+     * @param string $comment
+     */
+    public function comment(\Perfumerlabs\Start\Model\Duty $duty, string $comment)
+    {
+        $duty->setComment($comment);
+        $duty->save();
+    }
 }

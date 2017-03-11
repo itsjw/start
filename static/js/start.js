@@ -268,6 +268,35 @@ var Start = (function () {
         };
         request.send();
     };
+    Start.prototype.commentDuty = function (duty, comment) {
+        var start = this;
+        var request = new XMLHttpRequest();
+        request.open('POST', '/duty/comment/' + duty.id, true);
+        request.onload = function () {
+            if (request.status >= 200 && request.status < 400) {
+                var comment_area = document.getElementById("comment-area" + duty.id);
+                var comment_button = document.getElementById("comment-button" + duty.id);
+                var comment_text_area = document.getElementById("comment-text-area" + duty.id);
+                comment_area.style.display = 'none';
+                comment_text_area.innerText = comment;
+                comment_button.innerText = 'Комментарий';
+                comment_button.className = '';
+                if (!comment) {
+                    comment_text_area.style.display = 'none';
+                }
+                else {
+                    comment_text_area.style.display = 'block';
+                }
+            }
+            else {
+                alert('Не удалось сохранить комментарий');
+            }
+        };
+        request.onerror = function () {
+            alert('Не удалось сохранить комментарий');
+        };
+        request.send(JSON.stringify({ "comment": comment }));
+    };
     Start.prototype.viewDuty = function (duty) {
         if (duty === void 0) { duty = null; }
         if (duty == null && this.duties.length > 0) {
@@ -349,12 +378,26 @@ var Start = (function () {
             var _buttons_area = document.createElement("div");
             _buttons_area.setAttribute('class', 'buttons-area');
             _workspace.appendChild(_buttons_area);
+            var _comment_text_area = document.createElement("div");
+            _comment_text_area.id = 'comment-text-area' + duty.id;
+            _comment_text_area.setAttribute('class', 'comment-text-area');
+            _comment_text_area.innerText = duty.comment;
+            if (!duty.comment) {
+                _comment_text_area.style.display = 'none';
+            }
+            else {
+                _comment_text_area.style.display = 'block';
+            }
+            _workspace.appendChild(_comment_text_area);
             var _comment_area = document.createElement("div");
             _comment_area.id = 'comment-area' + duty.id;
             _comment_area.setAttribute('class', 'comment-area');
             _comment_area.style.display = 'none';
             var _comment_textarea = document.createElement("textarea");
+            _comment_textarea.id = 'comment-textarea' + duty.id;
+            _comment_textarea.rows = 5;
             _comment_textarea.placeholder = 'Комментарий';
+            _comment_textarea.value = duty.comment;
             _comment_area.appendChild(_comment_textarea);
             _workspace.appendChild(_comment_area);
             var _duty_area = document.createElement("div");
@@ -410,13 +453,16 @@ var Start = (function () {
                 _comment_button.innerText = 'Комментарий';
                 _comment_button.addEventListener('click', function () {
                     var comment_area = document.getElementById("comment-area" + duty.id);
+                    var comment_text_area = document.getElementById("comment-text-area" + duty.id);
+                    var comment_textarea = document.getElementById("comment-textarea" + duty.id);
                     if (comment_area.style.display == 'none') {
                         comment_area.style.display = 'block';
-                        _comment_button.innerText = 'Отмена';
+                        comment_text_area.style.display = 'none';
+                        _comment_button.innerText = 'Сохранить';
+                        _comment_button.className = 'primary';
                     }
                     else {
-                        comment_area.style.display = 'none';
-                        _comment_button.innerText = 'Комментарий';
+                        start.commentDuty(duty, comment_textarea.value);
                     }
                 }, false);
                 _buttons_area.appendChild(_comment_button);
@@ -476,6 +522,7 @@ var Duty = (function () {
         this.title = null;
         this.color = null;
         this.tags = [];
+        this.comment = null;
         this.iframe = null;
         this.readonly = null;
         this.writable = null;
@@ -493,6 +540,9 @@ var Duty = (function () {
         }
         if (object.tags) {
             this.tags = object.tags;
+        }
+        if (object.comment) {
+            this.comment = object.comment;
         }
         if (object.iframe) {
             this.iframe = object.iframe;
