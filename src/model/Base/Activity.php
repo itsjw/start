@@ -94,6 +94,14 @@ abstract class Activity implements ActiveRecordInterface
     protected $readonly;
 
     /**
+     * The value for the writable field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $writable;
+
+    /**
      * The value for the color field.
      *
      * @var        string
@@ -106,6 +114,13 @@ abstract class Activity implements ActiveRecordInterface
      * @var        string
      */
     protected $toolbar;
+
+    /**
+     * The value for the priority field.
+     *
+     * @var        int
+     */
+    protected $priority;
 
     /**
      * @var        ObjectCollection|ChildDuty[] Collection to store aggregation of ChildDuty objects.
@@ -136,6 +151,7 @@ abstract class Activity implements ActiveRecordInterface
     public function applyDefaultValues()
     {
         $this->readonly = false;
+        $this->writable = false;
     }
 
     /**
@@ -416,6 +432,26 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [writable] column value.
+     *
+     * @return boolean
+     */
+    public function getWritable()
+    {
+        return $this->writable;
+    }
+
+    /**
+     * Get the [writable] column value.
+     *
+     * @return boolean
+     */
+    public function isWritable()
+    {
+        return $this->getWritable();
+    }
+
+    /**
      * Get the [color] column value.
      *
      * @return string
@@ -433,6 +469,16 @@ abstract class Activity implements ActiveRecordInterface
     public function getToolbar()
     {
         return $this->toolbar;
+    }
+
+    /**
+     * Get the [priority] column value.
+     *
+     * @return int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
     }
 
     /**
@@ -524,6 +570,34 @@ abstract class Activity implements ActiveRecordInterface
     } // setReadonly()
 
     /**
+     * Sets the value of the [writable] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setWritable($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->writable !== $v) {
+            $this->writable = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_WRITABLE] = true;
+        }
+
+        return $this;
+    } // setWritable()
+
+    /**
      * Set the value of [color] column.
      *
      * @param string $v new value
@@ -564,6 +638,26 @@ abstract class Activity implements ActiveRecordInterface
     } // setToolbar()
 
     /**
+     * Set the value of [priority] column.
+     *
+     * @param int $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setPriority($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->priority !== $v) {
+            $this->priority = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_PRIORITY] = true;
+        }
+
+        return $this;
+    } // setPriority()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -574,6 +668,10 @@ abstract class Activity implements ActiveRecordInterface
     public function hasOnlyDefaultValues()
     {
             if ($this->readonly !== false) {
+                return false;
+            }
+
+            if ($this->writable !== false) {
                 return false;
             }
 
@@ -615,11 +713,17 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readonly = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->writable = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
             $this->toolbar = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->priority = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -628,7 +732,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 6; // 6 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -870,11 +974,17 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $modifiedColumns[':p' . $index++]  = 'readonly';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_WRITABLE)) {
+            $modifiedColumns[':p' . $index++]  = 'writable';
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $modifiedColumns[':p' . $index++]  = 'color';
         }
         if ($this->isColumnModified(ActivityTableMap::COL_TOOLBAR)) {
             $modifiedColumns[':p' . $index++]  = 'toolbar';
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
+            $modifiedColumns[':p' . $index++]  = 'priority';
         }
 
         $sql = sprintf(
@@ -899,11 +1009,17 @@ abstract class Activity implements ActiveRecordInterface
                     case 'readonly':
                         $stmt->bindValue($identifier, $this->readonly, PDO::PARAM_BOOL);
                         break;
+                    case 'writable':
+                        $stmt->bindValue($identifier, $this->writable, PDO::PARAM_BOOL);
+                        break;
                     case 'color':
                         $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
                         break;
                     case 'toolbar':
                         $stmt->bindValue($identifier, $this->toolbar, PDO::PARAM_STR);
+                        break;
+                    case 'priority':
+                        $stmt->bindValue($identifier, $this->priority, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -973,10 +1089,16 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getReadonly();
                 break;
             case 4:
-                return $this->getColor();
+                return $this->getWritable();
                 break;
             case 5:
+                return $this->getColor();
+                break;
+            case 6:
                 return $this->getToolbar();
+                break;
+            case 7:
+                return $this->getPriority();
                 break;
             default:
                 return null;
@@ -1012,8 +1134,10 @@ abstract class Activity implements ActiveRecordInterface
             $keys[1] => $this->getName(),
             $keys[2] => $this->getIframe(),
             $keys[3] => $this->getReadonly(),
-            $keys[4] => $this->getColor(),
-            $keys[5] => $this->getToolbar(),
+            $keys[4] => $this->getWritable(),
+            $keys[5] => $this->getColor(),
+            $keys[6] => $this->getToolbar(),
+            $keys[7] => $this->getPriority(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1083,10 +1207,16 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setReadonly($value);
                 break;
             case 4:
-                $this->setColor($value);
+                $this->setWritable($value);
                 break;
             case 5:
+                $this->setColor($value);
+                break;
+            case 6:
                 $this->setToolbar($value);
+                break;
+            case 7:
+                $this->setPriority($value);
                 break;
         } // switch()
 
@@ -1127,10 +1257,16 @@ abstract class Activity implements ActiveRecordInterface
             $this->setReadonly($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setColor($arr[$keys[4]]);
+            $this->setWritable($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setToolbar($arr[$keys[5]]);
+            $this->setColor($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setToolbar($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setPriority($arr[$keys[7]]);
         }
     }
 
@@ -1185,11 +1321,17 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $criteria->add(ActivityTableMap::COL_READONLY, $this->readonly);
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_WRITABLE)) {
+            $criteria->add(ActivityTableMap::COL_WRITABLE, $this->writable);
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $criteria->add(ActivityTableMap::COL_COLOR, $this->color);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_TOOLBAR)) {
             $criteria->add(ActivityTableMap::COL_TOOLBAR, $this->toolbar);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
+            $criteria->add(ActivityTableMap::COL_PRIORITY, $this->priority);
         }
 
         return $criteria;
@@ -1280,8 +1422,10 @@ abstract class Activity implements ActiveRecordInterface
         $copyObj->setName($this->getName());
         $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
+        $copyObj->setWritable($this->getWritable());
         $copyObj->setColor($this->getColor());
         $copyObj->setToolbar($this->getToolbar());
+        $copyObj->setPriority($this->getPriority());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1576,8 +1720,10 @@ abstract class Activity implements ActiveRecordInterface
         $this->name = null;
         $this->iframe = null;
         $this->readonly = null;
+        $this->writable = null;
         $this->color = null;
         $this->toolbar = null;
+        $this->priority = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

@@ -86,13 +86,6 @@ abstract class Duty implements ActiveRecordInterface
     protected $activity_id;
 
     /**
-     * The value for the priority field.
-     *
-     * @var        int
-     */
-    protected $priority;
-
-    /**
      * The value for the title field.
      *
      * @var        string
@@ -424,16 +417,6 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
-     * Get the [priority] column value.
-     *
-     * @return int
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
-    /**
      * Get the [title] column value.
      *
      * @return string
@@ -645,26 +628,6 @@ abstract class Duty implements ActiveRecordInterface
 
         return $this;
     } // setActivityId()
-
-    /**
-     * Set the value of [priority] column.
-     *
-     * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setPriority($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->priority !== $v) {
-            $this->priority = $v;
-            $this->modifiedColumns[DutyTableMap::COL_PRIORITY] = true;
-        }
-
-        return $this;
-    } // setPriority()
 
     /**
      * Set the value of [title] column.
@@ -902,32 +865,29 @@ abstract class Duty implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DutyTableMap::translateFieldName('ActivityId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->activity_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DutyTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->priority = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DutyTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DutyTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
             $this->title = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DutyTableMap::translateFieldName('Query', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DutyTableMap::translateFieldName('Query', TableMap::TYPE_PHPNAME, $indexType)];
             $this->query = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DutyTableMap::translateFieldName('RaisedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DutyTableMap::translateFieldName('RaisedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->raised_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DutyTableMap::translateFieldName('PickedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DutyTableMap::translateFieldName('PickedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->picked_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
             $this->tags = $col;
             $this->tags_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -937,7 +897,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 12; // 12 = DutyTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 11; // 11 = DutyTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Duty'), 0, $e);
@@ -1184,9 +1144,6 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_ACTIVITY_ID)) {
             $modifiedColumns[':p' . $index++]  = 'activity_id';
         }
-        if ($this->isColumnModified(DutyTableMap::COL_PRIORITY)) {
-            $modifiedColumns[':p' . $index++]  = 'priority';
-        }
         if ($this->isColumnModified(DutyTableMap::COL_TITLE)) {
             $modifiedColumns[':p' . $index++]  = 'title';
         }
@@ -1230,9 +1187,6 @@ abstract class Duty implements ActiveRecordInterface
                         break;
                     case 'activity_id':
                         $stmt->bindValue($identifier, $this->activity_id, PDO::PARAM_INT);
-                        break;
-                    case 'priority':
-                        $stmt->bindValue($identifier, $this->priority, PDO::PARAM_INT);
                         break;
                     case 'title':
                         $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
@@ -1323,30 +1277,27 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getActivityId();
                 break;
             case 3:
-                return $this->getPriority();
-                break;
-            case 4:
                 return $this->getTitle();
                 break;
-            case 5:
+            case 4:
                 return $this->getQuery();
                 break;
-            case 6:
+            case 5:
                 return $this->getRaisedAt();
                 break;
-            case 7:
+            case 6:
                 return $this->getPickedAt();
                 break;
-            case 8:
+            case 7:
                 return $this->getClosedAt();
                 break;
-            case 9:
+            case 8:
                 return $this->getTags();
                 break;
-            case 10:
+            case 9:
                 return $this->getCreatedAt();
                 break;
-            case 11:
+            case 10:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1382,16 +1333,19 @@ abstract class Duty implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
             $keys[2] => $this->getActivityId(),
-            $keys[3] => $this->getPriority(),
-            $keys[4] => $this->getTitle(),
-            $keys[5] => $this->getQuery(),
-            $keys[6] => $this->getRaisedAt(),
-            $keys[7] => $this->getPickedAt(),
-            $keys[8] => $this->getClosedAt(),
-            $keys[9] => $this->getTags(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getUpdatedAt(),
+            $keys[3] => $this->getTitle(),
+            $keys[4] => $this->getQuery(),
+            $keys[5] => $this->getRaisedAt(),
+            $keys[6] => $this->getPickedAt(),
+            $keys[7] => $this->getClosedAt(),
+            $keys[8] => $this->getTags(),
+            $keys[9] => $this->getCreatedAt(),
+            $keys[10] => $this->getUpdatedAt(),
         );
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
+        }
+
         if ($result[$keys[6]] instanceof \DateTime) {
             $result[$keys[6]] = $result[$keys[6]]->format('c');
         }
@@ -1400,16 +1354,12 @@ abstract class Duty implements ActiveRecordInterface
             $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
-        if ($result[$keys[8]] instanceof \DateTime) {
-            $result[$keys[8]] = $result[$keys[8]]->format('c');
+        if ($result[$keys[9]] instanceof \DateTime) {
+            $result[$keys[9]] = $result[$keys[9]]->format('c');
         }
 
         if ($result[$keys[10]] instanceof \DateTime) {
             $result[$keys[10]] = $result[$keys[10]]->format('c');
-        }
-
-        if ($result[$keys[11]] instanceof \DateTime) {
-            $result[$keys[11]] = $result[$keys[11]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1477,34 +1427,31 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setActivityId($value);
                 break;
             case 3:
-                $this->setPriority($value);
-                break;
-            case 4:
                 $this->setTitle($value);
                 break;
-            case 5:
+            case 4:
                 $this->setQuery($value);
                 break;
-            case 6:
+            case 5:
                 $this->setRaisedAt($value);
                 break;
-            case 7:
+            case 6:
                 $this->setPickedAt($value);
                 break;
-            case 8:
+            case 7:
                 $this->setClosedAt($value);
                 break;
-            case 9:
+            case 8:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
                 $this->setTags($value);
                 break;
-            case 10:
+            case 9:
                 $this->setCreatedAt($value);
                 break;
-            case 11:
+            case 10:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1543,31 +1490,28 @@ abstract class Duty implements ActiveRecordInterface
             $this->setActivityId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setPriority($arr[$keys[3]]);
+            $this->setTitle($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setTitle($arr[$keys[4]]);
+            $this->setQuery($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setQuery($arr[$keys[5]]);
+            $this->setRaisedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setRaisedAt($arr[$keys[6]]);
+            $this->setPickedAt($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPickedAt($arr[$keys[7]]);
+            $this->setClosedAt($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setClosedAt($arr[$keys[8]]);
+            $this->setTags($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setTags($arr[$keys[9]]);
+            $this->setCreatedAt($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
-        }
-        if (array_key_exists($keys[11], $arr)) {
-            $this->setUpdatedAt($arr[$keys[11]]);
+            $this->setUpdatedAt($arr[$keys[10]]);
         }
     }
 
@@ -1618,9 +1562,6 @@ abstract class Duty implements ActiveRecordInterface
         }
         if ($this->isColumnModified(DutyTableMap::COL_ACTIVITY_ID)) {
             $criteria->add(DutyTableMap::COL_ACTIVITY_ID, $this->activity_id);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_PRIORITY)) {
-            $criteria->add(DutyTableMap::COL_PRIORITY, $this->priority);
         }
         if ($this->isColumnModified(DutyTableMap::COL_TITLE)) {
             $criteria->add(DutyTableMap::COL_TITLE, $this->title);
@@ -1734,7 +1675,6 @@ abstract class Duty implements ActiveRecordInterface
     {
         $copyObj->setUserId($this->getUserId());
         $copyObj->setActivityId($this->getActivityId());
-        $copyObj->setPriority($this->getPriority());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setQuery($this->getQuery());
         $copyObj->setRaisedAt($this->getRaisedAt());
@@ -1835,7 +1775,6 @@ abstract class Duty implements ActiveRecordInterface
         $this->id = null;
         $this->user_id = null;
         $this->activity_id = null;
-        $this->priority = null;
         $this->title = null;
         $this->query = null;
         $this->raised_at = null;

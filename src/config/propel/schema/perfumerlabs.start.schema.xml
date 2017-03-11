@@ -4,7 +4,6 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="activity_id" type="integer"/>
-        <column name="priority" type="integer"/>
         <column name="title" type="longvarchar"/>
         <column name="query" type="longvarchar"/>
         <column name="raised_at" type="timestamp"/>
@@ -22,8 +21,10 @@
         <column name="name" type="varchar" size="255"/>
         <column name="iframe" type="varchar" size="255"/>
         <column name="readonly" type="boolean" required="true" defaultValue="false"/>
+        <column name="writable" type="boolean" required="true" defaultValue="false"/>
         <column name="color" type="varchar" size="255"/>
         <column name="toolbar" type="varchar" size="255"/>
+        <column name="priority" type="integer"/>
     </table>
 
     <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">

@@ -23,7 +23,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildDutyQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildDutyQuery orderByActivityId($order = Criteria::ASC) Order by the activity_id column
- * @method     ChildDutyQuery orderByPriority($order = Criteria::ASC) Order by the priority column
  * @method     ChildDutyQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildDutyQuery orderByQuery($order = Criteria::ASC) Order by the query column
  * @method     ChildDutyQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
@@ -36,7 +35,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery groupById() Group by the id column
  * @method     ChildDutyQuery groupByUserId() Group by the user_id column
  * @method     ChildDutyQuery groupByActivityId() Group by the activity_id column
- * @method     ChildDutyQuery groupByPriority() Group by the priority column
  * @method     ChildDutyQuery groupByTitle() Group by the title column
  * @method     ChildDutyQuery groupByQuery() Group by the query column
  * @method     ChildDutyQuery groupByRaisedAt() Group by the raised_at column
@@ -72,7 +70,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty findOneById(int $id) Return the first ChildDuty filtered by the id column
  * @method     ChildDuty findOneByUserId(int $user_id) Return the first ChildDuty filtered by the user_id column
  * @method     ChildDuty findOneByActivityId(int $activity_id) Return the first ChildDuty filtered by the activity_id column
- * @method     ChildDuty findOneByPriority(int $priority) Return the first ChildDuty filtered by the priority column
  * @method     ChildDuty findOneByTitle(string $title) Return the first ChildDuty filtered by the title column
  * @method     ChildDuty findOneByQuery(string $query) Return the first ChildDuty filtered by the query column
  * @method     ChildDuty findOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column
@@ -88,7 +85,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty requireOneById(int $id) Return the first ChildDuty filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByUserId(int $user_id) Return the first ChildDuty filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByActivityId(int $activity_id) Return the first ChildDuty filtered by the activity_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildDuty requireOneByPriority(int $priority) Return the first ChildDuty filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByTitle(string $title) Return the first ChildDuty filtered by the title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByQuery(string $query) Return the first ChildDuty filtered by the query column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -102,7 +98,6 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty[]|ObjectCollection findById(int $id) Return ChildDuty objects filtered by the id column
  * @method     ChildDuty[]|ObjectCollection findByUserId(int $user_id) Return ChildDuty objects filtered by the user_id column
  * @method     ChildDuty[]|ObjectCollection findByActivityId(int $activity_id) Return ChildDuty objects filtered by the activity_id column
- * @method     ChildDuty[]|ObjectCollection findByPriority(int $priority) Return ChildDuty objects filtered by the priority column
  * @method     ChildDuty[]|ObjectCollection findByTitle(string $title) Return ChildDuty objects filtered by the title column
  * @method     ChildDuty[]|ObjectCollection findByQuery(string $query) Return ChildDuty objects filtered by the query column
  * @method     ChildDuty[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildDuty objects filtered by the raised_at column
@@ -209,7 +204,7 @@ abstract class DutyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, activity_id, priority, title, query, raised_at, picked_at, closed_at, tags, created_at, updated_at FROM duty WHERE id = :p0';
+        $sql = 'SELECT id, user_id, activity_id, title, query, raised_at, picked_at, closed_at, tags, created_at, updated_at FROM duty WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -422,47 +417,6 @@ abstract class DutyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DutyTableMap::COL_ACTIVITY_ID, $activityId, $comparison);
-    }
-
-    /**
-     * Filter the query on the priority column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByPriority(1234); // WHERE priority = 1234
-     * $query->filterByPriority(array(12, 34)); // WHERE priority IN (12, 34)
-     * $query->filterByPriority(array('min' => 12)); // WHERE priority > 12
-     * </code>
-     *
-     * @param     mixed $priority The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildDutyQuery The current query, for fluid interface
-     */
-    public function filterByPriority($priority = null, $comparison = null)
-    {
-        if (is_array($priority)) {
-            $useMinMax = false;
-            if (isset($priority['min'])) {
-                $this->addUsingAlias(DutyTableMap::COL_PRIORITY, $priority['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($priority['max'])) {
-                $this->addUsingAlias(DutyTableMap::COL_PRIORITY, $priority['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DutyTableMap::COL_PRIORITY, $priority, $comparison);
     }
 
     /**
