@@ -21,6 +21,7 @@ class DutyFormatter
             'color' => $duty->getActivity()->getColor(),
             'readonly' => $duty->getActivity()->isReadonly(),
             'writable' => $duty->getActivity()->isWritable(),
+            'postponable' => $duty->getActivity()->isPostponable(),
             'comment' => $duty->getComment(),
             'tags' => $duty->getTags() ?: []
         ];

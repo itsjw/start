@@ -514,6 +514,7 @@ class Start {
 
             var _duty_area = document.createElement("div");
             _duty_area.id = 'duty-area' + duty.id;
+            _duty_area.className = 'duty-area';
 
             var _iframe = document.createElement('iframe');
             _iframe.src = duty.iframe;
@@ -524,79 +525,6 @@ class Start {
             _duty_area.appendChild(_iframe);
 
             _workspace.appendChild(_duty_area);
-
-            var _postpone_area = document.createElement("div");
-            _postpone_area.id = 'postpone-area' + duty.id;
-            _postpone_area.setAttribute('class', 'postpone-area');
-
-            var _postpone_area_list = document.createElement("ul");
-            var postpone_options = {
-                '+15 min': 'На 15 минут',
-                '+30 min': 'На 30 минут',
-                '+1 hour': 'На 1 час',
-                '+2 hour': 'На 2 часа',
-                '+1 day': 'На 1 день',
-                '+2 day': 'На 2 дня'
-            };
-
-            var postpone_options_keys = Object.keys(postpone_options);
-
-            for (i = 0; i < postpone_options_keys.length; i++) {
-                (function(i) {
-                    var _li = document.createElement("li");
-                    var _span = document.createElement("span");
-                    _span.innerText = postpone_options[postpone_options_keys[i]];
-
-                    _span.addEventListener('click', function () {
-                        if (confirm('Отложить задачу?')) {
-                            start.postponeDuty(duty.id, postpone_options_keys[i]);
-                        }
-                    }, false);
-
-                    _li.appendChild(_span);
-
-                    _postpone_area_list.appendChild(_li);
-                })(i)
-            }
-
-            var _input_date = document.createElement("input");
-            _input_date.type = 'date';
-
-            var _input_time = document.createElement("input");
-            _input_time.type = 'time';
-            _input_time.value = '09:00';
-
-            var _datetime_save_button = document.createElement("button");
-            _datetime_save_button.innerText = 'Сохранить';
-            _datetime_save_button.className = 'primary';
-
-            _datetime_save_button.addEventListener('click', function () {
-                if (_input_date.value && _input_time.value && confirm('Отложить задачу?')) {
-                    start.postponeDuty(duty.id, null, _input_date.value + " " + _input_time.value);
-                }
-            }, false);
-
-            var _li = document.createElement("li");
-            _li.appendChild(_input_date);
-            _li.appendChild(_input_time);
-            _li.appendChild(_datetime_save_button);
-
-            _postpone_area_list.appendChild(_li);
-
-            _postpone_area.appendChild(_postpone_area_list);
-            _workspace.appendChild(_postpone_area);
-
-            var _back_button = document.createElement("button");
-            _back_button.id = 'back-button' + duty.id;
-            _back_button.className = 'back-button';
-            _back_button.innerText = 'Назад';
-
-            _back_button.addEventListener('click', function () {
-                document.getElementById('stickers-column').className = "visible";
-                document.getElementById('workspaces').className = "invisible";
-            }, false);
-
-            _buttons_area.appendChild(_back_button);
 
             if (duty.writable) {
                 var _comment_button = document.createElement("button");
@@ -637,41 +565,116 @@ class Start {
                 _buttons_area.appendChild(_close_button);
             }
 
-            var _postpone_button = document.createElement("button");
-            _postpone_button.id = 'postpone-button' + duty.id;
-            _postpone_button.innerText = 'Отложить';
+            if (duty.postponable) {
+                var _postpone_area = document.createElement("div");
+                _postpone_area.id = 'postpone-area' + duty.id;
+                _postpone_area.setAttribute('class', 'postpone-area');
 
-            _postpone_button.addEventListener('click', function (event) {
-                var duty_area = document.getElementById("duty-area" + duty.id);
+                var _postpone_area_list = document.createElement("ul");
+                var postpone_options = {
+                    '+15 min': 'На 15 минут',
+                    '+30 min': 'На 30 минут',
+                    '+1 hour': 'На 1 час',
+                    '+2 hour': 'На 2 часа',
+                    '+1 day': 'На 1 день',
+                    '+2 day': 'На 2 дня'
+                };
 
-                if (duty_area.style.display == 'none') {
-                    document.getElementById("duty-area" + duty.id).style.display = "block";
-                    document.getElementById("postpone-area" + duty.id).style.display = "none";
+                var postpone_options_keys = Object.keys(postpone_options);
 
-                    if (duty.comment) {
-                        document.getElementById("comment-text-area" + duty.id).style.display = "block";
-                    }
+                for (i = 0; i < postpone_options_keys.length; i++) {
+                    (function(i) {
+                        var _li = document.createElement("li");
+                        var _span = document.createElement("span");
+                        _span.innerText = postpone_options[postpone_options_keys[i]];
 
-                    if (duty.readonly) {
-                        document.getElementById("close-button" + duty.id).style.display = "initial";
-                    }
+                        _span.addEventListener('click', function () {
+                            if (confirm('Отложить задачу?')) {
+                                start.postponeDuty(duty.id, postpone_options_keys[i]);
+                            }
+                        }, false);
 
-                    if (duty.writable) {
-                        document.getElementById("comment-button" + duty.id).style.display = "initial";
-                    }
+                        _li.appendChild(_span);
 
-                    _postpone_button.innerText = 'Отложить';
-                } else {
-                    document.getElementById("duty-area" + duty.id).style.display = "none";
-                    document.getElementById("postpone-area" + duty.id).style.display = "block";
-                    document.getElementById("comment-text-area" + duty.id).style.display = "none";
-                    document.getElementById("comment-button" + duty.id).style.display = "none";
-                    document.getElementById("close-button" + duty.id).style.display = "none";
-                    _postpone_button.innerText = 'Отмена';
+                        _postpone_area_list.appendChild(_li);
+                    })(i)
                 }
-            }, false);
 
-            _buttons_area.appendChild(_postpone_button);
+                var _input_date = document.createElement("input");
+                _input_date.type = 'date';
+
+                var _input_time = document.createElement("input");
+                _input_time.type = 'time';
+                _input_time.value = '09:00';
+
+                var _datetime_save_button = document.createElement("button");
+                _datetime_save_button.innerText = 'Сохранить';
+                _datetime_save_button.className = 'primary';
+
+                _datetime_save_button.addEventListener('click', function () {
+                    if (_input_date.value && _input_time.value && confirm('Отложить задачу?')) {
+                        start.postponeDuty(duty.id, null, _input_date.value + " " + _input_time.value);
+                    }
+                }, false);
+
+                var _li = document.createElement("li");
+                _li.appendChild(_input_date);
+                _li.appendChild(_input_time);
+                _li.appendChild(_datetime_save_button);
+
+                _postpone_area_list.appendChild(_li);
+
+                _postpone_area.appendChild(_postpone_area_list);
+                _workspace.appendChild(_postpone_area);
+
+                var _back_button = document.createElement("button");
+                _back_button.id = 'back-button' + duty.id;
+                _back_button.className = 'back-button';
+                _back_button.innerText = 'Назад';
+
+                _back_button.addEventListener('click', function () {
+                    document.getElementById('stickers-column').className = "visible";
+                    document.getElementById('workspaces').className = "invisible";
+                }, false);
+
+                _buttons_area.appendChild(_back_button);
+
+                var _postpone_button = document.createElement("button");
+                _postpone_button.id = 'postpone-button' + duty.id;
+                _postpone_button.innerText = 'Отложить';
+
+                _postpone_button.addEventListener('click', function (event) {
+                    var duty_area = document.getElementById("duty-area" + duty.id);
+
+                    if (duty_area.style.display == 'none') {
+                        document.getElementById("duty-area" + duty.id).style.display = "block";
+                        document.getElementById("postpone-area" + duty.id).style.display = "none";
+
+                        if (duty.comment) {
+                            document.getElementById("comment-text-area" + duty.id).style.display = "block";
+                        }
+
+                        if (duty.readonly) {
+                            document.getElementById("close-button" + duty.id).style.display = "initial";
+                        }
+
+                        if (duty.writable) {
+                            document.getElementById("comment-button" + duty.id).style.display = "initial";
+                        }
+
+                        _postpone_button.innerText = 'Отложить';
+                    } else {
+                        document.getElementById("duty-area" + duty.id).style.display = "none";
+                        document.getElementById("postpone-area" + duty.id).style.display = "block";
+                        document.getElementById("comment-text-area" + duty.id).style.display = "none";
+                        document.getElementById("comment-button" + duty.id).style.display = "none";
+                        document.getElementById("close-button" + duty.id).style.display = "none";
+                        _postpone_button.innerText = 'Отмена';
+                    }
+                }, false);
+
+                _buttons_area.appendChild(_postpone_button);
+            }
 
             document.getElementById("workspaces").appendChild(_workspace);
         }
@@ -709,6 +712,7 @@ class Duty {
     iframe: string = null;
     readonly: boolean = null;
     writable: boolean = null;
+    postponable: boolean = null;
 
     constructor(object: any) {
         if (object.id) {
@@ -745,6 +749,10 @@ class Duty {
 
         if (object.writable) {
             this.writable = object.writable;
+        }
+
+        if (object.postponable) {
+            this.postponable = object.postponable;
         }
     }
 }
