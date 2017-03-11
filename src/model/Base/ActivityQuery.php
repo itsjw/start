@@ -25,6 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
  * @method     ChildActivityQuery orderByWritable($order = Criteria::ASC) Order by the writable column
+ * @method     ChildActivityQuery orderByPostponable($order = Criteria::ASC) Order by the postponable column
  * @method     ChildActivityQuery orderByColor($order = Criteria::ASC) Order by the color column
  * @method     ChildActivityQuery orderByToolbar($order = Criteria::ASC) Order by the toolbar column
  * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
@@ -34,6 +35,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery groupByIframe() Group by the iframe column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
  * @method     ChildActivityQuery groupByWritable() Group by the writable column
+ * @method     ChildActivityQuery groupByPostponable() Group by the postponable column
  * @method     ChildActivityQuery groupByColor() Group by the color column
  * @method     ChildActivityQuery groupByToolbar() Group by the toolbar column
  * @method     ChildActivityQuery groupByPriority() Group by the priority column
@@ -66,6 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
  * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
  * @method     ChildActivity findOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column
+ * @method     ChildActivity findOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column
  * @method     ChildActivity findOneByColor(string $color) Return the first ChildActivity filtered by the color column
  * @method     ChildActivity findOneByToolbar(string $toolbar) Return the first ChildActivity filtered by the toolbar column
  * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column *
@@ -78,6 +81,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByColor(string $color) Return the first ChildActivity filtered by the color column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByToolbar(string $toolbar) Return the first ChildActivity filtered by the toolbar column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -88,6 +92,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
  * @method     ChildActivity[]|ObjectCollection findByWritable(boolean $writable) Return ChildActivity objects filtered by the writable column
+ * @method     ChildActivity[]|ObjectCollection findByPostponable(boolean $postponable) Return ChildActivity objects filtered by the postponable column
  * @method     ChildActivity[]|ObjectCollection findByColor(string $color) Return ChildActivity objects filtered by the color column
  * @method     ChildActivity[]|ObjectCollection findByToolbar(string $toolbar) Return ChildActivity objects filtered by the toolbar column
  * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
@@ -189,7 +194,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, iframe, readonly, writable, color, toolbar, priority FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, iframe, readonly, writable, postponable, color, toolbar, priority FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -422,6 +427,33 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_WRITABLE, $writable, $comparison);
+    }
+
+    /**
+     * Filter the query on the postponable column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPostponable(true); // WHERE postponable = true
+     * $query->filterByPostponable('yes'); // WHERE postponable = true
+     * </code>
+     *
+     * @param     boolean|string $postponable The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByPostponable($postponable = null, $comparison = null)
+    {
+        if (is_string($postponable)) {
+            $postponable = in_array(strtolower($postponable), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_POSTPONABLE, $postponable, $comparison);
     }
 
     /**

@@ -59,7 +59,7 @@ class ActivityTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 9;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ActivityTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /**
      * the column name for the id field
@@ -95,6 +95,11 @@ class ActivityTableMap extends TableMap
      * the column name for the writable field
      */
     const COL_WRITABLE = 'activity.writable';
+
+    /**
+     * the column name for the postponable field
+     */
+    const COL_POSTPONABLE = 'activity.postponable';
 
     /**
      * the column name for the color field
@@ -123,11 +128,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Iframe', 'Readonly', 'Writable', 'Color', 'Toolbar', 'Priority', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'iframe', 'readonly', 'writable', 'color', 'toolbar', 'priority', ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_IFRAME, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_WRITABLE, ActivityTableMap::COL_COLOR, ActivityTableMap::COL_TOOLBAR, ActivityTableMap::COL_PRIORITY, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'iframe', 'readonly', 'writable', 'color', 'toolbar', 'priority', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Iframe', 'Readonly', 'Writable', 'Postponable', 'Color', 'Toolbar', 'Priority', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'iframe', 'readonly', 'writable', 'postponable', 'color', 'toolbar', 'priority', ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_IFRAME, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_WRITABLE, ActivityTableMap::COL_POSTPONABLE, ActivityTableMap::COL_COLOR, ActivityTableMap::COL_TOOLBAR, ActivityTableMap::COL_PRIORITY, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'iframe', 'readonly', 'writable', 'postponable', 'color', 'toolbar', 'priority', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -137,11 +142,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Iframe' => 2, 'Readonly' => 3, 'Writable' => 4, 'Color' => 5, 'Toolbar' => 6, 'Priority' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'iframe' => 2, 'readonly' => 3, 'writable' => 4, 'color' => 5, 'toolbar' => 6, 'priority' => 7, ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_IFRAME => 2, ActivityTableMap::COL_READONLY => 3, ActivityTableMap::COL_WRITABLE => 4, ActivityTableMap::COL_COLOR => 5, ActivityTableMap::COL_TOOLBAR => 6, ActivityTableMap::COL_PRIORITY => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'iframe' => 2, 'readonly' => 3, 'writable' => 4, 'color' => 5, 'toolbar' => 6, 'priority' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Iframe' => 2, 'Readonly' => 3, 'Writable' => 4, 'Postponable' => 5, 'Color' => 6, 'Toolbar' => 7, 'Priority' => 8, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'iframe' => 2, 'readonly' => 3, 'writable' => 4, 'postponable' => 5, 'color' => 6, 'toolbar' => 7, 'priority' => 8, ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_IFRAME => 2, ActivityTableMap::COL_READONLY => 3, ActivityTableMap::COL_WRITABLE => 4, ActivityTableMap::COL_POSTPONABLE => 5, ActivityTableMap::COL_COLOR => 6, ActivityTableMap::COL_TOOLBAR => 7, ActivityTableMap::COL_PRIORITY => 8, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'iframe' => 2, 'readonly' => 3, 'writable' => 4, 'postponable' => 5, 'color' => 6, 'toolbar' => 7, 'priority' => 8, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -167,6 +172,7 @@ class ActivityTableMap extends TableMap
         $this->addColumn('iframe', 'Iframe', 'VARCHAR', false, 255, null);
         $this->addColumn('readonly', 'Readonly', 'BOOLEAN', true, null, false);
         $this->addColumn('writable', 'Writable', 'BOOLEAN', true, null, false);
+        $this->addColumn('postponable', 'Postponable', 'BOOLEAN', true, null, false);
         $this->addColumn('color', 'Color', 'VARCHAR', false, 255, null);
         $this->addColumn('toolbar', 'Toolbar', 'VARCHAR', false, 255, null);
         $this->addColumn('priority', 'Priority', 'INTEGER', false, null, null);
@@ -332,6 +338,7 @@ class ActivityTableMap extends TableMap
             $criteria->addSelectColumn(ActivityTableMap::COL_IFRAME);
             $criteria->addSelectColumn(ActivityTableMap::COL_READONLY);
             $criteria->addSelectColumn(ActivityTableMap::COL_WRITABLE);
+            $criteria->addSelectColumn(ActivityTableMap::COL_POSTPONABLE);
             $criteria->addSelectColumn(ActivityTableMap::COL_COLOR);
             $criteria->addSelectColumn(ActivityTableMap::COL_TOOLBAR);
             $criteria->addSelectColumn(ActivityTableMap::COL_PRIORITY);
@@ -341,6 +348,7 @@ class ActivityTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.iframe');
             $criteria->addSelectColumn($alias . '.readonly');
             $criteria->addSelectColumn($alias . '.writable');
+            $criteria->addSelectColumn($alias . '.postponable');
             $criteria->addSelectColumn($alias . '.color');
             $criteria->addSelectColumn($alias . '.toolbar');
             $criteria->addSelectColumn($alias . '.priority');

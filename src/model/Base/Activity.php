@@ -102,6 +102,14 @@ abstract class Activity implements ActiveRecordInterface
     protected $writable;
 
     /**
+     * The value for the postponable field.
+     *
+     * Note: this column has a database default value of: false
+     * @var        boolean
+     */
+    protected $postponable;
+
+    /**
      * The value for the color field.
      *
      * @var        string
@@ -152,6 +160,7 @@ abstract class Activity implements ActiveRecordInterface
     {
         $this->readonly = false;
         $this->writable = false;
+        $this->postponable = false;
     }
 
     /**
@@ -452,6 +461,26 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [postponable] column value.
+     *
+     * @return boolean
+     */
+    public function getPostponable()
+    {
+        return $this->postponable;
+    }
+
+    /**
+     * Get the [postponable] column value.
+     *
+     * @return boolean
+     */
+    public function isPostponable()
+    {
+        return $this->getPostponable();
+    }
+
+    /**
      * Get the [color] column value.
      *
      * @return string
@@ -598,6 +627,34 @@ abstract class Activity implements ActiveRecordInterface
     } // setWritable()
 
     /**
+     * Sets the value of the [postponable] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param  boolean|integer|string $v The new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setPostponable($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->postponable !== $v) {
+            $this->postponable = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_POSTPONABLE] = true;
+        }
+
+        return $this;
+    } // setPostponable()
+
+    /**
      * Set the value of [color] column.
      *
      * @param string $v new value
@@ -675,6 +732,10 @@ abstract class Activity implements ActiveRecordInterface
                 return false;
             }
 
+            if ($this->postponable !== false) {
+                return false;
+            }
+
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -716,13 +777,16 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->writable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->postponable = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
             $this->toolbar = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
             $this->priority = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -732,7 +796,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -977,6 +1041,9 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_WRITABLE)) {
             $modifiedColumns[':p' . $index++]  = 'writable';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_POSTPONABLE)) {
+            $modifiedColumns[':p' . $index++]  = 'postponable';
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $modifiedColumns[':p' . $index++]  = 'color';
         }
@@ -1011,6 +1078,9 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'writable':
                         $stmt->bindValue($identifier, $this->writable, PDO::PARAM_BOOL);
+                        break;
+                    case 'postponable':
+                        $stmt->bindValue($identifier, $this->postponable, PDO::PARAM_BOOL);
                         break;
                     case 'color':
                         $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
@@ -1092,12 +1162,15 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getWritable();
                 break;
             case 5:
-                return $this->getColor();
+                return $this->getPostponable();
                 break;
             case 6:
-                return $this->getToolbar();
+                return $this->getColor();
                 break;
             case 7:
+                return $this->getToolbar();
+                break;
+            case 8:
                 return $this->getPriority();
                 break;
             default:
@@ -1135,9 +1208,10 @@ abstract class Activity implements ActiveRecordInterface
             $keys[2] => $this->getIframe(),
             $keys[3] => $this->getReadonly(),
             $keys[4] => $this->getWritable(),
-            $keys[5] => $this->getColor(),
-            $keys[6] => $this->getToolbar(),
-            $keys[7] => $this->getPriority(),
+            $keys[5] => $this->getPostponable(),
+            $keys[6] => $this->getColor(),
+            $keys[7] => $this->getToolbar(),
+            $keys[8] => $this->getPriority(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1210,12 +1284,15 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setWritable($value);
                 break;
             case 5:
-                $this->setColor($value);
+                $this->setPostponable($value);
                 break;
             case 6:
-                $this->setToolbar($value);
+                $this->setColor($value);
                 break;
             case 7:
+                $this->setToolbar($value);
+                break;
+            case 8:
                 $this->setPriority($value);
                 break;
         } // switch()
@@ -1260,13 +1337,16 @@ abstract class Activity implements ActiveRecordInterface
             $this->setWritable($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setColor($arr[$keys[5]]);
+            $this->setPostponable($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setToolbar($arr[$keys[6]]);
+            $this->setColor($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPriority($arr[$keys[7]]);
+            $this->setToolbar($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setPriority($arr[$keys[8]]);
         }
     }
 
@@ -1323,6 +1403,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_WRITABLE)) {
             $criteria->add(ActivityTableMap::COL_WRITABLE, $this->writable);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_POSTPONABLE)) {
+            $criteria->add(ActivityTableMap::COL_POSTPONABLE, $this->postponable);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $criteria->add(ActivityTableMap::COL_COLOR, $this->color);
@@ -1423,6 +1506,7 @@ abstract class Activity implements ActiveRecordInterface
         $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
         $copyObj->setWritable($this->getWritable());
+        $copyObj->setPostponable($this->getPostponable());
         $copyObj->setColor($this->getColor());
         $copyObj->setToolbar($this->getToolbar());
         $copyObj->setPriority($this->getPriority());
@@ -1721,6 +1805,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->iframe = null;
         $this->readonly = null;
         $this->writable = null;
+        $this->postponable = null;
         $this->color = null;
         $this->toolbar = null;
         $this->priority = null;

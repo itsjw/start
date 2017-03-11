@@ -23,6 +23,7 @@
         <column name="iframe" type="varchar" size="255"/>
         <column name="readonly" type="boolean" required="true" defaultValue="false"/>
         <column name="writable" type="boolean" required="true" defaultValue="false"/>
+        <column name="postponable" type="boolean" required="true" defaultValue="false"/>
         <column name="color" type="varchar" size="255"/>
         <column name="toolbar" type="varchar" size="255"/>
         <column name="priority" type="integer"/>
