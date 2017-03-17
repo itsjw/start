@@ -2,6 +2,7 @@
 
 namespace Perfumerlabs\Start\Controller;
 
+use App\Model\UserQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
@@ -29,8 +30,10 @@ class SearchController extends ViewController
                 ->orderByRaisedAt()
                 ->find();
 
+            $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
             foreach ($duties as $duty) {
-                $content[] = $this->s('perfumerlabs.duty_formatter')->format($duty, $this->getUser());
+                $content[] = $this->s('perfumerlabs.duty_formatter')->format($duty, $user);
             }
         }
 

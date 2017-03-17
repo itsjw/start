@@ -2,6 +2,7 @@
 
 namespace Perfumerlabs\Start\Controller;
 
+use App\Model\UserQuery;
 use Perfumer\Framework\Controller\TemplateController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 
@@ -11,7 +12,7 @@ class LoginController extends TemplateController
 
     public function get()
     {
-        if ($this->getAuth()->isLogged()) {
+        if ($this->getAuth()->isAuthenticated()) {
             $this->redirect('/home');
         }
 
@@ -19,13 +20,15 @@ class LoginController extends TemplateController
         $password = (string) $this->f('password');
 
         if ($username && $password) {
-            $this->getAuth()->login($username, $password);
+            $user = UserQuery::create()->findOneByUsername($username);
 
-            if ($this->getAuth()->isLogged()) {
-                $this->redirect('/home');
-            } else {
+            if (!$user || !password_verify($password, $user->getPassword())) {
                 $this->redirect('/login');
             }
+
+            $this->getAuth()->startSession((string) $user->getId());
+
+            $this->redirect('/home');
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Perfumerlabs\Start\Controller\Duty;
 
+use App\Model\UserQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
@@ -22,13 +23,15 @@ class CreateController extends ViewController
 
         $duty = new Duty();
         $duty->setActivity($activity);
-        $duty->setUserId($this->getUser()->getId());
+        $duty->setUserId((int) $this->getAuth()->getData());
         $duty->setTitle($activity->getToolbar());
         $duty->setRaisedAt(new \DateTime());
         $duty->setPickedAt(new \DateTime());
         $duty->save();
 
-        $content = $this->s('perfumerlabs.duty_formatter')->format($duty, $this->getUser());
+        $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
+        $content = $this->s('perfumerlabs.duty_formatter')->format($duty, $user);
 
         $this->setContent($content);
     }

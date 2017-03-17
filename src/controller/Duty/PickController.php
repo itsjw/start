@@ -2,6 +2,7 @@
 
 namespace Perfumerlabs\Start\Controller\Duty;
 
+use App\Model\UserQuery;
 use Perfumer\Framework\Controller\PlainController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
@@ -19,8 +20,10 @@ class PickController extends PlainController
 
         $duty = DutyQuery::create()->findPk($id);
 
+        $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
         if ($duty) {
-            $this->s('perfumerlabs.duty')->pick($this->getUser(), $duty);
+            $this->s('perfumerlabs.duty')->pick($user, $duty);
         }
     }
 

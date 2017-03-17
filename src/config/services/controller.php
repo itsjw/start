@@ -3,19 +3,26 @@
 return [
     'perfumerlabs.start.controller.auth' => [
         'shared' => true,
-        'class' => 'Perfumer\\Component\\Auth\\Authorization\\DatabaseAuthorization',
-        'arguments' => ['#session', '#perfumerlabs.start.controller.auth.token.cookie_handler', [
-            'model' => '\\App\\Model\\User',
-            'username_field' => 'username',
-            'acl' => true,
-            'application' => false,
-            'update_gap' => 1800
+        'class' => 'Perfumer\\Component\\Auth\\Authentication',
+        'arguments' => ['#perfumerlabs.start.controller.session.user', '#perfumerlabs.start.controller.auth.data_provider.user', '#perfumerlabs.start.controller.auth.token.cookie_handler']
+    ],
+
+    'perfumerlabs.start.controller.auth.data_provider.user' => [
+        'shared' => true,
+        'class' => 'Perfumerlabs\\Start\\Service\\Auth\\UserDataProvider'
+    ],
+
+    'perfumerlabs.start.controller.session.user' => [
+        'shared' => true,
+        'class' => 'Perfumer\\Component\\Auth\\Session',
+        'arguments' => ['#cache.memcache', [
+            'cache_prefix' => '_session_user'
         ]]
     ],
 
     'perfumerlabs.start.controller.auth.token.cookie_handler' => [
         'shared' => true,
-        'class' => 'Perfumer\\Component\\Session\\TokenHandler\\CookieHandler',
+        'class' => 'Perfumer\\Component\\Auth\\TokenProvider\\CookieProvider',
         'arguments' => ['#cookie', [
             'lifetime' => 7 * 86400
         ]]

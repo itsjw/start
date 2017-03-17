@@ -2,7 +2,7 @@
 
 namespace Perfumerlabs\Start\Controller;
 
-use App\Model\User;
+use App\Model\UserQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
@@ -17,7 +17,7 @@ class ExtraController extends ViewController
     {
         $picked_duties = DutyQuery::create()
             ->joinWith('Activity')
-            ->filterByUserId($this->getUser()->getId())
+            ->filterByUserId((int) $this->getAuth()->getData())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
             ->find();
@@ -32,11 +32,13 @@ class ExtraController extends ViewController
             }
         }
 
-        $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($this->getUser());
+        $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
+        $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($user);
 
         $extra_duty = DutyQuery::create()
             ->joinWith('Activity')
-            ->filterByUserId($this->getUser()->getId())
+            ->filterByUserId((int) $this->getAuth()->getData())
             ->_or()
             ->filterByActivityId($allowed_activities, Criteria::IN)
             ->filterByClosedAt(null, Criteria::ISNULL)
@@ -52,22 +54,14 @@ class ExtraController extends ViewController
 
         if ($extra_duty) {
             $extra_duty->setPickedAt(new \DateTime());
-            $extra_duty->setUserId($this->getUser()->getId());
+            $extra_duty->setUserId((int) $this->getAuth()->getData());
 
             if ($extra_duty->save()) {
-                $content = $this->s('perfumerlabs.duty_formatter')->format($extra_duty, $this->getUser());
+                $content = $this->s('perfumerlabs.duty_formatter')->format($extra_duty, $user);
 
                 $this->setContent($content);
             }
         }
-    }
-
-    /**
-     * @return User
-     */
-    protected function getUser()
-    {
-        return parent::getUser();
     }
 
     /**

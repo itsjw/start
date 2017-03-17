@@ -10,7 +10,7 @@ class HomeController extends TemplateController
 {
     public function get()
     {
-        if (!$this->getAuth()->isLogged()) {
+        if (!$this->getAuth()->isAuthenticated()) {
             $this->redirect('/login');
         }
 

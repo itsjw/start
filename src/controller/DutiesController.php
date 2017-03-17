@@ -2,6 +2,7 @@
 
 namespace Perfumerlabs\Start\Controller;
 
+use App\Model\UserQuery;
 use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
@@ -21,7 +22,7 @@ class DutiesController extends ViewController
             ->_if($_id = $this->f('_id'))
                 ->filterById((int) $_id)
             ->_endif()
-            ->filterByUserId($this->getUser()->getId())
+            ->filterByUserId((int) $this->getAuth()->getData())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
             ->orderByRaisedAt()
@@ -29,8 +30,10 @@ class DutiesController extends ViewController
 
         $content = [];
 
+        $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
         foreach ($duties as $duty) {
-            $content[] = $this->s('perfumerlabs.duty_formatter')->format($duty, $this->getUser());
+            $content[] = $this->s('perfumerlabs.duty_formatter')->format($duty, $user);
         }
 
         $this->setContent($content);
