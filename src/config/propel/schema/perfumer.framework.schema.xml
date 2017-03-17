@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database name="start" defaultIdMethod="native" namespace="App\Model">
     <!-- Perfumer default model schemas -->
-    <table name="_application" phpName="Application">
-        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="name" type="varchar" size="255" required="true"/>
-        <column name="token" type="varchar" size="255" required="true"/>
-    </table>
-
     <table name="_role" phpName="Role">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255" required="true"/>
@@ -25,19 +19,17 @@
     <table name="_session" phpName="Session">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="token" type="varchar" size="255" required="true"/>
-        <column name="model_id" type="integer"/>
-        <column name="model_name" type="varchar" size="255"/>
+        <column name="user_id" type="integer"/>
         <column name="expired_at" type="timestamp"/>
-        <column name="application_id" type="integer"/>
-        <foreign-key foreignTable="_application" phpName="Application">
-            <reference local="application_id" foreign="id"/>
+        <column name="data" type="varchar" size="255"/>
+        <foreign-key foreignTable="_user" phpName="User">
+            <reference local="user_id" foreign="id"/>
         </foreign-key>
         <unique>
             <unique-column name="token"/>
         </unique>
         <index>
-            <index-column name="model_id"/>
-            <index-column name="model_name"/>
+            <index-column name="user_id"/>
         </index>
         <index>
             <index-column name="expired_at"/>

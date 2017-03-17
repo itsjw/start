@@ -5,9 +5,9 @@ namespace App\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use App\Model\Application as ChildApplication;
-use App\Model\ApplicationQuery as ChildApplicationQuery;
 use App\Model\SessionQuery as ChildSessionQuery;
+use App\Model\User as ChildUser;
+use App\Model\UserQuery as ChildUserQuery;
 use App\Model\Map\SessionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -78,18 +78,11 @@ abstract class Session implements ActiveRecordInterface
     protected $token;
 
     /**
-     * The value for the model_id field.
+     * The value for the user_id field.
      *
      * @var        int
      */
-    protected $model_id;
-
-    /**
-     * The value for the model_name field.
-     *
-     * @var        string
-     */
-    protected $model_name;
+    protected $user_id;
 
     /**
      * The value for the expired_at field.
@@ -99,11 +92,11 @@ abstract class Session implements ActiveRecordInterface
     protected $expired_at;
 
     /**
-     * The value for the application_id field.
+     * The value for the data field.
      *
-     * @var        int
+     * @var        string
      */
-    protected $application_id;
+    protected $data;
 
     /**
      * The value for the created_at field.
@@ -113,9 +106,9 @@ abstract class Session implements ActiveRecordInterface
     protected $created_at;
 
     /**
-     * @var        ChildApplication
+     * @var        ChildUser
      */
-    protected $aApplication;
+    protected $aUser;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -371,23 +364,13 @@ abstract class Session implements ActiveRecordInterface
     }
 
     /**
-     * Get the [model_id] column value.
+     * Get the [user_id] column value.
      *
      * @return int
      */
-    public function getModelId()
+    public function getUserId()
     {
-        return $this->model_id;
-    }
-
-    /**
-     * Get the [model_name] column value.
-     *
-     * @return string
-     */
-    public function getModelName()
-    {
-        return $this->model_name;
+        return $this->user_id;
     }
 
     /**
@@ -411,13 +394,13 @@ abstract class Session implements ActiveRecordInterface
     }
 
     /**
-     * Get the [application_id] column value.
+     * Get the [data] column value.
      *
-     * @return int
+     * @return string
      */
-    public function getApplicationId()
+    public function getData()
     {
-        return $this->application_id;
+        return $this->data;
     }
 
     /**
@@ -481,44 +464,28 @@ abstract class Session implements ActiveRecordInterface
     } // setToken()
 
     /**
-     * Set the value of [model_id] column.
+     * Set the value of [user_id] column.
      *
      * @param int $v new value
      * @return $this|\App\Model\Session The current object (for fluent API support)
      */
-    public function setModelId($v)
+    public function setUserId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->model_id !== $v) {
-            $this->model_id = $v;
-            $this->modifiedColumns[SessionTableMap::COL_MODEL_ID] = true;
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[SessionTableMap::COL_USER_ID] = true;
+        }
+
+        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
+            $this->aUser = null;
         }
 
         return $this;
-    } // setModelId()
-
-    /**
-     * Set the value of [model_name] column.
-     *
-     * @param string $v new value
-     * @return $this|\App\Model\Session The current object (for fluent API support)
-     */
-    public function setModelName($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->model_name !== $v) {
-            $this->model_name = $v;
-            $this->modifiedColumns[SessionTableMap::COL_MODEL_NAME] = true;
-        }
-
-        return $this;
-    } // setModelName()
+    } // setUserId()
 
     /**
      * Sets the value of [expired_at] column to a normalized version of the date/time value specified.
@@ -541,28 +508,24 @@ abstract class Session implements ActiveRecordInterface
     } // setExpiredAt()
 
     /**
-     * Set the value of [application_id] column.
+     * Set the value of [data] column.
      *
-     * @param int $v new value
+     * @param string $v new value
      * @return $this|\App\Model\Session The current object (for fluent API support)
      */
-    public function setApplicationId($v)
+    public function setData($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
-        if ($this->application_id !== $v) {
-            $this->application_id = $v;
-            $this->modifiedColumns[SessionTableMap::COL_APPLICATION_ID] = true;
-        }
-
-        if ($this->aApplication !== null && $this->aApplication->getId() !== $v) {
-            $this->aApplication = null;
+        if ($this->data !== $v) {
+            $this->data = $v;
+            $this->modifiedColumns[SessionTableMap::COL_DATA] = true;
         }
 
         return $this;
-    } // setApplicationId()
+    } // setData()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -626,19 +589,16 @@ abstract class Session implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : SessionTableMap::translateFieldName('Token', TableMap::TYPE_PHPNAME, $indexType)];
             $this->token = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : SessionTableMap::translateFieldName('ModelId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->model_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : SessionTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->user_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : SessionTableMap::translateFieldName('ModelName', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->model_name = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : SessionTableMap::translateFieldName('ExpiredAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : SessionTableMap::translateFieldName('ExpiredAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->expired_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : SessionTableMap::translateFieldName('ApplicationId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->application_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : SessionTableMap::translateFieldName('Data', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->data = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : SessionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : SessionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -648,7 +608,7 @@ abstract class Session implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = SessionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 6; // 6 = SessionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\Session'), 0, $e);
@@ -670,8 +630,8 @@ abstract class Session implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aApplication !== null && $this->application_id !== $this->aApplication->getId()) {
-            $this->aApplication = null;
+        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
+            $this->aUser = null;
         }
     } // ensureConsistency
 
@@ -712,7 +672,7 @@ abstract class Session implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aApplication = null;
+            $this->aUser = null;
         } // if (deep)
     }
 
@@ -826,11 +786,11 @@ abstract class Session implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aApplication !== null) {
-                if ($this->aApplication->isModified() || $this->aApplication->isNew()) {
-                    $affectedRows += $this->aApplication->save($con);
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
                 }
-                $this->setApplication($this->aApplication);
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -885,17 +845,14 @@ abstract class Session implements ActiveRecordInterface
         if ($this->isColumnModified(SessionTableMap::COL_TOKEN)) {
             $modifiedColumns[':p' . $index++]  = 'token';
         }
-        if ($this->isColumnModified(SessionTableMap::COL_MODEL_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'model_id';
-        }
-        if ($this->isColumnModified(SessionTableMap::COL_MODEL_NAME)) {
-            $modifiedColumns[':p' . $index++]  = 'model_name';
+        if ($this->isColumnModified(SessionTableMap::COL_USER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'user_id';
         }
         if ($this->isColumnModified(SessionTableMap::COL_EXPIRED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'expired_at';
         }
-        if ($this->isColumnModified(SessionTableMap::COL_APPLICATION_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'application_id';
+        if ($this->isColumnModified(SessionTableMap::COL_DATA)) {
+            $modifiedColumns[':p' . $index++]  = 'data';
         }
         if ($this->isColumnModified(SessionTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -917,17 +874,14 @@ abstract class Session implements ActiveRecordInterface
                     case 'token':
                         $stmt->bindValue($identifier, $this->token, PDO::PARAM_STR);
                         break;
-                    case 'model_id':
-                        $stmt->bindValue($identifier, $this->model_id, PDO::PARAM_INT);
-                        break;
-                    case 'model_name':
-                        $stmt->bindValue($identifier, $this->model_name, PDO::PARAM_STR);
+                    case 'user_id':
+                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
                         break;
                     case 'expired_at':
                         $stmt->bindValue($identifier, $this->expired_at ? $this->expired_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
-                    case 'application_id':
-                        $stmt->bindValue($identifier, $this->application_id, PDO::PARAM_INT);
+                    case 'data':
+                        $stmt->bindValue($identifier, $this->data, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -994,18 +948,15 @@ abstract class Session implements ActiveRecordInterface
                 return $this->getToken();
                 break;
             case 2:
-                return $this->getModelId();
+                return $this->getUserId();
                 break;
             case 3:
-                return $this->getModelName();
-                break;
-            case 4:
                 return $this->getExpiredAt();
                 break;
-            case 5:
-                return $this->getApplicationId();
+            case 4:
+                return $this->getData();
                 break;
-            case 6:
+            case 5:
                 return $this->getCreatedAt();
                 break;
             default:
@@ -1040,18 +991,17 @@ abstract class Session implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getToken(),
-            $keys[2] => $this->getModelId(),
-            $keys[3] => $this->getModelName(),
-            $keys[4] => $this->getExpiredAt(),
-            $keys[5] => $this->getApplicationId(),
-            $keys[6] => $this->getCreatedAt(),
+            $keys[2] => $this->getUserId(),
+            $keys[3] => $this->getExpiredAt(),
+            $keys[4] => $this->getData(),
+            $keys[5] => $this->getCreatedAt(),
         );
-        if ($result[$keys[4]] instanceof \DateTime) {
-            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        if ($result[$keys[3]] instanceof \DateTime) {
+            $result[$keys[3]] = $result[$keys[3]]->format('c');
         }
 
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
+        if ($result[$keys[5]] instanceof \DateTime) {
+            $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1060,20 +1010,20 @@ abstract class Session implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aApplication) {
+            if (null !== $this->aUser) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'application';
+                        $key = 'user';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = '_application';
+                        $key = '_user';
                         break;
                     default:
-                        $key = 'Application';
+                        $key = 'User';
                 }
 
-                $result[$key] = $this->aApplication->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1116,18 +1066,15 @@ abstract class Session implements ActiveRecordInterface
                 $this->setToken($value);
                 break;
             case 2:
-                $this->setModelId($value);
+                $this->setUserId($value);
                 break;
             case 3:
-                $this->setModelName($value);
-                break;
-            case 4:
                 $this->setExpiredAt($value);
                 break;
-            case 5:
-                $this->setApplicationId($value);
+            case 4:
+                $this->setData($value);
                 break;
-            case 6:
+            case 5:
                 $this->setCreatedAt($value);
                 break;
         } // switch()
@@ -1163,19 +1110,16 @@ abstract class Session implements ActiveRecordInterface
             $this->setToken($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setModelId($arr[$keys[2]]);
+            $this->setUserId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setModelName($arr[$keys[3]]);
+            $this->setExpiredAt($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setExpiredAt($arr[$keys[4]]);
+            $this->setData($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setApplicationId($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
+            $this->setCreatedAt($arr[$keys[5]]);
         }
     }
 
@@ -1224,17 +1168,14 @@ abstract class Session implements ActiveRecordInterface
         if ($this->isColumnModified(SessionTableMap::COL_TOKEN)) {
             $criteria->add(SessionTableMap::COL_TOKEN, $this->token);
         }
-        if ($this->isColumnModified(SessionTableMap::COL_MODEL_ID)) {
-            $criteria->add(SessionTableMap::COL_MODEL_ID, $this->model_id);
-        }
-        if ($this->isColumnModified(SessionTableMap::COL_MODEL_NAME)) {
-            $criteria->add(SessionTableMap::COL_MODEL_NAME, $this->model_name);
+        if ($this->isColumnModified(SessionTableMap::COL_USER_ID)) {
+            $criteria->add(SessionTableMap::COL_USER_ID, $this->user_id);
         }
         if ($this->isColumnModified(SessionTableMap::COL_EXPIRED_AT)) {
             $criteria->add(SessionTableMap::COL_EXPIRED_AT, $this->expired_at);
         }
-        if ($this->isColumnModified(SessionTableMap::COL_APPLICATION_ID)) {
-            $criteria->add(SessionTableMap::COL_APPLICATION_ID, $this->application_id);
+        if ($this->isColumnModified(SessionTableMap::COL_DATA)) {
+            $criteria->add(SessionTableMap::COL_DATA, $this->data);
         }
         if ($this->isColumnModified(SessionTableMap::COL_CREATED_AT)) {
             $criteria->add(SessionTableMap::COL_CREATED_AT, $this->created_at);
@@ -1326,10 +1267,9 @@ abstract class Session implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setToken($this->getToken());
-        $copyObj->setModelId($this->getModelId());
-        $copyObj->setModelName($this->getModelName());
+        $copyObj->setUserId($this->getUserId());
         $copyObj->setExpiredAt($this->getExpiredAt());
-        $copyObj->setApplicationId($this->getApplicationId());
+        $copyObj->setData($this->getData());
         $copyObj->setCreatedAt($this->getCreatedAt());
         if ($makeNew) {
             $copyObj->setNew(true);
@@ -1360,24 +1300,24 @@ abstract class Session implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildApplication object.
+     * Declares an association between this object and a ChildUser object.
      *
-     * @param  ChildApplication $v
+     * @param  ChildUser $v
      * @return $this|\App\Model\Session The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setApplication(ChildApplication $v = null)
+    public function setUser(ChildUser $v = null)
     {
         if ($v === null) {
-            $this->setApplicationId(NULL);
+            $this->setUserId(NULL);
         } else {
-            $this->setApplicationId($v->getId());
+            $this->setUserId($v->getId());
         }
 
-        $this->aApplication = $v;
+        $this->aUser = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildApplication object, it will not be re-added.
+        // If this object has already been added to the ChildUser object, it will not be re-added.
         if ($v !== null) {
             $v->addSession($this);
         }
@@ -1388,26 +1328,26 @@ abstract class Session implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildApplication object
+     * Get the associated ChildUser object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildApplication The associated ChildApplication object.
+     * @return ChildUser The associated ChildUser object.
      * @throws PropelException
      */
-    public function getApplication(ConnectionInterface $con = null)
+    public function getUser(ConnectionInterface $con = null)
     {
-        if ($this->aApplication === null && ($this->application_id !== null)) {
-            $this->aApplication = ChildApplicationQuery::create()->findPk($this->application_id, $con);
+        if ($this->aUser === null && ($this->user_id !== null)) {
+            $this->aUser = ChildUserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aApplication->addSessions($this);
+                $this->aUser->addSessions($this);
              */
         }
 
-        return $this->aApplication;
+        return $this->aUser;
     }
 
     /**
@@ -1417,15 +1357,14 @@ abstract class Session implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aApplication) {
-            $this->aApplication->removeSession($this);
+        if (null !== $this->aUser) {
+            $this->aUser->removeSession($this);
         }
         $this->id = null;
         $this->token = null;
-        $this->model_id = null;
-        $this->model_name = null;
+        $this->user_id = null;
         $this->expired_at = null;
-        $this->application_id = null;
+        $this->data = null;
         $this->created_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
@@ -1447,7 +1386,7 @@ abstract class Session implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
-        $this->aApplication = null;
+        $this->aUser = null;
     }
 
     /**

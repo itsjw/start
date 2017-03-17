@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "perfumer/framework": "0.1.0",
+        "perfumer/framework": "0.2.1",
         "propel/propel": "2.0.0-alpha7",
         "pwfisher/command-line-php": "dev-master",
         "symfony/console": "~2 || ~3",
@@ -20,7 +20,7 @@
         "symfony/validator": "~2 || ~3",
         "tedivm/stash": "~0.13.0",
         "twig/twig": "~1",
-        "erusev/parsedown": "1.6.0"
+        "erusev/parsedown": "~1"
     },
     "autoload": {
         "psr-4": {

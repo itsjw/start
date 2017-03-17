@@ -22,18 +22,16 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildSessionQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildSessionQuery orderByToken($order = Criteria::ASC) Order by the token column
- * @method     ChildSessionQuery orderByModelId($order = Criteria::ASC) Order by the model_id column
- * @method     ChildSessionQuery orderByModelName($order = Criteria::ASC) Order by the model_name column
+ * @method     ChildSessionQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildSessionQuery orderByExpiredAt($order = Criteria::ASC) Order by the expired_at column
- * @method     ChildSessionQuery orderByApplicationId($order = Criteria::ASC) Order by the application_id column
+ * @method     ChildSessionQuery orderByData($order = Criteria::ASC) Order by the data column
  * @method     ChildSessionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  *
  * @method     ChildSessionQuery groupById() Group by the id column
  * @method     ChildSessionQuery groupByToken() Group by the token column
- * @method     ChildSessionQuery groupByModelId() Group by the model_id column
- * @method     ChildSessionQuery groupByModelName() Group by the model_name column
+ * @method     ChildSessionQuery groupByUserId() Group by the user_id column
  * @method     ChildSessionQuery groupByExpiredAt() Group by the expired_at column
- * @method     ChildSessionQuery groupByApplicationId() Group by the application_id column
+ * @method     ChildSessionQuery groupByData() Group by the data column
  * @method     ChildSessionQuery groupByCreatedAt() Group by the created_at column
  *
  * @method     ChildSessionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -44,27 +42,26 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildSessionQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildSessionQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
- * @method     ChildSessionQuery leftJoinApplication($relationAlias = null) Adds a LEFT JOIN clause to the query using the Application relation
- * @method     ChildSessionQuery rightJoinApplication($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Application relation
- * @method     ChildSessionQuery innerJoinApplication($relationAlias = null) Adds a INNER JOIN clause to the query using the Application relation
+ * @method     ChildSessionQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildSessionQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildSessionQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
  *
- * @method     ChildSessionQuery joinWithApplication($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Application relation
+ * @method     ChildSessionQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
  *
- * @method     ChildSessionQuery leftJoinWithApplication() Adds a LEFT JOIN clause and with to the query using the Application relation
- * @method     ChildSessionQuery rightJoinWithApplication() Adds a RIGHT JOIN clause and with to the query using the Application relation
- * @method     ChildSessionQuery innerJoinWithApplication() Adds a INNER JOIN clause and with to the query using the Application relation
+ * @method     ChildSessionQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
+ * @method     ChildSessionQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
+ * @method     ChildSessionQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
  *
- * @method     \App\Model\ApplicationQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \App\Model\UserQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildSession findOne(ConnectionInterface $con = null) Return the first ChildSession matching the query
  * @method     ChildSession findOneOrCreate(ConnectionInterface $con = null) Return the first ChildSession matching the query, or a new ChildSession object populated from the query conditions when no match is found
  *
  * @method     ChildSession findOneById(int $id) Return the first ChildSession filtered by the id column
  * @method     ChildSession findOneByToken(string $token) Return the first ChildSession filtered by the token column
- * @method     ChildSession findOneByModelId(int $model_id) Return the first ChildSession filtered by the model_id column
- * @method     ChildSession findOneByModelName(string $model_name) Return the first ChildSession filtered by the model_name column
+ * @method     ChildSession findOneByUserId(int $user_id) Return the first ChildSession filtered by the user_id column
  * @method     ChildSession findOneByExpiredAt(string $expired_at) Return the first ChildSession filtered by the expired_at column
- * @method     ChildSession findOneByApplicationId(int $application_id) Return the first ChildSession filtered by the application_id column
+ * @method     ChildSession findOneByData(string $data) Return the first ChildSession filtered by the data column
  * @method     ChildSession findOneByCreatedAt(string $created_at) Return the first ChildSession filtered by the created_at column *
 
  * @method     ChildSession requirePk($key, ConnectionInterface $con = null) Return the ChildSession by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -72,19 +69,17 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildSession requireOneById(int $id) Return the first ChildSession filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSession requireOneByToken(string $token) Return the first ChildSession filtered by the token column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSession requireOneByModelId(int $model_id) Return the first ChildSession filtered by the model_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSession requireOneByModelName(string $model_name) Return the first ChildSession filtered by the model_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildSession requireOneByUserId(int $user_id) Return the first ChildSession filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSession requireOneByExpiredAt(string $expired_at) Return the first ChildSession filtered by the expired_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSession requireOneByApplicationId(int $application_id) Return the first ChildSession filtered by the application_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildSession requireOneByData(string $data) Return the first ChildSession filtered by the data column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSession requireOneByCreatedAt(string $created_at) Return the first ChildSession filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildSession[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildSession objects based on current ModelCriteria
  * @method     ChildSession[]|ObjectCollection findById(int $id) Return ChildSession objects filtered by the id column
  * @method     ChildSession[]|ObjectCollection findByToken(string $token) Return ChildSession objects filtered by the token column
- * @method     ChildSession[]|ObjectCollection findByModelId(int $model_id) Return ChildSession objects filtered by the model_id column
- * @method     ChildSession[]|ObjectCollection findByModelName(string $model_name) Return ChildSession objects filtered by the model_name column
+ * @method     ChildSession[]|ObjectCollection findByUserId(int $user_id) Return ChildSession objects filtered by the user_id column
  * @method     ChildSession[]|ObjectCollection findByExpiredAt(string $expired_at) Return ChildSession objects filtered by the expired_at column
- * @method     ChildSession[]|ObjectCollection findByApplicationId(int $application_id) Return ChildSession objects filtered by the application_id column
+ * @method     ChildSession[]|ObjectCollection findByData(string $data) Return ChildSession objects filtered by the data column
  * @method     ChildSession[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildSession objects filtered by the created_at column
  * @method     ChildSession[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -184,7 +179,7 @@ abstract class SessionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, token, model_id, model_name, expired_at, application_id, created_at FROM _session WHERE id = :p0';
+        $sql = 'SELECT id, token, user_id, expired_at, data, created_at FROM _session WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -341,16 +336,18 @@ abstract class SessionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the model_id column
+     * Filter the query on the user_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByModelId(1234); // WHERE model_id = 1234
-     * $query->filterByModelId(array(12, 34)); // WHERE model_id IN (12, 34)
-     * $query->filterByModelId(array('min' => 12)); // WHERE model_id > 12
+     * $query->filterByUserId(1234); // WHERE user_id = 1234
+     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
+     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
      *
-     * @param     mixed $modelId The value to use as filter.
+     * @see       filterByUser()
+     *
+     * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -358,16 +355,16 @@ abstract class SessionQuery extends ModelCriteria
      *
      * @return $this|ChildSessionQuery The current query, for fluid interface
      */
-    public function filterByModelId($modelId = null, $comparison = null)
+    public function filterByUserId($userId = null, $comparison = null)
     {
-        if (is_array($modelId)) {
+        if (is_array($userId)) {
             $useMinMax = false;
-            if (isset($modelId['min'])) {
-                $this->addUsingAlias(SessionTableMap::COL_MODEL_ID, $modelId['min'], Criteria::GREATER_EQUAL);
+            if (isset($userId['min'])) {
+                $this->addUsingAlias(SessionTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($modelId['max'])) {
-                $this->addUsingAlias(SessionTableMap::COL_MODEL_ID, $modelId['max'], Criteria::LESS_EQUAL);
+            if (isset($userId['max'])) {
+                $this->addUsingAlias(SessionTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -378,32 +375,7 @@ abstract class SessionQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(SessionTableMap::COL_MODEL_ID, $modelId, $comparison);
-    }
-
-    /**
-     * Filter the query on the model_name column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByModelName('fooValue');   // WHERE model_name = 'fooValue'
-     * $query->filterByModelName('%fooValue%', Criteria::LIKE); // WHERE model_name LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $modelName The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildSessionQuery The current query, for fluid interface
-     */
-    public function filterByModelName($modelName = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($modelName)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(SessionTableMap::COL_MODEL_NAME, $modelName, $comparison);
+        return $this->addUsingAlias(SessionTableMap::COL_USER_ID, $userId, $comparison);
     }
 
     /**
@@ -450,46 +422,28 @@ abstract class SessionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the application_id column
+     * Filter the query on the data column
      *
      * Example usage:
      * <code>
-     * $query->filterByApplicationId(1234); // WHERE application_id = 1234
-     * $query->filterByApplicationId(array(12, 34)); // WHERE application_id IN (12, 34)
-     * $query->filterByApplicationId(array('min' => 12)); // WHERE application_id > 12
+     * $query->filterByData('fooValue');   // WHERE data = 'fooValue'
+     * $query->filterByData('%fooValue%', Criteria::LIKE); // WHERE data LIKE '%fooValue%'
      * </code>
      *
-     * @see       filterByApplication()
-     *
-     * @param     mixed $applicationId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $data The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildSessionQuery The current query, for fluid interface
      */
-    public function filterByApplicationId($applicationId = null, $comparison = null)
+    public function filterByData($data = null, $comparison = null)
     {
-        if (is_array($applicationId)) {
-            $useMinMax = false;
-            if (isset($applicationId['min'])) {
-                $this->addUsingAlias(SessionTableMap::COL_APPLICATION_ID, $applicationId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($applicationId['max'])) {
-                $this->addUsingAlias(SessionTableMap::COL_APPLICATION_ID, $applicationId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($data)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(SessionTableMap::COL_APPLICATION_ID, $applicationId, $comparison);
+        return $this->addUsingAlias(SessionTableMap::COL_DATA, $data, $comparison);
     }
 
     /**
@@ -536,44 +490,44 @@ abstract class SessionQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \App\Model\Application object
+     * Filter the query by a related \App\Model\User object
      *
-     * @param \App\Model\Application|ObjectCollection $application The related object(s) to use as filter
+     * @param \App\Model\User|ObjectCollection $user The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @throws \Propel\Runtime\Exception\PropelException
      *
      * @return ChildSessionQuery The current query, for fluid interface
      */
-    public function filterByApplication($application, $comparison = null)
+    public function filterByUser($user, $comparison = null)
     {
-        if ($application instanceof \App\Model\Application) {
+        if ($user instanceof \App\Model\User) {
             return $this
-                ->addUsingAlias(SessionTableMap::COL_APPLICATION_ID, $application->getId(), $comparison);
-        } elseif ($application instanceof ObjectCollection) {
+                ->addUsingAlias(SessionTableMap::COL_USER_ID, $user->getId(), $comparison);
+        } elseif ($user instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(SessionTableMap::COL_APPLICATION_ID, $application->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(SessionTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByApplication() only accepts arguments of type \App\Model\Application or Collection');
+            throw new PropelException('filterByUser() only accepts arguments of type \App\Model\User or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Application relation
+     * Adds a JOIN clause to the query using the User relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildSessionQuery The current query, for fluid interface
      */
-    public function joinApplication($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinUser($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Application');
+        $relationMap = $tableMap->getRelation('User');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -588,14 +542,14 @@ abstract class SessionQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Application');
+            $this->addJoinObject($join, 'User');
         }
 
         return $this;
     }
 
     /**
-     * Use the Application relation Application object
+     * Use the User relation User object
      *
      * @see useQuery()
      *
@@ -603,13 +557,13 @@ abstract class SessionQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \App\Model\ApplicationQuery A secondary query class using the current class as primary query
+     * @return \App\Model\UserQuery A secondary query class using the current class as primary query
      */
-    public function useApplicationQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
-            ->joinApplication($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Application', '\App\Model\ApplicationQuery');
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', '\App\Model\UserQuery');
     }
 
     /**

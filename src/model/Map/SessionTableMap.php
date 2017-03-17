@@ -59,7 +59,7 @@ class SessionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 6;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class SessionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 7;
+    const NUM_HYDRATE_COLUMNS = 6;
 
     /**
      * the column name for the id field
@@ -82,14 +82,9 @@ class SessionTableMap extends TableMap
     const COL_TOKEN = '_session.token';
 
     /**
-     * the column name for the model_id field
+     * the column name for the user_id field
      */
-    const COL_MODEL_ID = '_session.model_id';
-
-    /**
-     * the column name for the model_name field
-     */
-    const COL_MODEL_NAME = '_session.model_name';
+    const COL_USER_ID = '_session.user_id';
 
     /**
      * the column name for the expired_at field
@@ -97,9 +92,9 @@ class SessionTableMap extends TableMap
     const COL_EXPIRED_AT = '_session.expired_at';
 
     /**
-     * the column name for the application_id field
+     * the column name for the data field
      */
-    const COL_APPLICATION_ID = '_session.application_id';
+    const COL_DATA = '_session.data';
 
     /**
      * the column name for the created_at field
@@ -118,11 +113,11 @@ class SessionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Token', 'ModelId', 'ModelName', 'ExpiredAt', 'ApplicationId', 'CreatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'token', 'modelId', 'modelName', 'expiredAt', 'applicationId', 'createdAt', ),
-        self::TYPE_COLNAME       => array(SessionTableMap::COL_ID, SessionTableMap::COL_TOKEN, SessionTableMap::COL_MODEL_ID, SessionTableMap::COL_MODEL_NAME, SessionTableMap::COL_EXPIRED_AT, SessionTableMap::COL_APPLICATION_ID, SessionTableMap::COL_CREATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'token', 'model_id', 'model_name', 'expired_at', 'application_id', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id', 'Token', 'UserId', 'ExpiredAt', 'Data', 'CreatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'token', 'userId', 'expiredAt', 'data', 'createdAt', ),
+        self::TYPE_COLNAME       => array(SessionTableMap::COL_ID, SessionTableMap::COL_TOKEN, SessionTableMap::COL_USER_ID, SessionTableMap::COL_EXPIRED_AT, SessionTableMap::COL_DATA, SessionTableMap::COL_CREATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'token', 'user_id', 'expired_at', 'data', 'created_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -132,11 +127,11 @@ class SessionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Token' => 1, 'ModelId' => 2, 'ModelName' => 3, 'ExpiredAt' => 4, 'ApplicationId' => 5, 'CreatedAt' => 6, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'token' => 1, 'modelId' => 2, 'modelName' => 3, 'expiredAt' => 4, 'applicationId' => 5, 'createdAt' => 6, ),
-        self::TYPE_COLNAME       => array(SessionTableMap::COL_ID => 0, SessionTableMap::COL_TOKEN => 1, SessionTableMap::COL_MODEL_ID => 2, SessionTableMap::COL_MODEL_NAME => 3, SessionTableMap::COL_EXPIRED_AT => 4, SessionTableMap::COL_APPLICATION_ID => 5, SessionTableMap::COL_CREATED_AT => 6, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'token' => 1, 'model_id' => 2, 'model_name' => 3, 'expired_at' => 4, 'application_id' => 5, 'created_at' => 6, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Token' => 1, 'UserId' => 2, 'ExpiredAt' => 3, 'Data' => 4, 'CreatedAt' => 5, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'token' => 1, 'userId' => 2, 'expiredAt' => 3, 'data' => 4, 'createdAt' => 5, ),
+        self::TYPE_COLNAME       => array(SessionTableMap::COL_ID => 0, SessionTableMap::COL_TOKEN => 1, SessionTableMap::COL_USER_ID => 2, SessionTableMap::COL_EXPIRED_AT => 3, SessionTableMap::COL_DATA => 4, SessionTableMap::COL_CREATED_AT => 5, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'token' => 1, 'user_id' => 2, 'expired_at' => 3, 'data' => 4, 'created_at' => 5, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, )
     );
 
     /**
@@ -159,10 +154,9 @@ class SessionTableMap extends TableMap
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('token', 'Token', 'VARCHAR', true, 255, null);
-        $this->addColumn('model_id', 'ModelId', 'INTEGER', false, null, null);
-        $this->addColumn('model_name', 'ModelName', 'VARCHAR', false, 255, null);
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
         $this->addColumn('expired_at', 'ExpiredAt', 'TIMESTAMP', false, null, null);
-        $this->addForeignKey('application_id', 'ApplicationId', 'INTEGER', '_application', 'id', false, null, null);
+        $this->addColumn('data', 'Data', 'VARCHAR', false, 255, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
 
@@ -171,10 +165,10 @@ class SessionTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Application', '\\App\\Model\\Application', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':application_id',
+    0 => ':user_id',
     1 => ':id',
   ),
 ), null, null, null, false);
@@ -336,18 +330,16 @@ class SessionTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(SessionTableMap::COL_ID);
             $criteria->addSelectColumn(SessionTableMap::COL_TOKEN);
-            $criteria->addSelectColumn(SessionTableMap::COL_MODEL_ID);
-            $criteria->addSelectColumn(SessionTableMap::COL_MODEL_NAME);
+            $criteria->addSelectColumn(SessionTableMap::COL_USER_ID);
             $criteria->addSelectColumn(SessionTableMap::COL_EXPIRED_AT);
-            $criteria->addSelectColumn(SessionTableMap::COL_APPLICATION_ID);
+            $criteria->addSelectColumn(SessionTableMap::COL_DATA);
             $criteria->addSelectColumn(SessionTableMap::COL_CREATED_AT);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.token');
-            $criteria->addSelectColumn($alias . '.model_id');
-            $criteria->addSelectColumn($alias . '.model_name');
+            $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.expired_at');
-            $criteria->addSelectColumn($alias . '.application_id');
+            $criteria->addSelectColumn($alias . '.data');
             $criteria->addSelectColumn($alias . '.created_at');
         }
     }

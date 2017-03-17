@@ -4,53 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6c40f08282eb458665dce331d9eff4e3",
-    "content-hash": "c2496d3f302ade47b3904b4145752b4f",
+    "hash": "3c23d783ba860c3d2878a54be83f7e60",
+    "content-hash": "5cc55e02c01246da14ccc4c3f25038d7",
     "packages": [
         {
-            "name": "container-interop/container-interop",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/container-interop/container-interop.git",
-                "reference": "79cbf1341c22ec75643d841642dd5d6acd83bdb8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/container-interop/container-interop/zipball/79cbf1341c22ec75643d841642dd5d6acd83bdb8",
-                "reference": "79cbf1341c22ec75643d841642dd5d6acd83bdb8",
-                "shasum": ""
-            },
-            "require": {
-                "psr/container": "^1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Interop\\Container\\": "src/Interop/Container/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
-            "homepage": "https://github.com/container-interop/container-interop",
-            "time": "2017-02-14 19:40:03"
-        },
-        {
             "name": "erusev/parsedown",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "3ebbd730b5c2cf5ce78bc1bf64071407fc6674b7"
+                "reference": "20ff8bbb57205368b4b42d094642a3e52dac85fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/3ebbd730b5c2cf5ce78bc1bf64071407fc6674b7",
-                "reference": "3ebbd730b5c2cf5ce78bc1bf64071407fc6674b7",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/20ff8bbb57205368b4b42d094642a3e52dac85fb",
+                "reference": "20ff8bbb57205368b4b42d094642a3e52dac85fb",
                 "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
             },
             "type": "library",
             "autoload": {
@@ -75,35 +47,30 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2015-10-04 16:44:32"
+            "time": "2016-11-02 15:56:58"
         },
         {
             "name": "perfumer/framework",
-            "version": "v0.1.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/perfumer/framework.git",
-                "reference": "28d5970b2e05e25c29cfcd7b0cd6767f1f55960a"
+                "reference": "067711cbd87d458e2addf5827a7231703f42fae3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/perfumer/framework/zipball/28d5970b2e05e25c29cfcd7b0cd6767f1f55960a",
-                "reference": "28d5970b2e05e25c29cfcd7b0cd6767f1f55960a",
+                "url": "https://api.github.com/repos/perfumer/framework/zipball/067711cbd87d458e2addf5827a7231703f42fae3",
+                "reference": "067711cbd87d458e2addf5827a7231703f42fae3",
                 "shasum": ""
             },
             "require": {
-                "container-interop/container-interop": "~1.0",
-                "php": ">=5.5.0"
+                "php": ">=7.0.0",
+                "psr/container": "^1.0"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Perfumer\\Component\\": "component/",
-                    "Perfumer\\Framework\\": "framework/",
-                    "Perfumer\\Helper\\": "helper/",
-                    "Perfumer\\Package\\Framework\\Bundle\\": "package/framework/bundle/",
-                    "Perfumer\\Package\\Framework\\Command\\": "package/framework/command/",
-                    "Perfumer\\Package\\Framework\\Controller\\": "package/framework/controller/"
+                    "Perfumer\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -122,7 +89,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-10-20 12:02:21"
+            "time": "2017-03-16 23:08:53"
         },
         {
             "name": "propel/propel",

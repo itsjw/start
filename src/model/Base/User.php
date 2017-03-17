@@ -7,10 +7,13 @@ use \Exception;
 use \PDO;
 use App\Model\Role as ChildRole;
 use App\Model\RoleQuery as ChildRoleQuery;
+use App\Model\Session as ChildSession;
+use App\Model\SessionQuery as ChildSessionQuery;
 use App\Model\User as ChildUser;
 use App\Model\UserQuery as ChildUserQuery;
 use App\Model\UserRole as ChildUserRole;
 use App\Model\UserRoleQuery as ChildUserRoleQuery;
+use App\Model\Map\SessionTableMap;
 use App\Model\Map\UserRoleTableMap;
 use App\Model\Map\UserTableMap;
 use Propel\Runtime\Propel;
@@ -127,6 +130,12 @@ abstract class User implements ActiveRecordInterface
     protected $updated_at;
 
     /**
+     * @var        ObjectCollection|ChildSession[] Collection to store aggregation of ChildSession objects.
+     */
+    protected $collSessions;
+    protected $collSessionsPartial;
+
+    /**
      * @var        ObjectCollection|ChildUserRole[] Collection to store aggregation of ChildUserRole objects.
      */
     protected $collUserRoles;
@@ -155,6 +164,12 @@ abstract class User implements ActiveRecordInterface
      * @var ObjectCollection|ChildRole[]
      */
     protected $rolesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildSession[]
+     */
+    protected $sessionsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -843,6 +858,8 @@ abstract class User implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->collSessions = null;
+
             $this->collUserRoles = null;
 
             $this->collRoles = null;
@@ -1000,6 +1017,24 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
+
+            if ($this->sessionsScheduledForDeletion !== null) {
+                if (!$this->sessionsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->sessionsScheduledForDeletion as $session) {
+                        // need to save related object because we set the relation to null
+                        $session->save($con);
+                    }
+                    $this->sessionsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collSessions !== null) {
+                foreach ($this->collSessions as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
 
             if ($this->userRolesScheduledForDeletion !== null) {
                 if (!$this->userRolesScheduledForDeletion->isEmpty()) {
@@ -1248,6 +1283,21 @@ abstract class User implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->collSessions) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'sessions';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = '_sessions';
+                        break;
+                    default:
+                        $key = 'Sessions';
+                }
+
+                $result[$key] = $this->collSessions->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collUserRoles) {
 
                 switch ($keyType) {
@@ -1535,6 +1585,12 @@ abstract class User implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
+            foreach ($this->getSessions() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addSession($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getUserRoles() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addUserRole($relObj->copy($deepCopy));
@@ -1582,9 +1638,237 @@ abstract class User implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('Session' == $relationName) {
+            return $this->initSessions();
+        }
         if ('UserRole' == $relationName) {
             return $this->initUserRoles();
         }
+    }
+
+    /**
+     * Clears out the collSessions collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addSessions()
+     */
+    public function clearSessions()
+    {
+        $this->collSessions = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collSessions collection loaded partially.
+     */
+    public function resetPartialSessions($v = true)
+    {
+        $this->collSessionsPartial = $v;
+    }
+
+    /**
+     * Initializes the collSessions collection.
+     *
+     * By default this just sets the collSessions collection to an empty array (like clearcollSessions());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initSessions($overrideExisting = true)
+    {
+        if (null !== $this->collSessions && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = SessionTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collSessions = new $collectionClassName;
+        $this->collSessions->setModel('\App\Model\Session');
+    }
+
+    /**
+     * Gets an array of ChildSession objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildSession[] List of ChildSession objects
+     * @throws PropelException
+     */
+    public function getSessions(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collSessionsPartial && !$this->isNew();
+        if (null === $this->collSessions || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collSessions) {
+                // return empty collection
+                $this->initSessions();
+            } else {
+                $collSessions = ChildSessionQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collSessionsPartial && count($collSessions)) {
+                        $this->initSessions(false);
+
+                        foreach ($collSessions as $obj) {
+                            if (false == $this->collSessions->contains($obj)) {
+                                $this->collSessions->append($obj);
+                            }
+                        }
+
+                        $this->collSessionsPartial = true;
+                    }
+
+                    return $collSessions;
+                }
+
+                if ($partial && $this->collSessions) {
+                    foreach ($this->collSessions as $obj) {
+                        if ($obj->isNew()) {
+                            $collSessions[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collSessions = $collSessions;
+                $this->collSessionsPartial = false;
+            }
+        }
+
+        return $this->collSessions;
+    }
+
+    /**
+     * Sets a collection of ChildSession objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $sessions A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setSessions(Collection $sessions, ConnectionInterface $con = null)
+    {
+        /** @var ChildSession[] $sessionsToDelete */
+        $sessionsToDelete = $this->getSessions(new Criteria(), $con)->diff($sessions);
+
+
+        $this->sessionsScheduledForDeletion = $sessionsToDelete;
+
+        foreach ($sessionsToDelete as $sessionRemoved) {
+            $sessionRemoved->setUser(null);
+        }
+
+        $this->collSessions = null;
+        foreach ($sessions as $session) {
+            $this->addSession($session);
+        }
+
+        $this->collSessions = $sessions;
+        $this->collSessionsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Session objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Session objects.
+     * @throws PropelException
+     */
+    public function countSessions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collSessionsPartial && !$this->isNew();
+        if (null === $this->collSessions || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collSessions) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getSessions());
+            }
+
+            $query = ChildSessionQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collSessions);
+    }
+
+    /**
+     * Method called to associate a ChildSession object to this object
+     * through the ChildSession foreign key attribute.
+     *
+     * @param  ChildSession $l ChildSession
+     * @return $this|\App\Model\User The current object (for fluent API support)
+     */
+    public function addSession(ChildSession $l)
+    {
+        if ($this->collSessions === null) {
+            $this->initSessions();
+            $this->collSessionsPartial = true;
+        }
+
+        if (!$this->collSessions->contains($l)) {
+            $this->doAddSession($l);
+
+            if ($this->sessionsScheduledForDeletion and $this->sessionsScheduledForDeletion->contains($l)) {
+                $this->sessionsScheduledForDeletion->remove($this->sessionsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildSession $session The ChildSession object to add.
+     */
+    protected function doAddSession(ChildSession $session)
+    {
+        $this->collSessions[]= $session;
+        $session->setUser($this);
+    }
+
+    /**
+     * @param  ChildSession $session The ChildSession object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeSession(ChildSession $session)
+    {
+        if ($this->getSessions()->contains($session)) {
+            $pos = $this->collSessions->search($session);
+            $this->collSessions->remove($pos);
+            if (null === $this->sessionsScheduledForDeletion) {
+                $this->sessionsScheduledForDeletion = clone $this->collSessions;
+                $this->sessionsScheduledForDeletion->clear();
+            }
+            $this->sessionsScheduledForDeletion[]= $session;
+            $session->setUser(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -2117,6 +2401,11 @@ abstract class User implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collSessions) {
+                foreach ($this->collSessions as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collUserRoles) {
                 foreach ($this->collUserRoles as $o) {
                     $o->clearAllReferences($deep);
@@ -2129,6 +2418,7 @@ abstract class User implements ActiveRecordInterface
             }
         } // if ($deep)
 
+        $this->collSessions = null;
         $this->collUserRoles = null;
         $this->collRoles = null;
     }
