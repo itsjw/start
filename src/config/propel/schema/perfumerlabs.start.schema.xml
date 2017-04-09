@@ -39,4 +39,23 @@
         <column name="time_from" type="time"/>
         <column name="time_to" type="time"/>
     </table>
+
+    <table name="tag" phpName="Tag" namespace="\Perfumerlabs\Start\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255" required="true"/>
+        <unique>
+            <unique-column name="name"/>
+        </unique>
+    </table>
+
+    <table name="related_tag" phpName="RelatedTag" namespace="\Perfumerlabs\Start\Model">
+        <column name="duty_id" type="integer" primaryKey="true"/>
+        <column name="tag_id" type="integer" primaryKey="true"/>
+        <foreign-key foreignTable="duty" onDelete="CASCADE">
+            <reference local="duty_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="tag" onDelete="CASCADE">
+            <reference local="tag_id" foreign="id"/>
+        </foreign-key>
+    </table>
 </database>

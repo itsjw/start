@@ -64,7 +64,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery rightJoinWithActivity() Adds a RIGHT JOIN clause and with to the query using the Activity relation
  * @method     ChildDutyQuery innerJoinWithActivity() Adds a INNER JOIN clause and with to the query using the Activity relation
  *
- * @method     \Perfumerlabs\Start\Model\ActivityQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildDutyQuery leftJoinRelatedTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the RelatedTag relation
+ * @method     ChildDutyQuery rightJoinRelatedTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RelatedTag relation
+ * @method     ChildDutyQuery innerJoinRelatedTag($relationAlias = null) Adds a INNER JOIN clause to the query using the RelatedTag relation
+ *
+ * @method     ChildDutyQuery joinWithRelatedTag($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the RelatedTag relation
+ *
+ * @method     ChildDutyQuery leftJoinWithRelatedTag() Adds a LEFT JOIN clause and with to the query using the RelatedTag relation
+ * @method     ChildDutyQuery rightJoinWithRelatedTag() Adds a RIGHT JOIN clause and with to the query using the RelatedTag relation
+ * @method     ChildDutyQuery innerJoinWithRelatedTag() Adds a INNER JOIN clause and with to the query using the RelatedTag relation
+ *
+ * @method     \Perfumerlabs\Start\Model\ActivityQuery|\Perfumerlabs\Start\Model\RelatedTagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildDuty findOne(ConnectionInterface $con = null) Return the first ChildDuty matching the query
  * @method     ChildDuty findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDuty matching the query, or a new ChildDuty object populated from the query conditions when no match is found
@@ -870,6 +880,79 @@ abstract class DutyQuery extends ModelCriteria
         return $this
             ->joinActivity($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Activity', '\Perfumerlabs\Start\Model\ActivityQuery');
+    }
+
+    /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\RelatedTag object
+     *
+     * @param \Perfumerlabs\Start\Model\RelatedTag|ObjectCollection $relatedTag the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByRelatedTag($relatedTag, $comparison = null)
+    {
+        if ($relatedTag instanceof \Perfumerlabs\Start\Model\RelatedTag) {
+            return $this
+                ->addUsingAlias(DutyTableMap::COL_ID, $relatedTag->getDutyId(), $comparison);
+        } elseif ($relatedTag instanceof ObjectCollection) {
+            return $this
+                ->useRelatedTagQuery()
+                ->filterByPrimaryKeys($relatedTag->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByRelatedTag() only accepts arguments of type \Perfumerlabs\Start\Model\RelatedTag or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the RelatedTag relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function joinRelatedTag($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('RelatedTag');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'RelatedTag');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the RelatedTag relation RelatedTag object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\RelatedTagQuery A secondary query class using the current class as primary query
+     */
+    public function useRelatedTagQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinRelatedTag($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'RelatedTag', '\Perfumerlabs\Start\Model\RelatedTagQuery');
     }
 
     /**

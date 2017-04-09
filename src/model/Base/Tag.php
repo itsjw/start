@@ -2,17 +2,14 @@
 
 namespace Perfumerlabs\Start\Model\Base;
 
-use \DateTime;
 use \Exception;
 use \PDO;
-use Perfumerlabs\Start\Model\Activity as ChildActivity;
-use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
-use Perfumerlabs\Start\Model\Duty as ChildDuty;
-use Perfumerlabs\Start\Model\DutyQuery as ChildDutyQuery;
 use Perfumerlabs\Start\Model\RelatedTag as ChildRelatedTag;
 use Perfumerlabs\Start\Model\RelatedTagQuery as ChildRelatedTagQuery;
-use Perfumerlabs\Start\Model\Map\DutyTableMap;
+use Perfumerlabs\Start\Model\Tag as ChildTag;
+use Perfumerlabs\Start\Model\TagQuery as ChildTagQuery;
 use Perfumerlabs\Start\Model\Map\RelatedTagTableMap;
+use Perfumerlabs\Start\Model\Map\TagTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -25,21 +22,20 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
- * Base class that represents a row from the 'duty' table.
+ * Base class that represents a row from the 'tag' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class Duty implements ActiveRecordInterface
+abstract class Tag implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\DutyTableMap';
+    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\TagTableMap';
 
 
     /**
@@ -76,93 +72,11 @@ abstract class Duty implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the user_id field.
-     *
-     * @var        int
-     */
-    protected $user_id;
-
-    /**
-     * The value for the activity_id field.
-     *
-     * @var        int
-     */
-    protected $activity_id;
-
-    /**
-     * The value for the title field.
+     * The value for the name field.
      *
      * @var        string
      */
-    protected $title;
-
-    /**
-     * The value for the query field.
-     *
-     * @var        string
-     */
-    protected $query;
-
-    /**
-     * The value for the comment field.
-     *
-     * @var        string
-     */
-    protected $comment;
-
-    /**
-     * The value for the raised_at field.
-     *
-     * @var        DateTime
-     */
-    protected $raised_at;
-
-    /**
-     * The value for the picked_at field.
-     *
-     * @var        DateTime
-     */
-    protected $picked_at;
-
-    /**
-     * The value for the closed_at field.
-     *
-     * @var        DateTime
-     */
-    protected $closed_at;
-
-    /**
-     * The value for the tags field.
-     *
-     * @var        array
-     */
-    protected $tags;
-
-    /**
-     * The unserialized $tags value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */
-    protected $tags_unserialized;
-
-    /**
-     * The value for the created_at field.
-     *
-     * @var        DateTime
-     */
-    protected $created_at;
-
-    /**
-     * The value for the updated_at field.
-     *
-     * @var        DateTime
-     */
-    protected $updated_at;
-
-    /**
-     * @var        ChildActivity
-     */
-    protected $aActivity;
+    protected $name;
 
     /**
      * @var        ObjectCollection|ChildRelatedTag[] Collection to store aggregation of ChildRelatedTag objects.
@@ -185,7 +99,7 @@ abstract class Duty implements ActiveRecordInterface
     protected $relatedTagsScheduledForDeletion = null;
 
     /**
-     * Initializes internal state of Perfumerlabs\Start\Model\Base\Duty object.
+     * Initializes internal state of Perfumerlabs\Start\Model\Base\Tag object.
      */
     public function __construct()
     {
@@ -280,9 +194,9 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Duty</code> instance.  If
-     * <code>obj</code> is an instance of <code>Duty</code>, delegates to
-     * <code>equals(Duty)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Tag</code> instance.  If
+     * <code>obj</code> is an instance of <code>Tag</code>, delegates to
+     * <code>equals(Tag)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -348,7 +262,7 @@ abstract class Duty implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Duty The current object, for fluid interface
+     * @return $this|Tag The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -420,189 +334,20 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
-     * Get the [user_id] column value.
-     *
-     * @return int
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
-
-    /**
-     * Get the [activity_id] column value.
-     *
-     * @return int
-     */
-    public function getActivityId()
-    {
-        return $this->activity_id;
-    }
-
-    /**
-     * Get the [title] column value.
+     * Get the [name] column value.
      *
      * @return string
      */
-    public function getTitle()
+    public function getName()
     {
-        return $this->title;
-    }
-
-    /**
-     * Get the [query] column value.
-     *
-     * @return string
-     */
-    public function getQuery()
-    {
-        return $this->query;
-    }
-
-    /**
-     * Get the [comment] column value.
-     *
-     * @return string
-     */
-    public function getComment()
-    {
-        return $this->comment;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [raised_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getRaisedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->raised_at;
-        } else {
-            return $this->raised_at instanceof \DateTimeInterface ? $this->raised_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [picked_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getPickedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->picked_at;
-        } else {
-            return $this->picked_at instanceof \DateTimeInterface ? $this->picked_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [closed_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getClosedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->closed_at;
-        } else {
-            return $this->closed_at instanceof \DateTimeInterface ? $this->closed_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [tags] column value.
-     *
-     * @return array
-     */
-    public function getTags()
-    {
-        if (null === $this->tags_unserialized) {
-            $this->tags_unserialized = array();
-        }
-        if (!$this->tags_unserialized && null !== $this->tags) {
-            $tags_unserialized = substr($this->tags, 2, -2);
-            $this->tags_unserialized = '' !== $tags_unserialized ? explode(' | ', $tags_unserialized) : array();
-        }
-
-        return $this->tags_unserialized;
-    }
-
-    /**
-     * Test the presence of a value in the [tags] array column value.
-     * @param      mixed $value
-     *
-     * @return boolean
-     */
-    public function hasTag($value)
-    {
-        return in_array($value, $this->getTags());
-    } // hasTag()
-
-    /**
-     * Get the [optionally formatted] temporal [created_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getCreatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->created_at;
-        } else {
-            return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [updated_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getUpdatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->updated_at;
-        } else {
-            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
-        }
+        return $this->name;
     }
 
     /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Tag The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -612,266 +357,31 @@ abstract class Duty implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[DutyTableMap::COL_ID] = true;
+            $this->modifiedColumns[TagTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
-     * Set the value of [user_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setUserId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->user_id !== $v) {
-            $this->user_id = $v;
-            $this->modifiedColumns[DutyTableMap::COL_USER_ID] = true;
-        }
-
-        return $this;
-    } // setUserId()
-
-    /**
-     * Set the value of [activity_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setActivityId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->activity_id !== $v) {
-            $this->activity_id = $v;
-            $this->modifiedColumns[DutyTableMap::COL_ACTIVITY_ID] = true;
-        }
-
-        if ($this->aActivity !== null && $this->aActivity->getId() !== $v) {
-            $this->aActivity = null;
-        }
-
-        return $this;
-    } // setActivityId()
-
-    /**
-     * Set the value of [title] column.
+     * Set the value of [name] column.
      *
      * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Tag The current object (for fluent API support)
      */
-    public function setTitle($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->title !== $v) {
-            $this->title = $v;
-            $this->modifiedColumns[DutyTableMap::COL_TITLE] = true;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[TagTableMap::COL_NAME] = true;
         }
 
         return $this;
-    } // setTitle()
-
-    /**
-     * Set the value of [query] column.
-     *
-     * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setQuery($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->query !== $v) {
-            $this->query = $v;
-            $this->modifiedColumns[DutyTableMap::COL_QUERY] = true;
-        }
-
-        return $this;
-    } // setQuery()
-
-    /**
-     * Set the value of [comment] column.
-     *
-     * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setComment($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->comment !== $v) {
-            $this->comment = $v;
-            $this->modifiedColumns[DutyTableMap::COL_COMMENT] = true;
-        }
-
-        return $this;
-    } // setComment()
-
-    /**
-     * Sets the value of [raised_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setRaisedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->raised_at !== null || $dt !== null) {
-            if ($this->raised_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->raised_at->format("Y-m-d H:i:s.u")) {
-                $this->raised_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[DutyTableMap::COL_RAISED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setRaisedAt()
-
-    /**
-     * Sets the value of [picked_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setPickedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->picked_at !== null || $dt !== null) {
-            if ($this->picked_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->picked_at->format("Y-m-d H:i:s.u")) {
-                $this->picked_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[DutyTableMap::COL_PICKED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setPickedAt()
-
-    /**
-     * Sets the value of [closed_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setClosedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->closed_at !== null || $dt !== null) {
-            if ($this->closed_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->closed_at->format("Y-m-d H:i:s.u")) {
-                $this->closed_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[DutyTableMap::COL_CLOSED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setClosedAt()
-
-    /**
-     * Set the value of [tags] column.
-     *
-     * @param array $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setTags($v)
-    {
-        if ($this->tags_unserialized !== $v) {
-            $this->tags_unserialized = $v;
-            $this->tags = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[DutyTableMap::COL_TAGS] = true;
-        }
-
-        return $this;
-    } // setTags()
-
-    /**
-     * Adds a value to the [tags] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function addTag($value)
-    {
-        $currentArray = $this->getTags();
-        $currentArray []= $value;
-        $this->setTags($currentArray);
-
-        return $this;
-    } // addTag()
-
-    /**
-     * Removes a value from the [tags] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function removeTag($value)
-    {
-        $targetArray = array();
-        foreach ($this->getTags() as $element) {
-            if ($element != $value) {
-                $targetArray []= $element;
-            }
-        }
-        $this->setTags($targetArray);
-
-        return $this;
-    } // removeTag()
-
-    /**
-     * Sets the value of [created_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setCreatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->created_at !== null || $dt !== null) {
-            if ($this->created_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->created_at->format("Y-m-d H:i:s.u")) {
-                $this->created_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[DutyTableMap::COL_CREATED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setCreatedAt()
-
-    /**
-     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setUpdatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
-                $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[DutyTableMap::COL_UPDATED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setUpdatedAt()
+    } // setName()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -909,42 +419,11 @@ abstract class Duty implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DutyTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : TagTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DutyTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->user_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DutyTableMap::translateFieldName('ActivityId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->activity_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DutyTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->title = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DutyTableMap::translateFieldName('Query', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->query = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DutyTableMap::translateFieldName('Comment', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->comment = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DutyTableMap::translateFieldName('RaisedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->raised_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DutyTableMap::translateFieldName('PickedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->picked_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->tags = $col;
-            $this->tags_unserialized = null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : TagTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -953,10 +432,10 @@ abstract class Duty implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 12; // 12 = DutyTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = TagTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Duty'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Tag'), 0, $e);
         }
     }
 
@@ -975,9 +454,6 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aActivity !== null && $this->activity_id !== $this->aActivity->getId()) {
-            $this->aActivity = null;
-        }
     } // ensureConsistency
 
     /**
@@ -1001,13 +477,13 @@ abstract class Duty implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(DutyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(TagTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildDutyQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildTagQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -1017,7 +493,6 @@ abstract class Duty implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aActivity = null;
             $this->collRelatedTags = null;
 
         } // if (deep)
@@ -1029,8 +504,8 @@ abstract class Duty implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Duty::setDeleted()
-     * @see Duty::isDeleted()
+     * @see Tag::setDeleted()
+     * @see Tag::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -1039,11 +514,11 @@ abstract class Duty implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DutyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildDutyQuery::create()
+            $deleteQuery = ChildTagQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -1078,7 +553,7 @@ abstract class Duty implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DutyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(TagTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -1086,20 +561,8 @@ abstract class Duty implements ActiveRecordInterface
             $isInsert = $this->isNew();
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
-                // timestampable behavior
-
-                if (!$this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
-                    $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
-                if (!$this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1109,7 +572,7 @@ abstract class Duty implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                DutyTableMap::addInstanceToPool($this);
+                TagTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1134,18 +597,6 @@ abstract class Duty implements ActiveRecordInterface
         $affectedRows = 0; // initialize var to track total num of affected rows
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
-
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aActivity !== null) {
-                if ($this->aActivity->isModified() || $this->aActivity->isNew()) {
-                    $affectedRows += $this->aActivity->save($con);
-                }
-                $this->setActivity($this->aActivity);
-            }
 
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
@@ -1195,13 +646,13 @@ abstract class Duty implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[DutyTableMap::COL_ID] = true;
+        $this->modifiedColumns[TagTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . DutyTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . TagTableMap::COL_ID . ')');
         }
         if (null === $this->id) {
             try {
-                $dataFetcher = $con->query("SELECT nextval('duty_id_seq')");
+                $dataFetcher = $con->query("SELECT nextval('tag_id_seq')");
                 $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
@@ -1210,45 +661,15 @@ abstract class Duty implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(DutyTableMap::COL_ID)) {
+        if ($this->isColumnModified(TagTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(DutyTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_id';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_ACTIVITY_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'activity_id';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_TITLE)) {
-            $modifiedColumns[':p' . $index++]  = 'title';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_QUERY)) {
-            $modifiedColumns[':p' . $index++]  = 'query';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_COMMENT)) {
-            $modifiedColumns[':p' . $index++]  = 'comment';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_RAISED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'raised_at';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_PICKED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'picked_at';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_CLOSED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'closed_at';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
-            $modifiedColumns[':p' . $index++]  = 'tags';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'created_at';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'updated_at';
+        if ($this->isColumnModified(TagTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'name';
         }
 
         $sql = sprintf(
-            'INSERT INTO duty (%s) VALUES (%s)',
+            'INSERT INTO tag (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1260,38 +681,8 @@ abstract class Duty implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'user_id':
-                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
-                        break;
-                    case 'activity_id':
-                        $stmt->bindValue($identifier, $this->activity_id, PDO::PARAM_INT);
-                        break;
-                    case 'title':
-                        $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
-                        break;
-                    case 'query':
-                        $stmt->bindValue($identifier, $this->query, PDO::PARAM_STR);
-                        break;
-                    case 'comment':
-                        $stmt->bindValue($identifier, $this->comment, PDO::PARAM_STR);
-                        break;
-                    case 'raised_at':
-                        $stmt->bindValue($identifier, $this->raised_at ? $this->raised_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'picked_at':
-                        $stmt->bindValue($identifier, $this->picked_at ? $this->picked_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'closed_at':
-                        $stmt->bindValue($identifier, $this->closed_at ? $this->closed_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'tags':
-                        $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
-                        break;
-                    case 'created_at':
-                        $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'name':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1332,7 +723,7 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = DutyTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = TagTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1352,37 +743,7 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getUserId();
-                break;
-            case 2:
-                return $this->getActivityId();
-                break;
-            case 3:
-                return $this->getTitle();
-                break;
-            case 4:
-                return $this->getQuery();
-                break;
-            case 5:
-                return $this->getComment();
-                break;
-            case 6:
-                return $this->getRaisedAt();
-                break;
-            case 7:
-                return $this->getPickedAt();
-                break;
-            case 8:
-                return $this->getClosedAt();
-                break;
-            case 9:
-                return $this->getTags();
-                break;
-            case 10:
-                return $this->getCreatedAt();
-                break;
-            case 11:
-                return $this->getUpdatedAt();
+                return $this->getName();
                 break;
             default:
                 return null;
@@ -1408,66 +769,21 @@ abstract class Duty implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Duty'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Tag'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Duty'][$this->hashCode()] = true;
-        $keys = DutyTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Tag'][$this->hashCode()] = true;
+        $keys = TagTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getUserId(),
-            $keys[2] => $this->getActivityId(),
-            $keys[3] => $this->getTitle(),
-            $keys[4] => $this->getQuery(),
-            $keys[5] => $this->getComment(),
-            $keys[6] => $this->getRaisedAt(),
-            $keys[7] => $this->getPickedAt(),
-            $keys[8] => $this->getClosedAt(),
-            $keys[9] => $this->getTags(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getUpdatedAt(),
+            $keys[1] => $this->getName(),
         );
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
-        }
-
-        if ($result[$keys[8]] instanceof \DateTime) {
-            $result[$keys[8]] = $result[$keys[8]]->format('c');
-        }
-
-        if ($result[$keys[10]] instanceof \DateTime) {
-            $result[$keys[10]] = $result[$keys[10]]->format('c');
-        }
-
-        if ($result[$keys[11]] instanceof \DateTime) {
-            $result[$keys[11]] = $result[$keys[11]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aActivity) {
-
-                switch ($keyType) {
-                    case TableMap::TYPE_CAMELNAME:
-                        $key = 'activity';
-                        break;
-                    case TableMap::TYPE_FIELDNAME:
-                        $key = 'activity';
-                        break;
-                    default:
-                        $key = 'Activity';
-                }
-
-                $result[$key] = $this->aActivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
             if (null !== $this->collRelatedTags) {
 
                 switch ($keyType) {
@@ -1497,11 +813,11 @@ abstract class Duty implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Perfumerlabs\Start\Model\Duty
+     * @return $this|\Perfumerlabs\Start\Model\Tag
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = DutyTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = TagTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1512,7 +828,7 @@ abstract class Duty implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Perfumerlabs\Start\Model\Duty
+     * @return $this|\Perfumerlabs\Start\Model\Tag
      */
     public function setByPosition($pos, $value)
     {
@@ -1521,41 +837,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setUserId($value);
-                break;
-            case 2:
-                $this->setActivityId($value);
-                break;
-            case 3:
-                $this->setTitle($value);
-                break;
-            case 4:
-                $this->setQuery($value);
-                break;
-            case 5:
-                $this->setComment($value);
-                break;
-            case 6:
-                $this->setRaisedAt($value);
-                break;
-            case 7:
-                $this->setPickedAt($value);
-                break;
-            case 8:
-                $this->setClosedAt($value);
-                break;
-            case 9:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setTags($value);
-                break;
-            case 10:
-                $this->setCreatedAt($value);
-                break;
-            case 11:
-                $this->setUpdatedAt($value);
+                $this->setName($value);
                 break;
         } // switch()
 
@@ -1581,43 +863,13 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = DutyTableMap::getFieldNames($keyType);
+        $keys = TagTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUserId($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setActivityId($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setTitle($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setQuery($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setComment($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setRaisedAt($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setPickedAt($arr[$keys[7]]);
-        }
-        if (array_key_exists($keys[8], $arr)) {
-            $this->setClosedAt($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setTags($arr[$keys[9]]);
-        }
-        if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
-        }
-        if (array_key_exists($keys[11], $arr)) {
-            $this->setUpdatedAt($arr[$keys[11]]);
+            $this->setName($arr[$keys[1]]);
         }
     }
 
@@ -1638,7 +890,7 @@ abstract class Duty implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object, for fluid interface
+     * @return $this|\Perfumerlabs\Start\Model\Tag The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -1658,43 +910,13 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(DutyTableMap::DATABASE_NAME);
+        $criteria = new Criteria(TagTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(DutyTableMap::COL_ID)) {
-            $criteria->add(DutyTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(TagTableMap::COL_ID)) {
+            $criteria->add(TagTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(DutyTableMap::COL_USER_ID)) {
-            $criteria->add(DutyTableMap::COL_USER_ID, $this->user_id);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_ACTIVITY_ID)) {
-            $criteria->add(DutyTableMap::COL_ACTIVITY_ID, $this->activity_id);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_TITLE)) {
-            $criteria->add(DutyTableMap::COL_TITLE, $this->title);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_QUERY)) {
-            $criteria->add(DutyTableMap::COL_QUERY, $this->query);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_COMMENT)) {
-            $criteria->add(DutyTableMap::COL_COMMENT, $this->comment);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_RAISED_AT)) {
-            $criteria->add(DutyTableMap::COL_RAISED_AT, $this->raised_at);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_PICKED_AT)) {
-            $criteria->add(DutyTableMap::COL_PICKED_AT, $this->picked_at);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_CLOSED_AT)) {
-            $criteria->add(DutyTableMap::COL_CLOSED_AT, $this->closed_at);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
-            $criteria->add(DutyTableMap::COL_TAGS, $this->tags);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
-            $criteria->add(DutyTableMap::COL_CREATED_AT, $this->created_at);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-            $criteria->add(DutyTableMap::COL_UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(TagTableMap::COL_NAME)) {
+            $criteria->add(TagTableMap::COL_NAME, $this->name);
         }
 
         return $criteria;
@@ -1712,8 +934,8 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildDutyQuery::create();
-        $criteria->add(DutyTableMap::COL_ID, $this->id);
+        $criteria = ChildTagQuery::create();
+        $criteria->add(TagTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1775,24 +997,14 @@ abstract class Duty implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\Duty (or compatible) type.
+     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\Tag (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUserId($this->getUserId());
-        $copyObj->setActivityId($this->getActivityId());
-        $copyObj->setTitle($this->getTitle());
-        $copyObj->setQuery($this->getQuery());
-        $copyObj->setComment($this->getComment());
-        $copyObj->setRaisedAt($this->getRaisedAt());
-        $copyObj->setPickedAt($this->getPickedAt());
-        $copyObj->setClosedAt($this->getClosedAt());
-        $copyObj->setTags($this->getTags());
-        $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setUpdatedAt($this->getUpdatedAt());
+        $copyObj->setName($this->getName());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1822,7 +1034,7 @@ abstract class Duty implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Perfumerlabs\Start\Model\Duty Clone of current object.
+     * @return \Perfumerlabs\Start\Model\Tag Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1833,57 +1045,6 @@ abstract class Duty implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
-    }
-
-    /**
-     * Declares an association between this object and a ChildActivity object.
-     *
-     * @param  ChildActivity $v
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     * @throws PropelException
-     */
-    public function setActivity(ChildActivity $v = null)
-    {
-        if ($v === null) {
-            $this->setActivityId(NULL);
-        } else {
-            $this->setActivityId($v->getId());
-        }
-
-        $this->aActivity = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildActivity object, it will not be re-added.
-        if ($v !== null) {
-            $v->addDuty($this);
-        }
-
-
-        return $this;
-    }
-
-
-    /**
-     * Get the associated ChildActivity object
-     *
-     * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildActivity The associated ChildActivity object.
-     * @throws PropelException
-     */
-    public function getActivity(ConnectionInterface $con = null)
-    {
-        if ($this->aActivity === null && ($this->activity_id !== null)) {
-            $this->aActivity = ChildActivityQuery::create()->findPk($this->activity_id, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aActivity->addDuties($this);
-             */
-        }
-
-        return $this->aActivity;
     }
 
 
@@ -1954,7 +1115,7 @@ abstract class Duty implements ActiveRecordInterface
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
      * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildDuty is new, it will return
+     * If this ChildTag is new, it will return
      * an empty collection or the current collection; the criteria is ignored on a new object.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
@@ -1971,7 +1132,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->initRelatedTags();
             } else {
                 $collRelatedTags = ChildRelatedTagQuery::create(null, $criteria)
-                    ->filterByDuty($this)
+                    ->filterByTag($this)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -2014,7 +1175,7 @@ abstract class Duty implements ActiveRecordInterface
      *
      * @param      Collection $relatedTags A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
-     * @return $this|ChildDuty The current object (for fluent API support)
+     * @return $this|ChildTag The current object (for fluent API support)
      */
     public function setRelatedTags(Collection $relatedTags, ConnectionInterface $con = null)
     {
@@ -2028,7 +1189,7 @@ abstract class Duty implements ActiveRecordInterface
         $this->relatedTagsScheduledForDeletion = clone $relatedTagsToDelete;
 
         foreach ($relatedTagsToDelete as $relatedTagRemoved) {
-            $relatedTagRemoved->setDuty(null);
+            $relatedTagRemoved->setTag(null);
         }
 
         $this->collRelatedTags = null;
@@ -2069,7 +1230,7 @@ abstract class Duty implements ActiveRecordInterface
             }
 
             return $query
-                ->filterByDuty($this)
+                ->filterByTag($this)
                 ->count($con);
         }
 
@@ -2081,7 +1242,7 @@ abstract class Duty implements ActiveRecordInterface
      * through the ChildRelatedTag foreign key attribute.
      *
      * @param  ChildRelatedTag $l ChildRelatedTag
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\Tag The current object (for fluent API support)
      */
     public function addRelatedTag(ChildRelatedTag $l)
     {
@@ -2107,12 +1268,12 @@ abstract class Duty implements ActiveRecordInterface
     protected function doAddRelatedTag(ChildRelatedTag $relatedTag)
     {
         $this->collRelatedTags[]= $relatedTag;
-        $relatedTag->setDuty($this);
+        $relatedTag->setTag($this);
     }
 
     /**
      * @param  ChildRelatedTag $relatedTag The ChildRelatedTag object to remove.
-     * @return $this|ChildDuty The current object (for fluent API support)
+     * @return $this|ChildTag The current object (for fluent API support)
      */
     public function removeRelatedTag(ChildRelatedTag $relatedTag)
     {
@@ -2124,7 +1285,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->relatedTagsScheduledForDeletion->clear();
             }
             $this->relatedTagsScheduledForDeletion[]= clone $relatedTag;
-            $relatedTag->setDuty(null);
+            $relatedTag->setTag(null);
         }
 
         return $this;
@@ -2134,23 +1295,23 @@ abstract class Duty implements ActiveRecordInterface
     /**
      * If this collection has already been initialized with
      * an identical criteria, it returns the collection.
-     * Otherwise if this Duty is new, it will return
-     * an empty collection; or if this Duty has previously
+     * Otherwise if this Tag is new, it will return
+     * an empty collection; or if this Tag has previously
      * been saved, it will retrieve related RelatedTags from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
-     * actually need in Duty.
+     * actually need in Tag.
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
      * @return ObjectCollection|ChildRelatedTag[] List of ChildRelatedTag objects
      */
-    public function getRelatedTagsJoinTag(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getRelatedTagsJoinDuty(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
         $query = ChildRelatedTagQuery::create(null, $criteria);
-        $query->joinWith('Tag', $joinBehavior);
+        $query->joinWith('Duty', $joinBehavior);
 
         return $this->getRelatedTags($query, $con);
     }
@@ -2162,22 +1323,8 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aActivity) {
-            $this->aActivity->removeDuty($this);
-        }
         $this->id = null;
-        $this->user_id = null;
-        $this->activity_id = null;
-        $this->title = null;
-        $this->query = null;
-        $this->comment = null;
-        $this->raised_at = null;
-        $this->picked_at = null;
-        $this->closed_at = null;
-        $this->tags = null;
-        $this->tags_unserialized = null;
-        $this->created_at = null;
-        $this->updated_at = null;
+        $this->name = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -2204,7 +1351,6 @@ abstract class Duty implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collRelatedTags = null;
-        $this->aActivity = null;
     }
 
     /**
@@ -2214,21 +1360,7 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(DutyTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildDuty The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[DutyTableMap::COL_UPDATED_AT] = true;
-
-        return $this;
+        return (string) $this->exportTo(TagTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**
