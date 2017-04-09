@@ -532,19 +532,12 @@ class Start {
                 _comment_button.innerText = 'Комментарий';
 
                 _comment_button.addEventListener('click', function () {
-                    var comment_area = document.getElementById("comment-area" + duty.id);
-                    var comment_text_area = document.getElementById("comment-text-area" + duty.id);
-                    var comment_textarea = document.getElementById("comment-textarea" + duty.id);
+                    start.addComment(duty, _comment_button);
+                }, false);
 
-                    if (comment_area.style.display == 'none') {
-                        comment_area.style.display = 'block';
-                        comment_text_area.style.display = 'none';
-                        _comment_button.innerText = 'Сохранить';
-                        _comment_button.className = 'primary';
-                        document.getElementById("postpone-button" + duty.id).style.display = "none";
-                        document.getElementById("close-button" + duty.id).style.display = "none";
-                    } else {
-                        start.commentDuty(duty, comment_textarea.value);
+                _comment_textarea.addEventListener('keypress', function (e) {console.log(e);
+                    if (e.ctrlKey && e.keyCode == 13) {
+                        start.addComment(duty, _comment_button);
                     }
                 }, false);
 
@@ -699,6 +692,24 @@ class Start {
         }
 
         document.getElementById("workspace" + duty.id).style.display = "block";
+    }
+
+    protected addComment(duty: Duty, comment_button) {
+        var start = this;
+        var comment_area = document.getElementById("comment-area" + duty.id);
+        var comment_text_area = document.getElementById("comment-text-area" + duty.id);
+        var comment_textarea = document.getElementById("comment-textarea" + duty.id);
+
+        if (comment_area.style.display == 'none') {
+            comment_area.style.display = 'block';
+            comment_text_area.style.display = 'none';
+            comment_button.innerText = 'Сохранить';
+            comment_button.className = 'primary';
+            document.getElementById("postpone-button" + duty.id).style.display = "none";
+            document.getElementById("close-button" + duty.id).style.display = "none";
+        } else {
+            start.commentDuty(duty, comment_textarea.value);
+        }
     }
 }
 

@@ -427,19 +427,12 @@ var Start = (function () {
                 _comment_button.id = 'comment-button' + duty.id;
                 _comment_button.innerText = 'Комментарий';
                 _comment_button.addEventListener('click', function () {
-                    var comment_area = document.getElementById("comment-area" + duty.id);
-                    var comment_text_area = document.getElementById("comment-text-area" + duty.id);
-                    var comment_textarea = document.getElementById("comment-textarea" + duty.id);
-                    if (comment_area.style.display == 'none') {
-                        comment_area.style.display = 'block';
-                        comment_text_area.style.display = 'none';
-                        _comment_button.innerText = 'Сохранить';
-                        _comment_button.className = 'primary';
-                        document.getElementById("postpone-button" + duty.id).style.display = "none";
-                        document.getElementById("close-button" + duty.id).style.display = "none";
-                    }
-                    else {
-                        start.commentDuty(duty, comment_textarea.value);
+                    start.addComment(duty, _comment_button);
+                }, false);
+                _comment_textarea.addEventListener('keypress', function (e) {
+                    console.log(e);
+                    if (e.ctrlKey && e.keyCode == 13) {
+                        start.addComment(duty, _comment_button);
                     }
                 }, false);
                 _buttons_area.appendChild(_comment_button);
@@ -559,6 +552,23 @@ var Start = (function () {
             document.getElementById("sticker" + duty.id).style.background = "cornsilk";
         }
         document.getElementById("workspace" + duty.id).style.display = "block";
+    };
+    Start.prototype.addComment = function (duty, comment_button) {
+        var start = this;
+        var comment_area = document.getElementById("comment-area" + duty.id);
+        var comment_text_area = document.getElementById("comment-text-area" + duty.id);
+        var comment_textarea = document.getElementById("comment-textarea" + duty.id);
+        if (comment_area.style.display == 'none') {
+            comment_area.style.display = 'block';
+            comment_text_area.style.display = 'none';
+            comment_button.innerText = 'Сохранить';
+            comment_button.className = 'primary';
+            document.getElementById("postpone-button" + duty.id).style.display = "none";
+            document.getElementById("close-button" + duty.id).style.display = "none";
+        }
+        else {
+            start.commentDuty(duty, comment_textarea.value);
+        }
     };
     return Start;
 }());
