@@ -141,12 +141,17 @@ var Start = (function () {
             if (request.status >= 200 && request.status < 400) {
                 var data = JSON.parse(request.responseText);
                 if (data.hasOwnProperty('content') && data.content !== null) {
-                    var duty = data.content;
-                    if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
-                        document.getElementById("no-duties").style.display = 'none';
-                        start.addDuty(new Duty(duty), 'current');
-                        var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
-                        sound.play();
+                    var duties = data.content;
+                    for (var i = 0; i < duties.length; i++) {
+                        (function (i) {
+                            var duty = duties[i];
+                            if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                                document.getElementById("no-duties").style.display = 'none';
+                                start.addDuty(new Duty(duty), 'current');
+                                var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
+                                sound.play();
+                            }
+                        })(i);
                     }
                 }
                 if (start.duties.length == 0 && document.getElementById('stickers').style.display != 'none') {

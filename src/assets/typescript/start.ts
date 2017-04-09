@@ -177,15 +177,21 @@ class Start {
                 var data = JSON.parse(request.responseText);
 
                 if (data.hasOwnProperty('content') && data.content !== null) {
-                    var duty = data.content;
+                    var duties = data.content;
 
-                    if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
-                        document.getElementById("no-duties").style.display = 'none';
+                    for (var i = 0; i < duties.length; i++) {
+                        (function(i) {
+                            var duty = duties[i];
 
-                        start.addDuty(new Duty(duty), 'current');
+                            if (typeof duty === 'object' && Object.keys(duty).length !== 0) {
+                                document.getElementById("no-duties").style.display = 'none';
 
-                        var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
-                        sound.play();
+                                start.addDuty(new Duty(duty), 'current');
+
+                                var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
+                                sound.play();
+                            }
+                        })(i)
                     }
                 }
 
