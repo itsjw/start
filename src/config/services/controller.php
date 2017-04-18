@@ -31,7 +31,7 @@ return [
     'perfumerlabs.start.controller.router' => [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\Router\\Http\\DefaultRouter',
-        'arguments' => ['#bundle_resolver', [
+        'arguments' => ['#gateway.http', [
             'data_type' => 'json'
         ]]
     ],

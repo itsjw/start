@@ -4,7 +4,7 @@ return [
     'perfumerlabs.start.api.router' => [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\Router\\Http\\DefaultRouter',
-        'arguments' => ['#bundle_resolver', [
+        'arguments' => ['#gateway.http', [
             'data_type' => 'json'
         ]]
     ],
