@@ -49,10 +49,10 @@ class ExtraController extends ViewController
             ->filterByRaisedAt(new \DateTime(), Criteria::LESS_EQUAL)
             ->filterById($picked_duties->getPrimaryKeys(), Criteria::NOT_IN)
             ->useActivityQuery()
-            ->filterByPriority($highest_priority, Criteria::GREATER_THAN)
-            ->orderByPriority(Criteria::DESC)
+                ->filterByPriority($highest_priority, Criteria::GREATER_THAN)
+                ->orderByPriority(Criteria::DESC)
             ->endUse()
-            ->orderByCreatedAt()
+            ->orderByRaisedAt()
             ->findOne();
 
         if ($extra_duty) {
@@ -84,10 +84,6 @@ class ExtraController extends ViewController
                     ->useRelatedTagQuery()
                         ->filterByTagId($related_tag_ids, Criteria::IN)
                     ->endUse()
-                    ->useActivityQuery()
-                        ->orderByPriority(Criteria::DESC)
-                    ->endUse()
-                    ->orderByCreatedAt()
                     ->find();
 
                 foreach ($related_duties as $related_duty) {
