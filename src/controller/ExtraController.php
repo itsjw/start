@@ -39,6 +39,10 @@ class ExtraController extends ViewController
 
         $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($user);
 
+        if (count($allowed_activities) == 0) {
+            return;
+        }
+
         $extra_duty = DutyQuery::create()
             ->joinWith('Activity')
             ->condition('user', 'Duty.UserId = ?', (int) $this->getAuth()->getData())
