@@ -8,11 +8,6 @@ return [
     '_domains' => [
         [
             'domain' => 'start.dev',
-            'prefix' => '/api',
-            'bundle' => 'perfumerlabs/start/api'
-        ],
-        [
-            'domain' => 'start.dev',
             'bundle' => 'perfumerlabs/start/controller'
         ],
         [
@@ -27,12 +22,12 @@ return [
 
     'propel' => [
         'project' => 'start',
-        'dsn' => 'pgsql:host=localhost;port=5433;dbname=start',
+        'dsn' => 'pgsql:host=db;port=5432;dbname=naimi',
         'db_user' => 'postgres',
         'db_password' => 'root',
         'config_dir' => __DIR__ . '/../propel/' . ENV,
         'schema_dir' => __DIR__ . '/../propel/schema',
-        'model_dir' => __DIR__ . '/../../model',
+        'model_dir' => __DIR__ . '/../../Model',
         'migration_dir' => __DIR__ . '/../propel/migration',
     ],
 

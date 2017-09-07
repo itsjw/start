@@ -19,7 +19,7 @@ class ControllerBundle extends AbstractBundle
     public function getDefinitionFiles()
     {
         return [
-            __DIR__ . '/../config/services/controller.php'
+            __DIR__ . '/../Resource/config/services/controller.php'
         ];
     }
 

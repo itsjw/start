@@ -19,14 +19,14 @@ class DevBundle extends AbstractBundle
     public function getDefinitionFiles()
     {
         return [
-            __DIR__ . '/../config/services/dev.php'
+            __DIR__ . '/../Resource/config/services/dev.php'
         ];
     }
 
     public function getResourceFiles()
     {
         return [
-            __DIR__ . '/../config/resources/dev.php'
+            __DIR__ . '/../Resource/config/resources/dev.php'
         ];
     }
 }

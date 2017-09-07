@@ -19,7 +19,7 @@ class CommandBundle extends AbstractBundle
     public function getDefinitionFiles()
     {
         return [
-            __DIR__ . '/../config/services/command.php'
+            __DIR__ . '/../Resource/config/services/command.php'
         ];
     }
 

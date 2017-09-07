@@ -52,6 +52,6 @@ return [
     'perfumerlabs.start.controller.template_provider' => [
         'shared' => true,
         'class' => 'Perfumer\\Framework\\View\\TemplateProvider\\TwigFilesystemProvider',
-        'arguments' => ['#twig.filesystem_loader', __DIR__ . '/../../view', 'start']
+        'arguments' => ['#twig.filesystem_loader', __DIR__ . '/../../tpl', 'start']
     ],
 ];

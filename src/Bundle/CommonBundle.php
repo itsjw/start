@@ -19,7 +19,7 @@ class CommonBundle extends AbstractBundle
     public function getDefinitionFiles()
     {
         return [
-            __DIR__ . '/../config/services/common.php'
+            __DIR__ . '/../Resource/config/services/common.php'
         ];
     }
 }
