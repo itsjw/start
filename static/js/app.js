@@ -1,7 +1,7 @@
 var app = new Vue({
     el: '#dashboard',
     data: {
-        stickers: [],
+        duties: [],
         results: [],
         searching: false,
         query: ''
@@ -10,7 +10,7 @@ var app = new Vue({
         init: function () {
             this.$http.get('/duties').then(function(response) {
                 if (response.body.content) {
-                    this.stickers = response.body.content;
+                    this.duties = response.body.content;
                 }
 
                 $this = this;
@@ -18,7 +18,7 @@ var app = new Vue({
                 setInterval(function () {
                     $this.$http.get('/extra').then(function(response) {
                         if (response.body.content) {
-                            $this.stickers += response.body.content;
+                            $this.duties += response.body.content;
 
                             var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
                             sound.play();

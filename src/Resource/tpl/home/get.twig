@@ -83,18 +83,18 @@
         </div>
 
         <div id="stickers" v-if="!searching">
-            <div class="sticker" v-for="sticker in stickers" v-bind:style="{borderLeft: '20px solid ' + sticker.color}">
-                <div style="color: #cccccc; font-size: smaller">{{ '{{ sticker.name }}' }}</div>
-                <div style="margin-top: 5px">{{ '{{ sticker.title }}' }}</div>
-                <div v-if="sticker.tags && sticker.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ sticker.tags.join(\', \') }}' }}</div>
+            <div class="sticker" v-for="duty in duties" v-bind:style="{borderLeft: '20px solid ' + duty.color}" v-on:click="openDuty(duty)">
+                <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
+                <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
+                <div v-if="duty.tags && duty.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
             </div>
         </div>
 
         <div id="searching" v-if="results.length > 0 && searching">
-            <div class="sticker" v-for="sticker in results" v-bind:style="{borderLeft: '20px solid ' + sticker.color}">
-                <div style="color: #cccccc; font-size: smaller">{{ '{{ sticker.name }}' }}</div>
-                <div style="margin-top: 5px">{{ '{{ sticker.title }}' }}</div>
-                <div v-if="sticker.tags && sticker.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ sticker.tags.join(\', \') }}' }}</div>
+            <div class="sticker" v-for="duty in results" v-bind:style="{borderLeft: '20px solid ' + duty.color}" v-on:click="pickDuty(duty)">
+                <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
+                <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
+                <div v-if="duty.tags && sticker.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
             </div>
         </div>
 
@@ -102,11 +102,45 @@
     </div>
 
     <div id="workspaces" class="invisible">
+        <div class="workspace" v-for="duty in duties" v-if="duty.open">
+            <div class="buttons-area" v-if="duty.writable || duty.readonly || duty.postponable">
+                <button v-if="duty.writable">Комментарий</button>
+                <button v-if="duty.readonly">Закрыть</button>
+                <button v-if="duty.postponable">Отложить</button>
+                <button class="back-button">Назад</button>
+            </div>
+
+            <div class="comment-text-area" v-if="duty.comment">{{ '{{ duty.comment }}' }}</div>
+
+            <div class="comment-area" v-if="duty.writable">
+                <textarea rows="5" placeholder="Комментарий">{{ '{{ duty.comment }}' }}</textarea>
+            </div>
+
+            <div class="postpone-area" v-if="duty.postponable">
+                <ul>
+                    <li><span>На 15 минут</span></li>
+                    <li><span>На 30 минут</span></li>
+                    <li><span>На 1 час</span></li>
+                    <li><span>На 2 часа</span></li>
+                    <li><span>На 1 день</span></li>
+                    <li><span>На 2 дня</span></li>
+                    <li>
+                        <input type="date">
+                        <input type="time" value="00:00:00">
+                        <button class="primary">Сохранить</button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="duty-area" v-if="duty.iframe_open">
+                <iframe v-attr="src: duty.iframe"></iframe>
+            </div>
+        </div>
     </div>
 
     <div style="clear: both"></div>
 
-    <div id="no-duties" v-if="stickers.length == 0 && !searching">
+    <div id="no-duties" v-if="duties.length == 0 && !searching">
         <div>У вас пока нет задач</div>
     </div>
 </div>
