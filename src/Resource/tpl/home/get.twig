@@ -10,91 +10,92 @@
 </head>
 
 <body>
-<div id="navbar" v-cloak>
-    <div class="navbar-left">
-        {% for toolbar in toolbars %}
-            <span class="create-duty" @click="createDuty({{ toolbar.id }})">{{ toolbar.toolbar }}</span>
-        {% endfor %}
+
+<div id="container">
+    <div id="navbar" v-cloak>
+        <div class="navbar-left">
+            {% for toolbar in toolbars %}
+                <span class="create-duty" @click="createDuty({{ toolbar.id }})">{{ toolbar.toolbar }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="navbar-right">
+            <a href="{{ url('logout') }}">Выход</a>
+        </div>
+
+        <div style="clear: both"></div>
     </div>
 
-    <div class="navbar-right">
-        <a href="{{ url('logout') }}">Выход</a>
-    </div>
+    <div id="dashboard" v-cloak>
+        <div id="stickers-column" class="visible">
+            <div id="online" v-bind:class="{yes: online, no: !online}" @click="toggleOnline()">
+                {{ '{{ online ? \'Я онлайн\' : \'Я оффлайн\' }}' }}
+            </div>
 
-    <div style="clear: both"></div>
-</div>
+            <div style="margin-bottom: 10px">
+                <input id="search" @focus="focusSearch()" @blur="blurSearch()" @keyup="search()" v-model="query" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
+            </div>
 
-<div id="dashboard" v-cloak>
-    <div id="stickers-column" class="visible">
-        <div id="online" v-bind:class="{yes: online, no: !online}" @click="toggleOnline()">
-            {{ '{{ online ? \'Я онлайн\' : \'Я оффлайн\' }}' }}
+            <div id="stickers" v-if="!searching">
+                <div class="sticker" v-for="duty in duties" v-bind:style="{borderLeft: '20px solid ' + duty.color}" @click="openDuty(duty)" v-bind:class="{active: duty.shown}">
+                    <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
+                    <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
+                    <div v-if="duty.tags && duty.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
+                </div>
+            </div>
+
+            <div id="searching" v-if="results.length > 0 && searching">
+                <div class="sticker" v-for="duty in results" v-bind:style="{borderLeft: '20px solid ' + duty.color}" @click="pickDuty(duty)">
+                    <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
+                    <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
+                    <div v-if="duty.tags && duty.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
+                </div>
+            </div>
+
+            <div id="search-help" v-if="results.length == 0 && searching" style="color: #ccc">Начните вводить текст</div>
         </div>
 
-        <div style="margin-bottom: 10px">
-            <input id="search" @focus="focusSearch()" @blur="blurSearch()" @keyup="search()" v-model="query" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
-        </div>
+        <div id="workspaces" class="invisible">
+            <div class="workspace" v-for="duty in duties" v-if="duty.open" v-bind:class="{hidden: !duty.shown}">
+                <div class="buttons-area" v-if="duty.writable || duty.readonly || duty.postponable">
+                    <button v-if="duty.writable && !duty.commenting && !duty.postponing " @click="commentDuty(duty)">Комментарий</button>
+                    <button v-if="duty.commenting" @click="saveComment(duty)" class="primary">Сохранить</button>
+                    <button v-if="duty.readonly && !duty.commenting && !duty.postponing" @click="closeDuty(duty)">Закрыть</button>
+                    <button v-if="duty.postponable && !duty.commenting && !duty.postponing" @click="postponeDuty(duty)">Отложить</button>
+                    <button v-if="duty.commenting || duty.postponing" @click="resetDuty(duty)">Назад</button>
+                </div>
 
-        <div id="stickers" v-if="!searching">
-            <div class="sticker" v-for="duty in duties" v-bind:style="{borderLeft: '20px solid ' + duty.color}" @click="openDuty(duty)" v-bind:class="{active: duty.shown}">
-                <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
-                <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
-                <div v-if="duty.tags && duty.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
+                <div class="comment-text-area" v-if="duty.comment && !duty.commenting && !duty.postponing">{{ '{{ duty.comment }}' }}</div>
+
+                <div class="comment-area" v-if="duty.writable && duty.commenting">
+                    <textarea rows="5" placeholder="Комментарий" v-model="duty.tmp_comment">{{ '{{ duty.comment }}' }}</textarea>
+                </div>
+
+                <div class="postpone-area" v-if="duty.postponable && duty.postponing">
+                    <ul>
+                        <li><span @click="savePostpone(duty, '+15 min')">На 15 минут</span></li>
+                        <li><span @click="savePostpone(duty, '+30 min')">На 30 минут</span></li>
+                        <li><span @click="savePostpone(duty, '+1 hour')">На 1 час</span></li>
+                        <li><span @click="savePostpone(duty, '+2 hour')">На 2 часа</span></li>
+                        <li><span @click="savePostpone(duty, '+1 day')">На 1 день</span></li>
+                        <li><span @click="savePostpone(duty, '+2 day')">На 2 дня</span></li>
+                        <li>
+                            <input type="date" v-model="duty.postpone_date">
+                            <input type="time" v-model="duty.postpone_time">
+                            <button class="primary" @click="savePostpone(duty, null)">Сохранить</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="duty-area" v-if="duty.iframe_open">
+                    <iframe :src="duty.iframe"></iframe>
+                </div>
+            </div>
+
+            <div id="no-duties" v-if="duties.length == 0 && !searching">
+                <div>У вас пока нет задач</div>
             </div>
         </div>
-
-        <div id="searching" v-if="results.length > 0 && searching">
-            <div class="sticker" v-for="duty in results" v-bind:style="{borderLeft: '20px solid ' + duty.color}" @click="pickDuty(duty)">
-                <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
-                <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
-                <div v-if="duty.tags && duty.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
-            </div>
-        </div>
-
-        <div id="search-help" v-if="results.length == 0 && searching" style="color: #ccc">Начните вводить текст</div>
-    </div>
-
-    <div id="workspaces" class="invisible">
-        <div class="workspace" v-for="duty in duties" v-if="duty.open" v-bind:class="{hidden: !duty.shown}">
-            <div class="buttons-area" v-if="duty.writable || duty.readonly || duty.postponable">
-                <button v-if="duty.writable && !duty.commenting && !duty.postponing " @click="commentDuty(duty)">Комментарий</button>
-                <button v-if="duty.commenting" @click="saveComment(duty)" class="primary">Сохранить</button>
-                <button v-if="duty.readonly && !duty.commenting && !duty.postponing" @click="closeDuty(duty)">Закрыть</button>
-                <button v-if="duty.postponable && !duty.commenting && !duty.postponing" @click="postponeDuty(duty)">Отложить</button>
-                <button v-if="duty.commenting || duty.postponing" @click="resetDuty(duty)">Назад</button>
-            </div>
-
-            <div class="comment-text-area" v-if="duty.comment && !duty.commenting && !duty.postponing">{{ '{{ duty.comment }}' }}</div>
-
-            <div class="comment-area" v-if="duty.writable && duty.commenting">
-                <textarea rows="5" placeholder="Комментарий" v-model="duty.tmp_comment">{{ '{{ duty.comment }}' }}</textarea>
-            </div>
-
-            <div class="postpone-area" v-if="duty.postponable && duty.postponing">
-                <ul>
-                    <li><span @click="savePostpone(duty, '+15 min')">На 15 минут</span></li>
-                    <li><span @click="savePostpone(duty, '+30 min')">На 30 минут</span></li>
-                    <li><span @click="savePostpone(duty, '+1 hour')">На 1 час</span></li>
-                    <li><span @click="savePostpone(duty, '+2 hour')">На 2 часа</span></li>
-                    <li><span @click="savePostpone(duty, '+1 day')">На 1 день</span></li>
-                    <li><span @click="savePostpone(duty, '+2 day')">На 2 дня</span></li>
-                    <li>
-                        <input type="date" v-model="duty.postpone_date">
-                        <input type="time" v-model="duty.postpone_time">
-                        <button class="primary" @click="savePostpone(duty, null)">Сохранить</button>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="duty-area" v-if="duty.iframe_open">
-                <iframe :src="duty.iframe"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <div style="clear: both"></div>
-
-    <div id="no-duties" v-if="duties.length == 0 && !searching">
-        <div>У вас пока нет задач</div>
     </div>
 </div>
 
