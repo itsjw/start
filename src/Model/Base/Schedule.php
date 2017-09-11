@@ -2,9 +2,12 @@
 
 namespace Perfumerlabs\Start\Model\Base;
 
-use \DateTime;
 use \Exception;
 use \PDO;
+use App\Model\Role;
+use App\Model\RoleQuery;
+use Perfumerlabs\Start\Model\Activity as ChildActivity;
+use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
 use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
 use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
@@ -18,7 +21,6 @@ use Propel\Runtime\Exception\LogicException;
 use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
-use Propel\Runtime\Util\PropelDateTime;
 
 /**
  * Base class that represents a row from the 'schedule' table.
@@ -69,13 +71,6 @@ abstract class Schedule implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the user_id field.
-     *
-     * @var        int
-     */
-    protected $user_id;
-
-    /**
      * The value for the role_id field.
      *
      * @var        int
@@ -83,46 +78,21 @@ abstract class Schedule implements ActiveRecordInterface
     protected $role_id;
 
     /**
-     * The value for the activities field.
-     *
-     * @var        array
-     */
-    protected $activities;
-
-    /**
-     * The unserialized $activities value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */
-    protected $activities_unserialized;
-
-    /**
-     * The value for the week_day field.
+     * The value for the activity_id field.
      *
      * @var        int
      */
-    protected $week_day;
+    protected $activity_id;
 
     /**
-     * The value for the _date field.
-     *
-     * @var        DateTime
+     * @var        Role
      */
-    protected $_date;
+    protected $aRole;
 
     /**
-     * The value for the time_from field.
-     *
-     * @var        DateTime
+     * @var        ChildActivity
      */
-    protected $time_from;
-
-    /**
-     * The value for the time_to field.
-     *
-     * @var        DateTime
-     */
-    protected $time_to;
+    protected $aActivity;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -368,16 +338,6 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Get the [user_id] column value.
-     *
-     * @return int
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
-    }
-
-    /**
      * Get the [role_id] column value.
      *
      * @return int
@@ -388,102 +348,13 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Get the [activities] column value.
-     *
-     * @return array
-     */
-    public function getActivities()
-    {
-        if (null === $this->activities_unserialized) {
-            $this->activities_unserialized = array();
-        }
-        if (!$this->activities_unserialized && null !== $this->activities) {
-            $activities_unserialized = substr($this->activities, 2, -2);
-            $this->activities_unserialized = '' !== $activities_unserialized ? explode(' | ', $activities_unserialized) : array();
-        }
-
-        return $this->activities_unserialized;
-    }
-
-    /**
-     * Test the presence of a value in the [activities] array column value.
-     * @param      mixed $value
-     *
-     * @return boolean
-     */
-    public function hasActivitie($value)
-    {
-        return in_array($value, $this->getActivities());
-    } // hasActivitie()
-
-    /**
-     * Get the [week_day] column value.
+     * Get the [activity_id] column value.
      *
      * @return int
      */
-    public function getWeekDay()
+    public function getActivityId()
     {
-        return $this->week_day;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [_date] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getDate($format = NULL)
-    {
-        if ($format === null) {
-            return $this->_date;
-        } else {
-            return $this->_date instanceof \DateTimeInterface ? $this->_date->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [time_from] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getTimeFrom($format = NULL)
-    {
-        if ($format === null) {
-            return $this->time_from;
-        } else {
-            return $this->time_from instanceof \DateTimeInterface ? $this->time_from->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [time_to] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getTimeTo($format = NULL)
-    {
-        if ($format === null) {
-            return $this->time_to;
-        } else {
-            return $this->time_to instanceof \DateTimeInterface ? $this->time_to->format($format) : null;
-        }
+        return $this->activity_id;
     }
 
     /**
@@ -507,26 +378,6 @@ abstract class Schedule implements ActiveRecordInterface
     } // setId()
 
     /**
-     * Set the value of [user_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function setUserId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->user_id !== $v) {
-            $this->user_id = $v;
-            $this->modifiedColumns[ScheduleTableMap::COL_USER_ID] = true;
-        }
-
-        return $this;
-    } // setUserId()
-
-    /**
      * Set the value of [role_id] column.
      *
      * @param int $v new value
@@ -543,139 +394,36 @@ abstract class Schedule implements ActiveRecordInterface
             $this->modifiedColumns[ScheduleTableMap::COL_ROLE_ID] = true;
         }
 
+        if ($this->aRole !== null && $this->aRole->getId() !== $v) {
+            $this->aRole = null;
+        }
+
         return $this;
     } // setRoleId()
 
     /**
-     * Set the value of [activities] column.
-     *
-     * @param array $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function setActivities($v)
-    {
-        if ($this->activities_unserialized !== $v) {
-            $this->activities_unserialized = $v;
-            $this->activities = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[ScheduleTableMap::COL_ACTIVITIES] = true;
-        }
-
-        return $this;
-    } // setActivities()
-
-    /**
-     * Adds a value to the [activities] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function addActivitie($value)
-    {
-        $currentArray = $this->getActivities();
-        $currentArray []= $value;
-        $this->setActivities($currentArray);
-
-        return $this;
-    } // addActivitie()
-
-    /**
-     * Removes a value from the [activities] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function removeActivitie($value)
-    {
-        $targetArray = array();
-        foreach ($this->getActivities() as $element) {
-            if ($element != $value) {
-                $targetArray []= $element;
-            }
-        }
-        $this->setActivities($targetArray);
-
-        return $this;
-    } // removeActivitie()
-
-    /**
-     * Set the value of [week_day] column.
+     * Set the value of [activity_id] column.
      *
      * @param int $v new value
      * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
      */
-    public function setWeekDay($v)
+    public function setActivityId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->week_day !== $v) {
-            $this->week_day = $v;
-            $this->modifiedColumns[ScheduleTableMap::COL_WEEK_DAY] = true;
+        if ($this->activity_id !== $v) {
+            $this->activity_id = $v;
+            $this->modifiedColumns[ScheduleTableMap::COL_ACTIVITY_ID] = true;
+        }
+
+        if ($this->aActivity !== null && $this->aActivity->getId() !== $v) {
+            $this->aActivity = null;
         }
 
         return $this;
-    } // setWeekDay()
-
-    /**
-     * Sets the value of [_date] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function setDate($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->_date !== null || $dt !== null) {
-            if ($this->_date === null || $dt === null || $dt->format("Y-m-d") !== $this->_date->format("Y-m-d")) {
-                $this->_date = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ScheduleTableMap::COL__DATE] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setDate()
-
-    /**
-     * Sets the value of [time_from] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function setTimeFrom($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->time_from !== null || $dt !== null) {
-            if ($this->time_from === null || $dt === null || $dt->format("H:i:s.u") !== $this->time_from->format("H:i:s.u")) {
-                $this->time_from = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ScheduleTableMap::COL_TIME_FROM] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setTimeFrom()
-
-    /**
-     * Sets the value of [time_to] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function setTimeTo($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->time_to !== null || $dt !== null) {
-            if ($this->time_to === null || $dt === null || $dt->format("H:i:s.u") !== $this->time_to->format("H:i:s.u")) {
-                $this->time_to = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[ScheduleTableMap::COL_TIME_TO] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setTimeTo()
+    } // setActivityId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -716,27 +464,11 @@ abstract class Schedule implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ScheduleTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ScheduleTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->user_id = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ScheduleTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ScheduleTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->role_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ScheduleTableMap::translateFieldName('Activities', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->activities = $col;
-            $this->activities_unserialized = null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ScheduleTableMap::translateFieldName('WeekDay', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->week_day = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ScheduleTableMap::translateFieldName('Date', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->_date = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ScheduleTableMap::translateFieldName('TimeFrom', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->time_from = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ScheduleTableMap::translateFieldName('TimeTo', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->time_to = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ScheduleTableMap::translateFieldName('ActivityId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->activity_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -745,7 +477,7 @@ abstract class Schedule implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = ScheduleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 3; // 3 = ScheduleTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Schedule'), 0, $e);
@@ -767,6 +499,12 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aRole !== null && $this->role_id !== $this->aRole->getId()) {
+            $this->aRole = null;
+        }
+        if ($this->aActivity !== null && $this->activity_id !== $this->aActivity->getId()) {
+            $this->aActivity = null;
+        }
     } // ensureConsistency
 
     /**
@@ -806,6 +544,8 @@ abstract class Schedule implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aRole = null;
+            $this->aActivity = null;
         } // if (deep)
     }
 
@@ -909,6 +649,25 @@ abstract class Schedule implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aRole !== null) {
+                if ($this->aRole->isModified() || $this->aRole->isNew()) {
+                    $affectedRows += $this->aRole->save($con);
+                }
+                $this->setRole($this->aRole);
+            }
+
+            if ($this->aActivity !== null) {
+                if ($this->aActivity->isModified() || $this->aActivity->isNew()) {
+                    $affectedRows += $this->aActivity->save($con);
+                }
+                $this->setActivity($this->aActivity);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -958,26 +717,11 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->isColumnModified(ScheduleTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_USER_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'user_id';
-        }
         if ($this->isColumnModified(ScheduleTableMap::COL_ROLE_ID)) {
             $modifiedColumns[':p' . $index++]  = 'role_id';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITIES)) {
-            $modifiedColumns[':p' . $index++]  = 'activities';
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL_WEEK_DAY)) {
-            $modifiedColumns[':p' . $index++]  = 'week_day';
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL__DATE)) {
-            $modifiedColumns[':p' . $index++]  = '_date';
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL_TIME_FROM)) {
-            $modifiedColumns[':p' . $index++]  = 'time_from';
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL_TIME_TO)) {
-            $modifiedColumns[':p' . $index++]  = 'time_to';
+        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITY_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'activity_id';
         }
 
         $sql = sprintf(
@@ -993,26 +737,11 @@ abstract class Schedule implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
-                    case 'user_id':
-                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
-                        break;
                     case 'role_id':
                         $stmt->bindValue($identifier, $this->role_id, PDO::PARAM_INT);
                         break;
-                    case 'activities':
-                        $stmt->bindValue($identifier, $this->activities, PDO::PARAM_STR);
-                        break;
-                    case 'week_day':
-                        $stmt->bindValue($identifier, $this->week_day, PDO::PARAM_INT);
-                        break;
-                    case '_date':
-                        $stmt->bindValue($identifier, $this->_date ? $this->_date->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'time_from':
-                        $stmt->bindValue($identifier, $this->time_from ? $this->time_from->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'time_to':
-                        $stmt->bindValue($identifier, $this->time_to ? $this->time_to->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'activity_id':
+                        $stmt->bindValue($identifier, $this->activity_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1073,25 +802,10 @@ abstract class Schedule implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getUserId();
-                break;
-            case 2:
                 return $this->getRoleId();
                 break;
-            case 3:
-                return $this->getActivities();
-                break;
-            case 4:
-                return $this->getWeekDay();
-                break;
-            case 5:
-                return $this->getDate();
-                break;
-            case 6:
-                return $this->getTimeFrom();
-                break;
-            case 7:
-                return $this->getTimeTo();
+            case 2:
+                return $this->getActivityId();
                 break;
             default:
                 return null;
@@ -1110,10 +824,11 @@ abstract class Schedule implements ActiveRecordInterface
      *                    Defaults to TableMap::TYPE_PHPNAME.
      * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
      * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+     * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
      *
      * @return array an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+    public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
         if (isset($alreadyDumpedObjects['Schedule'][$this->hashCode()])) {
@@ -1123,31 +838,46 @@ abstract class Schedule implements ActiveRecordInterface
         $keys = ScheduleTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getUserId(),
-            $keys[2] => $this->getRoleId(),
-            $keys[3] => $this->getActivities(),
-            $keys[4] => $this->getWeekDay(),
-            $keys[5] => $this->getDate(),
-            $keys[6] => $this->getTimeFrom(),
-            $keys[7] => $this->getTimeTo(),
+            $keys[1] => $this->getRoleId(),
+            $keys[2] => $this->getActivityId(),
         );
-        if ($result[$keys[5]] instanceof \DateTime) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
-        }
-
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
-        }
-
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
             $result[$key] = $virtualColumn;
         }
 
+        if ($includeForeignObjects) {
+            if (null !== $this->aRole) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'role';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = '_role';
+                        break;
+                    default:
+                        $key = 'Role';
+                }
+
+                $result[$key] = $this->aRole->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aActivity) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'activity';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'activity';
+                        break;
+                    default:
+                        $key = 'Activity';
+                }
+
+                $result[$key] = $this->aActivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+        }
 
         return $result;
     }
@@ -1185,29 +915,10 @@ abstract class Schedule implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setUserId($value);
-                break;
-            case 2:
                 $this->setRoleId($value);
                 break;
-            case 3:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setActivities($value);
-                break;
-            case 4:
-                $this->setWeekDay($value);
-                break;
-            case 5:
-                $this->setDate($value);
-                break;
-            case 6:
-                $this->setTimeFrom($value);
-                break;
-            case 7:
-                $this->setTimeTo($value);
+            case 2:
+                $this->setActivityId($value);
                 break;
         } // switch()
 
@@ -1239,25 +950,10 @@ abstract class Schedule implements ActiveRecordInterface
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUserId($arr[$keys[1]]);
+            $this->setRoleId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setRoleId($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setActivities($arr[$keys[3]]);
-        }
-        if (array_key_exists($keys[4], $arr)) {
-            $this->setWeekDay($arr[$keys[4]]);
-        }
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setDate($arr[$keys[5]]);
-        }
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setTimeFrom($arr[$keys[6]]);
-        }
-        if (array_key_exists($keys[7], $arr)) {
-            $this->setTimeTo($arr[$keys[7]]);
+            $this->setActivityId($arr[$keys[2]]);
         }
     }
 
@@ -1303,26 +999,11 @@ abstract class Schedule implements ActiveRecordInterface
         if ($this->isColumnModified(ScheduleTableMap::COL_ID)) {
             $criteria->add(ScheduleTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_USER_ID)) {
-            $criteria->add(ScheduleTableMap::COL_USER_ID, $this->user_id);
-        }
         if ($this->isColumnModified(ScheduleTableMap::COL_ROLE_ID)) {
             $criteria->add(ScheduleTableMap::COL_ROLE_ID, $this->role_id);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITIES)) {
-            $criteria->add(ScheduleTableMap::COL_ACTIVITIES, $this->activities);
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL_WEEK_DAY)) {
-            $criteria->add(ScheduleTableMap::COL_WEEK_DAY, $this->week_day);
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL__DATE)) {
-            $criteria->add(ScheduleTableMap::COL__DATE, $this->_date);
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL_TIME_FROM)) {
-            $criteria->add(ScheduleTableMap::COL_TIME_FROM, $this->time_from);
-        }
-        if ($this->isColumnModified(ScheduleTableMap::COL_TIME_TO)) {
-            $criteria->add(ScheduleTableMap::COL_TIME_TO, $this->time_to);
+        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITY_ID)) {
+            $criteria->add(ScheduleTableMap::COL_ACTIVITY_ID, $this->activity_id);
         }
 
         return $criteria;
@@ -1410,13 +1091,8 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setUserId($this->getUserId());
         $copyObj->setRoleId($this->getRoleId());
-        $copyObj->setActivities($this->getActivities());
-        $copyObj->setWeekDay($this->getWeekDay());
-        $copyObj->setDate($this->getDate());
-        $copyObj->setTimeFrom($this->getTimeFrom());
-        $copyObj->setTimeTo($this->getTimeTo());
+        $copyObj->setActivityId($this->getActivityId());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1446,21 +1122,123 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a Role object.
+     *
+     * @param  Role $v
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setRole(Role $v = null)
+    {
+        if ($v === null) {
+            $this->setRoleId(NULL);
+        } else {
+            $this->setRoleId($v->getId());
+        }
+
+        $this->aRole = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Role object, it will not be re-added.
+        if ($v !== null) {
+            $v->addSchedule($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Role object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return Role The associated Role object.
+     * @throws PropelException
+     */
+    public function getRole(ConnectionInterface $con = null)
+    {
+        if ($this->aRole === null && ($this->role_id !== null)) {
+            $this->aRole = RoleQuery::create()->findPk($this->role_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aRole->addSchedules($this);
+             */
+        }
+
+        return $this->aRole;
+    }
+
+    /**
+     * Declares an association between this object and a ChildActivity object.
+     *
+     * @param  ChildActivity $v
+     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setActivity(ChildActivity $v = null)
+    {
+        if ($v === null) {
+            $this->setActivityId(NULL);
+        } else {
+            $this->setActivityId($v->getId());
+        }
+
+        $this->aActivity = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildActivity object, it will not be re-added.
+        if ($v !== null) {
+            $v->addSchedule($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildActivity object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildActivity The associated ChildActivity object.
+     * @throws PropelException
+     */
+    public function getActivity(ConnectionInterface $con = null)
+    {
+        if ($this->aActivity === null && ($this->activity_id !== null)) {
+            $this->aActivity = ChildActivityQuery::create()->findPk($this->activity_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aActivity->addSchedules($this);
+             */
+        }
+
+        return $this->aActivity;
+    }
+
+    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
      */
     public function clear()
     {
+        if (null !== $this->aRole) {
+            $this->aRole->removeSchedule($this);
+        }
+        if (null !== $this->aActivity) {
+            $this->aActivity->removeSchedule($this);
+        }
         $this->id = null;
-        $this->user_id = null;
         $this->role_id = null;
-        $this->activities = null;
-        $this->activities_unserialized = null;
-        $this->week_day = null;
-        $this->_date = null;
-        $this->time_from = null;
-        $this->time_to = null;
+        $this->activity_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1481,6 +1259,8 @@ abstract class Schedule implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
+        $this->aRole = null;
+        $this->aActivity = null;
     }
 
     /**

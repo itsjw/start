@@ -97,9 +97,9 @@ class UserTableMap extends TableMap
     const COL_IS_DISABLED = '_user.is_disabled';
 
     /**
-     * the column name for the banned_till field
+     * the column name for the online_at field
      */
-    const COL_BANNED_TILL = '_user.banned_till';
+    const COL_ONLINE_AT = '_user.online_at';
 
     /**
      * the column name for the created_at field
@@ -123,10 +123,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Username', 'Password', 'IsAdmin', 'IsDisabled', 'BannedTill', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'username', 'password', 'isAdmin', 'isDisabled', 'bannedTill', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_IS_ADMIN, UserTableMap::COL_IS_DISABLED, UserTableMap::COL_BANNED_TILL, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'username', 'password', 'is_admin', 'is_disabled', 'banned_till', 'created_at', 'updated_at', ),
+        self::TYPE_PHPNAME       => array('Id', 'Username', 'Password', 'IsAdmin', 'IsDisabled', 'OnlineAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'username', 'password', 'isAdmin', 'isDisabled', 'onlineAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_IS_ADMIN, UserTableMap::COL_IS_DISABLED, UserTableMap::COL_ONLINE_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'username', 'password', 'is_admin', 'is_disabled', 'online_at', 'created_at', 'updated_at', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
@@ -137,10 +137,10 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Password' => 2, 'IsAdmin' => 3, 'IsDisabled' => 4, 'BannedTill' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'isAdmin' => 3, 'isDisabled' => 4, 'bannedTill' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_PASSWORD => 2, UserTableMap::COL_IS_ADMIN => 3, UserTableMap::COL_IS_DISABLED => 4, UserTableMap::COL_BANNED_TILL => 5, UserTableMap::COL_CREATED_AT => 6, UserTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'is_admin' => 3, 'is_disabled' => 4, 'banned_till' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Password' => 2, 'IsAdmin' => 3, 'IsDisabled' => 4, 'OnlineAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'isAdmin' => 3, 'isDisabled' => 4, 'onlineAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_PASSWORD => 2, UserTableMap::COL_IS_ADMIN => 3, UserTableMap::COL_IS_DISABLED => 4, UserTableMap::COL_ONLINE_AT => 5, UserTableMap::COL_CREATED_AT => 6, UserTableMap::COL_UPDATED_AT => 7, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'is_admin' => 3, 'is_disabled' => 4, 'online_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
@@ -167,7 +167,7 @@ class UserTableMap extends TableMap
         $this->addColumn('password', 'Password', 'VARCHAR', false, 255, null);
         $this->addColumn('is_admin', 'IsAdmin', 'BOOLEAN', true, null, false);
         $this->addColumn('is_disabled', 'IsDisabled', 'BOOLEAN', true, null, false);
-        $this->addColumn('banned_till', 'BannedTill', 'TIMESTAMP', false, null, null);
+        $this->addColumn('online_at', 'OnlineAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     } // initialize()
@@ -362,7 +362,7 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
             $criteria->addSelectColumn(UserTableMap::COL_IS_ADMIN);
             $criteria->addSelectColumn(UserTableMap::COL_IS_DISABLED);
-            $criteria->addSelectColumn(UserTableMap::COL_BANNED_TILL);
+            $criteria->addSelectColumn(UserTableMap::COL_ONLINE_AT);
             $criteria->addSelectColumn(UserTableMap::COL_CREATED_AT);
             $criteria->addSelectColumn(UserTableMap::COL_UPDATED_AT);
         } else {
@@ -371,7 +371,7 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.password');
             $criteria->addSelectColumn($alias . '.is_admin');
             $criteria->addSelectColumn($alias . '.is_disabled');
-            $criteria->addSelectColumn($alias . '.banned_till');
+            $criteria->addSelectColumn($alias . '.online_at');
             $criteria->addSelectColumn($alias . '.created_at');
             $criteria->addSelectColumn($alias . '.updated_at');
         }

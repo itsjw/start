@@ -109,11 +109,11 @@ abstract class User implements ActiveRecordInterface
     protected $is_disabled;
 
     /**
-     * The value for the banned_till field.
+     * The value for the online_at field.
      *
      * @var        DateTime
      */
-    protected $banned_till;
+    protected $online_at;
 
     /**
      * The value for the created_at field.
@@ -487,7 +487,7 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Get the [optionally formatted] temporal [banned_till] column value.
+     * Get the [optionally formatted] temporal [online_at] column value.
      *
      *
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
@@ -497,12 +497,12 @@ abstract class User implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getBannedTill($format = NULL)
+    public function getOnlineAt($format = NULL)
     {
         if ($format === null) {
-            return $this->banned_till;
+            return $this->online_at;
         } else {
-            return $this->banned_till instanceof \DateTimeInterface ? $this->banned_till->format($format) : null;
+            return $this->online_at instanceof \DateTimeInterface ? $this->online_at->format($format) : null;
         }
     }
 
@@ -663,24 +663,24 @@ abstract class User implements ActiveRecordInterface
     } // setIsDisabled()
 
     /**
-     * Sets the value of [banned_till] column to a normalized version of the date/time value specified.
+     * Sets the value of [online_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
      *               Empty strings are treated as NULL.
      * @return $this|\App\Model\User The current object (for fluent API support)
      */
-    public function setBannedTill($v)
+    public function setOnlineAt($v)
     {
         $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->banned_till !== null || $dt !== null) {
-            if ($this->banned_till === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->banned_till->format("Y-m-d H:i:s.u")) {
-                $this->banned_till = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[UserTableMap::COL_BANNED_TILL] = true;
+        if ($this->online_at !== null || $dt !== null) {
+            if ($this->online_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->online_at->format("Y-m-d H:i:s.u")) {
+                $this->online_at = $dt === null ? null : clone $dt;
+                $this->modifiedColumns[UserTableMap::COL_ONLINE_AT] = true;
             }
         } // if either are not null
 
         return $this;
-    } // setBannedTill()
+    } // setOnlineAt()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -781,8 +781,8 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('IsDisabled', TableMap::TYPE_PHPNAME, $indexType)];
             $this->is_disabled = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('BannedTill', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->banned_till = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('OnlineAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->online_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
@@ -1103,8 +1103,8 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_IS_DISABLED)) {
             $modifiedColumns[':p' . $index++]  = 'is_disabled';
         }
-        if ($this->isColumnModified(UserTableMap::COL_BANNED_TILL)) {
-            $modifiedColumns[':p' . $index++]  = 'banned_till';
+        if ($this->isColumnModified(UserTableMap::COL_ONLINE_AT)) {
+            $modifiedColumns[':p' . $index++]  = 'online_at';
         }
         if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -1138,8 +1138,8 @@ abstract class User implements ActiveRecordInterface
                     case 'is_disabled':
                         $stmt->bindValue($identifier, $this->is_disabled, PDO::PARAM_BOOL);
                         break;
-                    case 'banned_till':
-                        $stmt->bindValue($identifier, $this->banned_till ? $this->banned_till->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
+                    case 'online_at':
+                        $stmt->bindValue($identifier, $this->online_at ? $this->online_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1218,7 +1218,7 @@ abstract class User implements ActiveRecordInterface
                 return $this->getIsDisabled();
                 break;
             case 5:
-                return $this->getBannedTill();
+                return $this->getOnlineAt();
                 break;
             case 6:
                 return $this->getCreatedAt();
@@ -1261,7 +1261,7 @@ abstract class User implements ActiveRecordInterface
             $keys[2] => $this->getPassword(),
             $keys[3] => $this->getIsAdmin(),
             $keys[4] => $this->getIsDisabled(),
-            $keys[5] => $this->getBannedTill(),
+            $keys[5] => $this->getOnlineAt(),
             $keys[6] => $this->getCreatedAt(),
             $keys[7] => $this->getUpdatedAt(),
         );
@@ -1363,7 +1363,7 @@ abstract class User implements ActiveRecordInterface
                 $this->setIsDisabled($value);
                 break;
             case 5:
-                $this->setBannedTill($value);
+                $this->setOnlineAt($value);
                 break;
             case 6:
                 $this->setCreatedAt($value);
@@ -1413,7 +1413,7 @@ abstract class User implements ActiveRecordInterface
             $this->setIsDisabled($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setBannedTill($arr[$keys[5]]);
+            $this->setOnlineAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
             $this->setCreatedAt($arr[$keys[6]]);
@@ -1477,8 +1477,8 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_IS_DISABLED)) {
             $criteria->add(UserTableMap::COL_IS_DISABLED, $this->is_disabled);
         }
-        if ($this->isColumnModified(UserTableMap::COL_BANNED_TILL)) {
-            $criteria->add(UserTableMap::COL_BANNED_TILL, $this->banned_till);
+        if ($this->isColumnModified(UserTableMap::COL_ONLINE_AT)) {
+            $criteria->add(UserTableMap::COL_ONLINE_AT, $this->online_at);
         }
         if ($this->isColumnModified(UserTableMap::COL_CREATED_AT)) {
             $criteria->add(UserTableMap::COL_CREATED_AT, $this->created_at);
@@ -1576,7 +1576,7 @@ abstract class User implements ActiveRecordInterface
         $copyObj->setPassword($this->getPassword());
         $copyObj->setIsAdmin($this->getIsAdmin());
         $copyObj->setIsDisabled($this->getIsDisabled());
-        $copyObj->setBannedTill($this->getBannedTill());
+        $copyObj->setOnlineAt($this->getOnlineAt());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -2379,7 +2379,7 @@ abstract class User implements ActiveRecordInterface
         $this->password = null;
         $this->is_admin = null;
         $this->is_disabled = null;
-        $this->banned_till = null;
+        $this->online_at = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->alreadyInSave = false;

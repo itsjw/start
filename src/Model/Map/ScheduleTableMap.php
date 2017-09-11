@@ -59,7 +59,7 @@ class ScheduleTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ScheduleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the id field
@@ -77,39 +77,14 @@ class ScheduleTableMap extends TableMap
     const COL_ID = 'schedule.id';
 
     /**
-     * the column name for the user_id field
-     */
-    const COL_USER_ID = 'schedule.user_id';
-
-    /**
      * the column name for the role_id field
      */
     const COL_ROLE_ID = 'schedule.role_id';
 
     /**
-     * the column name for the activities field
+     * the column name for the activity_id field
      */
-    const COL_ACTIVITIES = 'schedule.activities';
-
-    /**
-     * the column name for the week_day field
-     */
-    const COL_WEEK_DAY = 'schedule.week_day';
-
-    /**
-     * the column name for the _date field
-     */
-    const COL__DATE = 'schedule._date';
-
-    /**
-     * the column name for the time_from field
-     */
-    const COL_TIME_FROM = 'schedule.time_from';
-
-    /**
-     * the column name for the time_to field
-     */
-    const COL_TIME_TO = 'schedule.time_to';
+    const COL_ACTIVITY_ID = 'schedule.activity_id';
 
     /**
      * The default string format for model objects of the related table
@@ -123,11 +98,11 @@ class ScheduleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'RoleId', 'Activities', 'WeekDay', 'Date', 'TimeFrom', 'TimeTo', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'roleId', 'activities', 'weekDay', 'date', 'timeFrom', 'timeTo', ),
-        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID, ScheduleTableMap::COL_USER_ID, ScheduleTableMap::COL_ROLE_ID, ScheduleTableMap::COL_ACTIVITIES, ScheduleTableMap::COL_WEEK_DAY, ScheduleTableMap::COL__DATE, ScheduleTableMap::COL_TIME_FROM, ScheduleTableMap::COL_TIME_TO, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'role_id', 'activities', 'week_day', '_date', 'time_from', 'time_to', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'RoleId', 'ActivityId', ),
+        self::TYPE_CAMELNAME     => array('id', 'roleId', 'activityId', ),
+        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID, ScheduleTableMap::COL_ROLE_ID, ScheduleTableMap::COL_ACTIVITY_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'role_id', 'activity_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -137,11 +112,11 @@ class ScheduleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'RoleId' => 2, 'Activities' => 3, 'WeekDay' => 4, 'Date' => 5, 'TimeFrom' => 6, 'TimeTo' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'roleId' => 2, 'activities' => 3, 'weekDay' => 4, 'date' => 5, 'timeFrom' => 6, 'timeTo' => 7, ),
-        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID => 0, ScheduleTableMap::COL_USER_ID => 1, ScheduleTableMap::COL_ROLE_ID => 2, ScheduleTableMap::COL_ACTIVITIES => 3, ScheduleTableMap::COL_WEEK_DAY => 4, ScheduleTableMap::COL__DATE => 5, ScheduleTableMap::COL_TIME_FROM => 6, ScheduleTableMap::COL_TIME_TO => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'role_id' => 2, 'activities' => 3, 'week_day' => 4, '_date' => 5, 'time_from' => 6, 'time_to' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'RoleId' => 1, 'ActivityId' => 2, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'roleId' => 1, 'activityId' => 2, ),
+        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID => 0, ScheduleTableMap::COL_ROLE_ID => 1, ScheduleTableMap::COL_ACTIVITY_ID => 2, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'role_id' => 1, 'activity_id' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -163,13 +138,8 @@ class ScheduleTableMap extends TableMap
         $this->setPrimaryKeyMethodInfo('schedule_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
-        $this->addColumn('role_id', 'RoleId', 'INTEGER', false, null, null);
-        $this->addColumn('activities', 'Activities', 'ARRAY', false, null, null);
-        $this->addColumn('week_day', 'WeekDay', 'INTEGER', false, null, null);
-        $this->addColumn('_date', 'Date', 'DATE', false, null, null);
-        $this->addColumn('time_from', 'TimeFrom', 'TIME', false, null, null);
-        $this->addColumn('time_to', 'TimeTo', 'TIME', false, null, null);
+        $this->addForeignKey('role_id', 'RoleId', 'INTEGER', '_role', 'id', false, null, null);
+        $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
     } // initialize()
 
     /**
@@ -177,6 +147,20 @@ class ScheduleTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Role', '\\App\\Model\\Role', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':role_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, null, false);
+        $this->addRelation('Activity', '\\Perfumerlabs\\Start\\Model\\Activity', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':activity_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, null, false);
     } // buildRelations()
 
     /**
@@ -321,22 +305,12 @@ class ScheduleTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(ScheduleTableMap::COL_ID);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_USER_ID);
             $criteria->addSelectColumn(ScheduleTableMap::COL_ROLE_ID);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_ACTIVITIES);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_WEEK_DAY);
-            $criteria->addSelectColumn(ScheduleTableMap::COL__DATE);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_TIME_FROM);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_TIME_TO);
+            $criteria->addSelectColumn(ScheduleTableMap::COL_ACTIVITY_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.role_id');
-            $criteria->addSelectColumn($alias . '.activities');
-            $criteria->addSelectColumn($alias . '.week_day');
-            $criteria->addSelectColumn($alias . '._date');
-            $criteria->addSelectColumn($alias . '.time_from');
-            $criteria->addSelectColumn($alias . '.time_to');
+            $criteria->addSelectColumn($alias . '.activity_id');
         }
     }
 

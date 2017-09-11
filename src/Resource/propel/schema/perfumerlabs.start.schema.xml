@@ -31,13 +31,14 @@
 
     <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
-        <column name="user_id" type="integer"/>
         <column name="role_id" type="integer"/>
-        <column name="activities" type="array"/>
-        <column name="week_day" type="integer"/>
-        <column name="_date" type="date" phpName="Date"/>
-        <column name="time_from" type="time"/>
-        <column name="time_to" type="time"/>
+        <column name="activity_id" type="integer"/>
+        <foreign-key foreignTable="_role" onDelete="CASCADE">
+            <reference local="role_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="activity" onDelete="CASCADE">
+            <reference local="activity_id" foreign="id"/>
+        </foreign-key>
     </table>
 
     <table name="tag" phpName="Tag" namespace="\Perfumerlabs\Start\Model">
@@ -58,5 +59,4 @@
             <reference local="tag_id" foreign="id"/>
         </foreign-key>
     </table>
-
 </database>

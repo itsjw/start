@@ -190,7 +190,23 @@ class ActivityTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Duties', false);
+        $this->addRelation('Schedule', '\\Perfumerlabs\\Start\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':activity_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'Schedules', false);
     } // buildRelations()
+    /**
+     * Method to invalidate the instance pool of all tables related to activity     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool()
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        ScheduleTableMap::clearInstancePool();
+    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.

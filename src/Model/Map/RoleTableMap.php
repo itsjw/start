@@ -4,6 +4,7 @@ namespace App\Model\Map;
 
 use App\Model\Role;
 use App\Model\RoleQuery;
+use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -154,6 +155,13 @@ class RoleTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'UserRoles', false);
+        $this->addRelation('Schedule', '\\Perfumerlabs\\Start\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':role_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'Schedules', false);
         $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Users');
     } // buildRelations()
     /**
@@ -164,6 +172,7 @@ class RoleTableMap extends TableMap
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         UserRoleTableMap::clearInstancePool();
+        ScheduleTableMap::clearInstancePool();
     }
 
     /**

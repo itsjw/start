@@ -26,6 +26,10 @@
 
 <div id="dashboard" v-cloak>
     <div id="stickers-column" class="visible">
+        <div id="online" v-bind:class="{yes: online, no: !online}" @click="toggleOnline()">
+            {{ '{{ online ? \'Я онлайн\' : \'Я оффлайн\' }}' }}
+        </div>
+
         <div style="margin-bottom: 10px">
             <input id="search" @focus="focusSearch()" @blur="blurSearch()" @keyup="search()" v-model="query" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
         </div>

@@ -4,12 +4,14 @@ namespace Perfumerlabs\Start\Model\Base;
 
 use \Exception;
 use \PDO;
+use App\Model\Role;
 use Perfumerlabs\Start\Model\Schedule as ChildSchedule;
 use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
 use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
@@ -20,22 +22,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildScheduleQuery orderById($order = Criteria::ASC) Order by the id column
- * @method     ChildScheduleQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildScheduleQuery orderByRoleId($order = Criteria::ASC) Order by the role_id column
- * @method     ChildScheduleQuery orderByActivities($order = Criteria::ASC) Order by the activities column
- * @method     ChildScheduleQuery orderByWeekDay($order = Criteria::ASC) Order by the week_day column
- * @method     ChildScheduleQuery orderByDate($order = Criteria::ASC) Order by the _date column
- * @method     ChildScheduleQuery orderByTimeFrom($order = Criteria::ASC) Order by the time_from column
- * @method     ChildScheduleQuery orderByTimeTo($order = Criteria::ASC) Order by the time_to column
+ * @method     ChildScheduleQuery orderByActivityId($order = Criteria::ASC) Order by the activity_id column
  *
  * @method     ChildScheduleQuery groupById() Group by the id column
- * @method     ChildScheduleQuery groupByUserId() Group by the user_id column
  * @method     ChildScheduleQuery groupByRoleId() Group by the role_id column
- * @method     ChildScheduleQuery groupByActivities() Group by the activities column
- * @method     ChildScheduleQuery groupByWeekDay() Group by the week_day column
- * @method     ChildScheduleQuery groupByDate() Group by the _date column
- * @method     ChildScheduleQuery groupByTimeFrom() Group by the time_from column
- * @method     ChildScheduleQuery groupByTimeTo() Group by the time_to column
+ * @method     ChildScheduleQuery groupByActivityId() Group by the activity_id column
  *
  * @method     ChildScheduleQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildScheduleQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -45,39 +37,46 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildScheduleQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildScheduleQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildScheduleQuery leftJoinRole($relationAlias = null) Adds a LEFT JOIN clause to the query using the Role relation
+ * @method     ChildScheduleQuery rightJoinRole($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Role relation
+ * @method     ChildScheduleQuery innerJoinRole($relationAlias = null) Adds a INNER JOIN clause to the query using the Role relation
+ *
+ * @method     ChildScheduleQuery joinWithRole($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Role relation
+ *
+ * @method     ChildScheduleQuery leftJoinWithRole() Adds a LEFT JOIN clause and with to the query using the Role relation
+ * @method     ChildScheduleQuery rightJoinWithRole() Adds a RIGHT JOIN clause and with to the query using the Role relation
+ * @method     ChildScheduleQuery innerJoinWithRole() Adds a INNER JOIN clause and with to the query using the Role relation
+ *
+ * @method     ChildScheduleQuery leftJoinActivity($relationAlias = null) Adds a LEFT JOIN clause to the query using the Activity relation
+ * @method     ChildScheduleQuery rightJoinActivity($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Activity relation
+ * @method     ChildScheduleQuery innerJoinActivity($relationAlias = null) Adds a INNER JOIN clause to the query using the Activity relation
+ *
+ * @method     ChildScheduleQuery joinWithActivity($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Activity relation
+ *
+ * @method     ChildScheduleQuery leftJoinWithActivity() Adds a LEFT JOIN clause and with to the query using the Activity relation
+ * @method     ChildScheduleQuery rightJoinWithActivity() Adds a RIGHT JOIN clause and with to the query using the Activity relation
+ * @method     ChildScheduleQuery innerJoinWithActivity() Adds a INNER JOIN clause and with to the query using the Activity relation
+ *
+ * @method     \App\Model\RoleQuery|\Perfumerlabs\Start\Model\ActivityQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildSchedule findOne(ConnectionInterface $con = null) Return the first ChildSchedule matching the query
  * @method     ChildSchedule findOneOrCreate(ConnectionInterface $con = null) Return the first ChildSchedule matching the query, or a new ChildSchedule object populated from the query conditions when no match is found
  *
  * @method     ChildSchedule findOneById(int $id) Return the first ChildSchedule filtered by the id column
- * @method     ChildSchedule findOneByUserId(int $user_id) Return the first ChildSchedule filtered by the user_id column
  * @method     ChildSchedule findOneByRoleId(int $role_id) Return the first ChildSchedule filtered by the role_id column
- * @method     ChildSchedule findOneByActivities(array $activities) Return the first ChildSchedule filtered by the activities column
- * @method     ChildSchedule findOneByWeekDay(int $week_day) Return the first ChildSchedule filtered by the week_day column
- * @method     ChildSchedule findOneByDate(string $_date) Return the first ChildSchedule filtered by the _date column
- * @method     ChildSchedule findOneByTimeFrom(string $time_from) Return the first ChildSchedule filtered by the time_from column
- * @method     ChildSchedule findOneByTimeTo(string $time_to) Return the first ChildSchedule filtered by the time_to column *
+ * @method     ChildSchedule findOneByActivityId(int $activity_id) Return the first ChildSchedule filtered by the activity_id column *
 
  * @method     ChildSchedule requirePk($key, ConnectionInterface $con = null) Return the ChildSchedule by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOne(ConnectionInterface $con = null) Return the first ChildSchedule matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildSchedule requireOneById(int $id) Return the first ChildSchedule filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByUserId(int $user_id) Return the first ChildSchedule filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildSchedule requireOneByRoleId(int $role_id) Return the first ChildSchedule filtered by the role_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByActivities(array $activities) Return the first ChildSchedule filtered by the activities column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByWeekDay(int $week_day) Return the first ChildSchedule filtered by the week_day column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByDate(string $_date) Return the first ChildSchedule filtered by the _date column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByTimeFrom(string $time_from) Return the first ChildSchedule filtered by the time_from column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildSchedule requireOneByTimeTo(string $time_to) Return the first ChildSchedule filtered by the time_to column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildSchedule requireOneByActivityId(int $activity_id) Return the first ChildSchedule filtered by the activity_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildSchedule[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildSchedule objects based on current ModelCriteria
  * @method     ChildSchedule[]|ObjectCollection findById(int $id) Return ChildSchedule objects filtered by the id column
- * @method     ChildSchedule[]|ObjectCollection findByUserId(int $user_id) Return ChildSchedule objects filtered by the user_id column
  * @method     ChildSchedule[]|ObjectCollection findByRoleId(int $role_id) Return ChildSchedule objects filtered by the role_id column
- * @method     ChildSchedule[]|ObjectCollection findByActivities(array $activities) Return ChildSchedule objects filtered by the activities column
- * @method     ChildSchedule[]|ObjectCollection findByWeekDay(int $week_day) Return ChildSchedule objects filtered by the week_day column
- * @method     ChildSchedule[]|ObjectCollection findByDate(string $_date) Return ChildSchedule objects filtered by the _date column
- * @method     ChildSchedule[]|ObjectCollection findByTimeFrom(string $time_from) Return ChildSchedule objects filtered by the time_from column
- * @method     ChildSchedule[]|ObjectCollection findByTimeTo(string $time_to) Return ChildSchedule objects filtered by the time_to column
+ * @method     ChildSchedule[]|ObjectCollection findByActivityId(int $activity_id) Return ChildSchedule objects filtered by the activity_id column
  * @method     ChildSchedule[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -176,7 +175,7 @@ abstract class ScheduleQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, role_id, activities, week_day, _date, time_from, time_to FROM schedule WHERE id = :p0';
+        $sql = 'SELECT id, role_id, activity_id FROM schedule WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -308,47 +307,6 @@ abstract class ScheduleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the user_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByUserId(1234); // WHERE user_id = 1234
-     * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
-     * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
-     * </code>
-     *
-     * @param     mixed $userId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildScheduleQuery The current query, for fluid interface
-     */
-    public function filterByUserId($userId = null, $comparison = null)
-    {
-        if (is_array($userId)) {
-            $useMinMax = false;
-            if (isset($userId['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_USER_ID, $userId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($userId['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_USER_ID, $userId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ScheduleTableMap::COL_USER_ID, $userId, $comparison);
-    }
-
-    /**
      * Filter the query on the role_id column
      *
      * Example usage:
@@ -357,6 +315,8 @@ abstract class ScheduleQuery extends ModelCriteria
      * $query->filterByRoleId(array(12, 34)); // WHERE role_id IN (12, 34)
      * $query->filterByRoleId(array('min' => 12)); // WHERE role_id > 12
      * </code>
+     *
+     * @see       filterByRole()
      *
      * @param     mixed $roleId The value to use as filter.
      *              Use scalar values for equality.
@@ -390,97 +350,18 @@ abstract class ScheduleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the activities column
-     *
-     * @param     array $activities The values to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildScheduleQuery The current query, for fluid interface
-     */
-    public function filterByActivities($activities = null, $comparison = null)
-    {
-        $key = $this->getAliasedColName(ScheduleTableMap::COL_ACTIVITIES);
-        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            foreach ($activities as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addAnd($key, $value, Criteria::LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::LIKE);
-                }
-            }
-
-            return $this;
-        } elseif ($comparison == Criteria::CONTAINS_SOME) {
-            foreach ($activities as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addOr($key, $value, Criteria::LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::LIKE);
-                }
-            }
-
-            return $this;
-        } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            foreach ($activities as $value) {
-                $value = '%| ' . $value . ' |%';
-                if ($this->containsKey($key)) {
-                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
-                } else {
-                    $this->add($key, $value, Criteria::NOT_LIKE);
-                }
-            }
-            $this->addOr($key, null, Criteria::ISNULL);
-
-            return $this;
-        }
-
-        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITIES, $activities, $comparison);
-    }
-
-    /**
-     * Filter the query on the activities column
-     * @param     mixed $activities The value to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
-     *
-     * @return $this|ChildScheduleQuery The current query, for fluid interface
-     */
-    public function filterByActivitie($activities = null, $comparison = null)
-    {
-        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
-            if (is_scalar($activities)) {
-                $activities = '%| ' . $activities . ' |%';
-                $comparison = Criteria::LIKE;
-            }
-        } elseif ($comparison == Criteria::CONTAINS_NONE) {
-            $activities = '%| ' . $activities . ' |%';
-            $comparison = Criteria::NOT_LIKE;
-            $key = $this->getAliasedColName(ScheduleTableMap::COL_ACTIVITIES);
-            if ($this->containsKey($key)) {
-                $this->addAnd($key, $activities, $comparison);
-            } else {
-                $this->addAnd($key, $activities, $comparison);
-            }
-            $this->addOr($key, null, Criteria::ISNULL);
-
-            return $this;
-        }
-
-        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITIES, $activities, $comparison);
-    }
-
-    /**
-     * Filter the query on the week_day column
+     * Filter the query on the activity_id column
      *
      * Example usage:
      * <code>
-     * $query->filterByWeekDay(1234); // WHERE week_day = 1234
-     * $query->filterByWeekDay(array(12, 34)); // WHERE week_day IN (12, 34)
-     * $query->filterByWeekDay(array('min' => 12)); // WHERE week_day > 12
+     * $query->filterByActivityId(1234); // WHERE activity_id = 1234
+     * $query->filterByActivityId(array(12, 34)); // WHERE activity_id IN (12, 34)
+     * $query->filterByActivityId(array('min' => 12)); // WHERE activity_id > 12
      * </code>
      *
-     * @param     mixed $weekDay The value to use as filter.
+     * @see       filterByActivity()
+     *
+     * @param     mixed $activityId The value to use as filter.
      *              Use scalar values for equality.
      *              Use array values for in_array() equivalent.
      *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
@@ -488,16 +369,16 @@ abstract class ScheduleQuery extends ModelCriteria
      *
      * @return $this|ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByWeekDay($weekDay = null, $comparison = null)
+    public function filterByActivityId($activityId = null, $comparison = null)
     {
-        if (is_array($weekDay)) {
+        if (is_array($activityId)) {
             $useMinMax = false;
-            if (isset($weekDay['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_WEEK_DAY, $weekDay['min'], Criteria::GREATER_EQUAL);
+            if (isset($activityId['min'])) {
+                $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_ID, $activityId['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($weekDay['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_WEEK_DAY, $weekDay['max'], Criteria::LESS_EQUAL);
+            if (isset($activityId['max'])) {
+                $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_ID, $activityId['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -508,136 +389,161 @@ abstract class ScheduleQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_WEEK_DAY, $weekDay, $comparison);
+        return $this->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_ID, $activityId, $comparison);
     }
 
     /**
-     * Filter the query on the _date column
+     * Filter the query by a related \App\Model\Role object
      *
-     * Example usage:
-     * <code>
-     * $query->filterByDate('2011-03-14'); // WHERE _date = '2011-03-14'
-     * $query->filterByDate('now'); // WHERE _date = '2011-03-14'
-     * $query->filterByDate(array('max' => 'yesterday')); // WHERE _date > '2011-03-13'
-     * </code>
+     * @param \App\Model\Role|ObjectCollection $role The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
-     * @param     mixed $date The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @throws \Propel\Runtime\Exception\PropelException
      *
-     * @return $this|ChildScheduleQuery The current query, for fluid interface
+     * @return ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByDate($date = null, $comparison = null)
+    public function filterByRole($role, $comparison = null)
     {
-        if (is_array($date)) {
-            $useMinMax = false;
-            if (isset($date['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL__DATE, $date['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($date['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL__DATE, $date['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
+        if ($role instanceof \App\Model\Role) {
+            return $this
+                ->addUsingAlias(ScheduleTableMap::COL_ROLE_ID, $role->getId(), $comparison);
+        } elseif ($role instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
-        }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL__DATE, $date, $comparison);
+            return $this
+                ->addUsingAlias(ScheduleTableMap::COL_ROLE_ID, $role->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByRole() only accepts arguments of type \App\Model\Role or Collection');
+        }
     }
 
     /**
-     * Filter the query on the time_from column
+     * Adds a JOIN clause to the query using the Role relation
      *
-     * Example usage:
-     * <code>
-     * $query->filterByTimeFrom('2011-03-14'); // WHERE time_from = '2011-03-14'
-     * $query->filterByTimeFrom('now'); // WHERE time_from = '2011-03-14'
-     * $query->filterByTimeFrom(array('max' => 'yesterday')); // WHERE time_from > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $timeFrom The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildScheduleQuery The current query, for fluid interface
      */
-    public function filterByTimeFrom($timeFrom = null, $comparison = null)
+    public function joinRole($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-        if (is_array($timeFrom)) {
-            $useMinMax = false;
-            if (isset($timeFrom['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_TIME_FROM, $timeFrom['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($timeFrom['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_TIME_FROM, $timeFrom['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Role');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_TIME_FROM, $timeFrom, $comparison);
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Role');
+        }
+
+        return $this;
     }
 
     /**
-     * Filter the query on the time_to column
+     * Use the Role relation Role object
      *
-     * Example usage:
-     * <code>
-     * $query->filterByTimeTo('2011-03-14'); // WHERE time_to = '2011-03-14'
-     * $query->filterByTimeTo('now'); // WHERE time_to = '2011-03-14'
-     * $query->filterByTimeTo(array('max' => 'yesterday')); // WHERE time_to > '2011-03-13'
-     * </code>
+     * @see useQuery()
      *
-     * @param     mixed $timeTo The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return $this|ChildScheduleQuery The current query, for fluid interface
+     * @return \App\Model\RoleQuery A secondary query class using the current class as primary query
      */
-    public function filterByTimeTo($timeTo = null, $comparison = null)
+    public function useRoleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-        if (is_array($timeTo)) {
-            $useMinMax = false;
-            if (isset($timeTo['min'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_TIME_TO, $timeTo['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($timeTo['max'])) {
-                $this->addUsingAlias(ScheduleTableMap::COL_TIME_TO, $timeTo['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
+        return $this
+            ->joinRole($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Role', '\App\Model\RoleQuery');
+    }
+
+    /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\Activity object
+     *
+     * @param \Perfumerlabs\Start\Model\Activity|ObjectCollection $activity The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildScheduleQuery The current query, for fluid interface
+     */
+    public function filterByActivity($activity, $comparison = null)
+    {
+        if ($activity instanceof \Perfumerlabs\Start\Model\Activity) {
+            return $this
+                ->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_ID, $activity->getId(), $comparison);
+        } elseif ($activity instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
+
+            return $this
+                ->addUsingAlias(ScheduleTableMap::COL_ACTIVITY_ID, $activity->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByActivity() only accepts arguments of type \Perfumerlabs\Start\Model\Activity or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Activity relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildScheduleQuery The current query, for fluid interface
+     */
+    public function joinActivity($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Activity');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
         }
 
-        return $this->addUsingAlias(ScheduleTableMap::COL_TIME_TO, $timeTo, $comparison);
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Activity');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Activity relation Activity object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\ActivityQuery A secondary query class using the current class as primary query
+     */
+    public function useActivityQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinActivity($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Activity', '\Perfumerlabs\Start\Model\ActivityQuery');
     }
 
     /**

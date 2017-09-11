@@ -25,7 +25,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderByPassword($order = Criteria::ASC) Order by the password column
  * @method     ChildUserQuery orderByIsAdmin($order = Criteria::ASC) Order by the is_admin column
  * @method     ChildUserQuery orderByIsDisabled($order = Criteria::ASC) Order by the is_disabled column
- * @method     ChildUserQuery orderByBannedTill($order = Criteria::ASC) Order by the banned_till column
+ * @method     ChildUserQuery orderByOnlineAt($order = Criteria::ASC) Order by the online_at column
  * @method     ChildUserQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildUserQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -34,7 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupByPassword() Group by the password column
  * @method     ChildUserQuery groupByIsAdmin() Group by the is_admin column
  * @method     ChildUserQuery groupByIsDisabled() Group by the is_disabled column
- * @method     ChildUserQuery groupByBannedTill() Group by the banned_till column
+ * @method     ChildUserQuery groupByOnlineAt() Group by the online_at column
  * @method     ChildUserQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildUserQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -76,7 +76,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneByPassword(string $password) Return the first ChildUser filtered by the password column
  * @method     ChildUser findOneByIsAdmin(boolean $is_admin) Return the first ChildUser filtered by the is_admin column
  * @method     ChildUser findOneByIsDisabled(boolean $is_disabled) Return the first ChildUser filtered by the is_disabled column
- * @method     ChildUser findOneByBannedTill(string $banned_till) Return the first ChildUser filtered by the banned_till column
+ * @method     ChildUser findOneByOnlineAt(string $online_at) Return the first ChildUser filtered by the online_at column
  * @method     ChildUser findOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column
  * @method     ChildUser findOneByUpdatedAt(string $updated_at) Return the first ChildUser filtered by the updated_at column *
 
@@ -88,7 +88,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneByPassword(string $password) Return the first ChildUser filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByIsAdmin(boolean $is_admin) Return the first ChildUser filtered by the is_admin column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByIsDisabled(boolean $is_disabled) Return the first ChildUser filtered by the is_disabled column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildUser requireOneByBannedTill(string $banned_till) Return the first ChildUser filtered by the banned_till column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByOnlineAt(string $online_at) Return the first ChildUser filtered by the online_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByCreatedAt(string $created_at) Return the first ChildUser filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByUpdatedAt(string $updated_at) Return the first ChildUser filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -98,7 +98,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findByPassword(string $password) Return ChildUser objects filtered by the password column
  * @method     ChildUser[]|ObjectCollection findByIsAdmin(boolean $is_admin) Return ChildUser objects filtered by the is_admin column
  * @method     ChildUser[]|ObjectCollection findByIsDisabled(boolean $is_disabled) Return ChildUser objects filtered by the is_disabled column
- * @method     ChildUser[]|ObjectCollection findByBannedTill(string $banned_till) Return ChildUser objects filtered by the banned_till column
+ * @method     ChildUser[]|ObjectCollection findByOnlineAt(string $online_at) Return ChildUser objects filtered by the online_at column
  * @method     ChildUser[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildUser objects filtered by the created_at column
  * @method     ChildUser[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildUser objects filtered by the updated_at column
  * @method     ChildUser[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -199,7 +199,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, username, password, is_admin, is_disabled, banned_till, created_at, updated_at FROM _user WHERE id = :p0';
+        $sql = 'SELECT id, username, password, is_admin, is_disabled, online_at, created_at, updated_at FROM _user WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -435,16 +435,16 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the banned_till column
+     * Filter the query on the online_at column
      *
      * Example usage:
      * <code>
-     * $query->filterByBannedTill('2011-03-14'); // WHERE banned_till = '2011-03-14'
-     * $query->filterByBannedTill('now'); // WHERE banned_till = '2011-03-14'
-     * $query->filterByBannedTill(array('max' => 'yesterday')); // WHERE banned_till > '2011-03-13'
+     * $query->filterByOnlineAt('2011-03-14'); // WHERE online_at = '2011-03-14'
+     * $query->filterByOnlineAt('now'); // WHERE online_at = '2011-03-14'
+     * $query->filterByOnlineAt(array('max' => 'yesterday')); // WHERE online_at > '2011-03-13'
      * </code>
      *
-     * @param     mixed $bannedTill The value to use as filter.
+     * @param     mixed $onlineAt The value to use as filter.
      *              Values can be integers (unix timestamps), DateTime objects, or strings.
      *              Empty strings are treated as NULL.
      *              Use scalar values for equality.
@@ -454,16 +454,16 @@ abstract class UserQuery extends ModelCriteria
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function filterByBannedTill($bannedTill = null, $comparison = null)
+    public function filterByOnlineAt($onlineAt = null, $comparison = null)
     {
-        if (is_array($bannedTill)) {
+        if (is_array($onlineAt)) {
             $useMinMax = false;
-            if (isset($bannedTill['min'])) {
-                $this->addUsingAlias(UserTableMap::COL_BANNED_TILL, $bannedTill['min'], Criteria::GREATER_EQUAL);
+            if (isset($onlineAt['min'])) {
+                $this->addUsingAlias(UserTableMap::COL_ONLINE_AT, $onlineAt['min'], Criteria::GREATER_EQUAL);
                 $useMinMax = true;
             }
-            if (isset($bannedTill['max'])) {
-                $this->addUsingAlias(UserTableMap::COL_BANNED_TILL, $bannedTill['max'], Criteria::LESS_EQUAL);
+            if (isset($onlineAt['max'])) {
+                $this->addUsingAlias(UserTableMap::COL_ONLINE_AT, $onlineAt['max'], Criteria::LESS_EQUAL);
                 $useMinMax = true;
             }
             if ($useMinMax) {
@@ -474,7 +474,7 @@ abstract class UserQuery extends ModelCriteria
             }
         }
 
-        return $this->addUsingAlias(UserTableMap::COL_BANNED_TILL, $bannedTill, $comparison);
+        return $this->addUsingAlias(UserTableMap::COL_ONLINE_AT, $onlineAt, $comparison);
     }
 
     /**

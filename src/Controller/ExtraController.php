@@ -37,6 +37,9 @@ class ExtraController extends ViewController
 
         $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
 
+        $user->setOnlineAt(new \DateTime());
+        $user->save();
+
         $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($user);
 
         if (count($allowed_activities) == 0) {

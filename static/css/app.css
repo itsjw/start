@@ -27,6 +27,12 @@ input[type=date], input[type=time] { border-radius: 5px; padding: 2px; border: 1
 .hidden { display: none }
 #workspaces iframe { border: 0 }
 
+#online { border-radius: 5px; padding: 15px 30px; text-align: center; margin-bottom: 10px; cursor: pointer }
+#online.yes { border: 1px solid #5eb95e; color: #5eb95e }
+#online.yes:hover { background-color: #5eb95e; color: #ffffff }
+#online.no { border: 1px solid #dd514c; color: #dd514c }
+#online.no:hover { background-color: #dd514c; color: #ffffff }
+
 @media screen and (max-width: 799px) {
     #dashboard { width: 100% }
     #stickers-column, #workspaces { width: 100% }

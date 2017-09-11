@@ -45,7 +45,7 @@
         <column name="password" type="varchar" size="255"/>
         <column name="is_admin" type="boolean" required="true" defaultValue="false"/>
         <column name="is_disabled" type="boolean" required="true" defaultValue="false"/>
-        <column name="banned_till" type="timestamp"/>
+        <column name="online_at" type="timestamp"/>
         <unique>
             <unique-column name="username"/>
         </unique>

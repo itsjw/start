@@ -4,9 +4,13 @@ var dashboard = new Vue({
         duties: [],
         results: [],
         searching: false,
-        query: ''
+        query: '',
+        online: false
     },
     methods: {
+        toggleOnline: function () {
+            this.online = !this.online;
+        },
         init: function () {
             this.$http.get('/duties').then(function(response) {
                 if (response.body.content) {
@@ -20,6 +24,10 @@ var dashboard = new Vue({
                 $this = this;
 
                 setInterval(function () {
+                    if (!$this.online) {
+                        return;
+                    }
+
                     $this.$http.get('/extra').then(function(response) {
                         if (response.body.content) {
                             for (i = 0; i < response.body.content.length; i++) {
