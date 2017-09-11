@@ -24,26 +24,7 @@ var dashboard = new Vue({
                 $this = this;
 
                 setInterval(function () {
-                    if (!$this.online) {
-                        return;
-                    }
-
-                    $this.$http.get('/extra').then(function(response) {
-                        if (response.body.content) {
-                            for (i = 0; i < response.body.content.length; i++) {
-                                $this.addDuty(response.body.content[i]);
-                            }
-
-                            var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
-                            sound.play();
-
-                            if ($this.duties.length === 1) {
-                                $this.openDuty($this.duties[0]);
-                            }
-                        }
-                    }, function(response) {
-                        console.log(response);
-                    });
+                    $this.extraDuties();
                 }, 10000);
             }, function(response) {
                 console.log(response);
@@ -53,6 +34,28 @@ var dashboard = new Vue({
 
             document.addEventListener('Start.closeDuty', function(event) {
                 $this.closeDutyById(event.detail);
+            });
+        },
+        extraDuties: function () {
+            if (!this.online) {
+                return;
+            }
+
+            this.$http.get('/extra').then(function(response) {
+                if (response.body.content) {
+                    for (i = 0; i < response.body.content.length; i++) {
+                        this.addDuty(response.body.content[i]);
+                    }
+
+                    var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
+                    sound.play();
+
+                    if (this.duties.length === 1) {
+                        this.openDuty($this.duties[0]);
+                    }
+                }
+            }, function(response) {
+                console.log(response);
             });
         },
         addDuty: function (data) {
@@ -105,7 +108,12 @@ var dashboard = new Vue({
 
             this.$http.post('/duty/close/' + duty.id, {comment: duty.tmp_comment}).then(function(response) {
                 this.duties.splice(this.duties.indexOf(duty), 1);
-                this.openDuty(this.duties[0]);
+
+                if (this.duties.length > 0) {
+                    this.openDuty(this.duties[0]);
+                } else {
+                    this.extraDuties();
+                }
             }, function(response) {
                 console.log(response);
             });
@@ -151,7 +159,12 @@ var dashboard = new Vue({
 
             this.$http.post('/duty/postpone/' + duty.id, data).then(function(response) {
                 this.duties.splice(this.duties.indexOf(duty), 1);
-                this.openDuty(this.duties[0]);
+
+                if (this.duties.length > 0) {
+                    this.openDuty(this.duties[0]);
+                } else {
+                    this.extraDuties();
+                }
             }, function(response) {
                 console.log(response);
             });
