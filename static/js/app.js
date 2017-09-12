@@ -170,7 +170,15 @@ var dashboard = new Vue({
             });
         },
         search: function () {
-            this.$http.get('/search?query=' + this.query).then(function(response) {
+            this.$http.get('/search?query=' + this.query, {
+                before: function(request) {
+                    if (this.previousRequest) {
+                        this.previousRequest.abort();
+                    }
+
+                    this.previousRequest = request;
+                }
+            }).then(function(response) {
                 this.results = response.body.content;
             }, function(response) {
                 console.log(response);
