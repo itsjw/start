@@ -19,7 +19,7 @@ var dashboard = new Vue({
             this.$http.get('/duties').then(function(response) {
                 if (response.body.content) {
                     for (i = 0; i < response.body.content.length; i++) {
-                        this.addDuty(response.body.content[i]);
+                        this.appendDuty(response.body.content[i]);
                     }
 
                     this.openDuty(this.duties[0]);
@@ -48,8 +48,10 @@ var dashboard = new Vue({
             this.$http.get('/extra').then(function(response) {
                 if (response.body.content) {
                     for (i = 0; i < response.body.content.length; i++) {
-                        this.addDuty(response.body.content[i]);
+                        this.prependDuty(response.body.content[i]);
                     }
+
+                    document.getElementById('stickers-column').scrollTop = 0;
 
                     var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
                     sound.play();
@@ -62,7 +64,13 @@ var dashboard = new Vue({
                 console.log(response);
             });
         },
-        addDuty: function (data) {
+        prependDuty: function (data) {
+            var duty = new Duty(data);
+            this.duties.unshift(duty);
+
+            return duty;
+        },
+        appendDuty: function (data) {
             var duty = new Duty(data);
             this.duties.push(duty);
 
@@ -132,7 +140,7 @@ var dashboard = new Vue({
             }
 
             this.$http.post('/duty/pick/' + duty.id).then(function(response) {
-                this.addDuty(duty);
+                this.appendDuty(duty);
                 this.openDutyBySticker(duty);
                 this.results = [];
                 this.searching = false;
@@ -214,7 +222,7 @@ var navbar = new Vue({
             }
 
             this.$http.post('/duty/create', {activity_id: activity_id}).then(function(response) {
-                var duty = dashboard.addDuty(response.body.content);
+                var duty = dashboard.appendDuty(response.body.content);
                 dashboard.openDutyBySticker(duty);
             }, function(response) {
                 console.log(response);
