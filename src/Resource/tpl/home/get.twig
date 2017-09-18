@@ -31,7 +31,7 @@
     </div>
 
     <div id="dashboard" v-cloak>
-        <div id="stickers-column" class="visible">
+        <div id="stickers-column" v-bind:class="{visible: stickers_shown, invisible: !stickers_shown}">
             <div id="online" v-bind:class="{yes: online, no: !online}" @click="toggleOnline()">
                 {{ '{{ online ? \'Я онлайн\' : \'Я оффлайн\' }}' }}
             </div>
@@ -41,7 +41,7 @@
             </div>
 
             <div id="stickers" v-if="!searching">
-                <div class="sticker" v-for="duty in duties" v-bind:style="{borderLeft: '20px solid ' + duty.color}" @click="openDuty(duty)" v-bind:class="{active: duty.shown}">
+                <div class="sticker" v-for="duty in duties" v-bind:style="{borderLeft: '20px solid ' + duty.color}" @click="openDutyBySticker(duty)" v-bind:class="{active: duty.shown}">
                     <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
                     <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
                     <div v-if="duty.tags && duty.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.tags.join(\', \') }}' }}</div>
@@ -59,8 +59,10 @@
             <div id="search-help" v-if="results.length == 0 && searching" style="color: #ccc">Начните вводить текст</div>
         </div>
 
-        <div id="workspaces" class="invisible">
+        <div id="workspaces" v-bind:class="{visible: !stickers_shown, invisible: stickers_shown}">
             <div class="workspace" v-for="duty in duties" v-if="duty.open" v-bind:class="{hidden: !duty.shown}">
+                <div class="to_stickers" @click="toStickers()">К списку задач</div>
+
                 <div class="buttons-area" v-if="duty.writable || duty.readonly || duty.postponable">
                     <button v-if="duty.writable && !duty.commenting && !duty.postponing " @click="commentDuty(duty)">Комментарий</button>
                     <button v-if="duty.commenting" @click="saveComment(duty)" class="primary">Сохранить</button>

@@ -5,11 +5,15 @@ var dashboard = new Vue({
         results: [],
         searching: false,
         query: '',
-        online: false
+        online: false,
+        stickers_shown: true
     },
     methods: {
         toggleOnline: function () {
             this.online = !this.online;
+        },
+        toStickers: function () {
+            this.stickers_shown = true;
         },
         init: function () {
             this.$http.get('/duties').then(function(response) {
@@ -59,11 +63,14 @@ var dashboard = new Vue({
             });
         },
         addDuty: function (data) {
-            this.duties.push(new Duty(data));
-        },
-        addDutyAndOpen: function (data) {
             var duty = new Duty(data);
             this.duties.push(duty);
+
+            return duty;
+        },
+        openDutyBySticker: function (duty) {
+            this.stickers_shown = false;
+
             this.openDuty(duty);
         },
         openDuty: function (duty) {
@@ -108,6 +115,7 @@ var dashboard = new Vue({
 
             this.$http.post('/duty/close/' + duty.id, {comment: duty.tmp_comment}).then(function(response) {
                 this.duties.splice(this.duties.indexOf(duty), 1);
+                this.stickers_shown = true;
 
                 if (this.duties.length > 0) {
                     this.openDuty(this.duties[0]);
@@ -124,7 +132,8 @@ var dashboard = new Vue({
             }
 
             this.$http.post('/duty/pick/' + duty.id).then(function(response) {
-                this.addDutyAndOpen(duty);
+                this.addDuty(duty);
+                this.openDutyBySticker(duty);
                 this.results = [];
                 this.searching = false;
                 this.query = '';
@@ -159,6 +168,7 @@ var dashboard = new Vue({
 
             this.$http.post('/duty/postpone/' + duty.id, data).then(function(response) {
                 this.duties.splice(this.duties.indexOf(duty), 1);
+                this.stickers_shown = true;
 
                 if (this.duties.length > 0) {
                     this.openDuty(this.duties[0]);
@@ -204,7 +214,8 @@ var navbar = new Vue({
             }
 
             this.$http.post('/duty/create', {activity_id: activity_id}).then(function(response) {
-                dashboard.addDutyAndOpen(response.body.content);
+                var duty = dashboard.addDuty(response.body.content);
+                dashboard.openDutyBySticker(duty);
             }, function(response) {
                 console.log(response);
             });
