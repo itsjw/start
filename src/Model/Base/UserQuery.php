@@ -7,8 +7,9 @@ use \PDO;
 use App\Model\User as ChildUser;
 use App\Model\UserQuery as ChildUserQuery;
 use App\Model\Map\UserTableMap;
+use Perfumerlabs\Start\Model\ActivityAccess;
 use Perfumerlabs\Start\Model\Duty;
-use Perfumerlabs\Start\Model\UserNav;
+use Perfumerlabs\Start\Model\NavAccess;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -78,17 +79,27 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithDuty() Adds a RIGHT JOIN clause and with to the query using the Duty relation
  * @method     ChildUserQuery innerJoinWithDuty() Adds a INNER JOIN clause and with to the query using the Duty relation
  *
- * @method     ChildUserQuery leftJoinUserNav($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserNav relation
- * @method     ChildUserQuery rightJoinUserNav($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserNav relation
- * @method     ChildUserQuery innerJoinUserNav($relationAlias = null) Adds a INNER JOIN clause to the query using the UserNav relation
+ * @method     ChildUserQuery leftJoinNavAccess($relationAlias = null) Adds a LEFT JOIN clause to the query using the NavAccess relation
+ * @method     ChildUserQuery rightJoinNavAccess($relationAlias = null) Adds a RIGHT JOIN clause to the query using the NavAccess relation
+ * @method     ChildUserQuery innerJoinNavAccess($relationAlias = null) Adds a INNER JOIN clause to the query using the NavAccess relation
  *
- * @method     ChildUserQuery joinWithUserNav($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the UserNav relation
+ * @method     ChildUserQuery joinWithNavAccess($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the NavAccess relation
  *
- * @method     ChildUserQuery leftJoinWithUserNav() Adds a LEFT JOIN clause and with to the query using the UserNav relation
- * @method     ChildUserQuery rightJoinWithUserNav() Adds a RIGHT JOIN clause and with to the query using the UserNav relation
- * @method     ChildUserQuery innerJoinWithUserNav() Adds a INNER JOIN clause and with to the query using the UserNav relation
+ * @method     ChildUserQuery leftJoinWithNavAccess() Adds a LEFT JOIN clause and with to the query using the NavAccess relation
+ * @method     ChildUserQuery rightJoinWithNavAccess() Adds a RIGHT JOIN clause and with to the query using the NavAccess relation
+ * @method     ChildUserQuery innerJoinWithNavAccess() Adds a INNER JOIN clause and with to the query using the NavAccess relation
  *
- * @method     \App\Model\SessionQuery|\App\Model\UserRoleQuery|\Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\UserNavQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildUserQuery leftJoinActivityAccess($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActivityAccess relation
+ * @method     ChildUserQuery rightJoinActivityAccess($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActivityAccess relation
+ * @method     ChildUserQuery innerJoinActivityAccess($relationAlias = null) Adds a INNER JOIN clause to the query using the ActivityAccess relation
+ *
+ * @method     ChildUserQuery joinWithActivityAccess($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ActivityAccess relation
+ *
+ * @method     ChildUserQuery leftJoinWithActivityAccess() Adds a LEFT JOIN clause and with to the query using the ActivityAccess relation
+ * @method     ChildUserQuery rightJoinWithActivityAccess() Adds a RIGHT JOIN clause and with to the query using the ActivityAccess relation
+ * @method     ChildUserQuery innerJoinWithActivityAccess() Adds a INNER JOIN clause and with to the query using the ActivityAccess relation
+ *
+ * @method     \App\Model\SessionQuery|\App\Model\UserRoleQuery|\Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\NavAccessQuery|\Perfumerlabs\Start\Model\ActivityAccessQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -805,40 +816,40 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Perfumerlabs\Start\Model\UserNav object
+     * Filter the query by a related \Perfumerlabs\Start\Model\NavAccess object
      *
-     * @param \Perfumerlabs\Start\Model\UserNav|ObjectCollection $userNav the related object to use as filter
+     * @param \Perfumerlabs\Start\Model\NavAccess|ObjectCollection $navAccess the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildUserQuery The current query, for fluid interface
      */
-    public function filterByUserNav($userNav, $comparison = null)
+    public function filterByNavAccess($navAccess, $comparison = null)
     {
-        if ($userNav instanceof \Perfumerlabs\Start\Model\UserNav) {
+        if ($navAccess instanceof \Perfumerlabs\Start\Model\NavAccess) {
             return $this
-                ->addUsingAlias(UserTableMap::COL_ID, $userNav->getUserId(), $comparison);
-        } elseif ($userNav instanceof ObjectCollection) {
+                ->addUsingAlias(UserTableMap::COL_ID, $navAccess->getUserId(), $comparison);
+        } elseif ($navAccess instanceof ObjectCollection) {
             return $this
-                ->useUserNavQuery()
-                ->filterByPrimaryKeys($userNav->getPrimaryKeys())
+                ->useNavAccessQuery()
+                ->filterByPrimaryKeys($navAccess->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterByUserNav() only accepts arguments of type \Perfumerlabs\Start\Model\UserNav or Collection');
+            throw new PropelException('filterByNavAccess() only accepts arguments of type \Perfumerlabs\Start\Model\NavAccess or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the UserNav relation
+     * Adds a JOIN clause to the query using the NavAccess relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildUserQuery The current query, for fluid interface
      */
-    public function joinUserNav($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinNavAccess($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('UserNav');
+        $relationMap = $tableMap->getRelation('NavAccess');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -853,14 +864,14 @@ abstract class UserQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'UserNav');
+            $this->addJoinObject($join, 'NavAccess');
         }
 
         return $this;
     }
 
     /**
-     * Use the UserNav relation UserNav object
+     * Use the NavAccess relation NavAccess object
      *
      * @see useQuery()
      *
@@ -868,13 +879,86 @@ abstract class UserQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \Perfumerlabs\Start\Model\UserNavQuery A secondary query class using the current class as primary query
+     * @return \Perfumerlabs\Start\Model\NavAccessQuery A secondary query class using the current class as primary query
      */
-    public function useUserNavQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useNavAccessQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
-            ->joinUserNav($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'UserNav', '\Perfumerlabs\Start\Model\UserNavQuery');
+            ->joinNavAccess($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'NavAccess', '\Perfumerlabs\Start\Model\NavAccessQuery');
+    }
+
+    /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\ActivityAccess object
+     *
+     * @param \Perfumerlabs\Start\Model\ActivityAccess|ObjectCollection $activityAccess the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByActivityAccess($activityAccess, $comparison = null)
+    {
+        if ($activityAccess instanceof \Perfumerlabs\Start\Model\ActivityAccess) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $activityAccess->getUserId(), $comparison);
+        } elseif ($activityAccess instanceof ObjectCollection) {
+            return $this
+                ->useActivityAccessQuery()
+                ->filterByPrimaryKeys($activityAccess->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByActivityAccess() only accepts arguments of type \Perfumerlabs\Start\Model\ActivityAccess or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActivityAccess relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinActivityAccess($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActivityAccess');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActivityAccess');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActivityAccess relation ActivityAccess object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\ActivityAccessQuery A secondary query class using the current class as primary query
+     */
+    public function useActivityAccessQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinActivityAccess($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActivityAccess', '\Perfumerlabs\Start\Model\ActivityAccessQuery');
     }
 
     /**
@@ -891,23 +975,6 @@ abstract class UserQuery extends ModelCriteria
         return $this
             ->useUserRoleQuery()
             ->filterByRole($role, $comparison)
-            ->endUse();
-    }
-
-    /**
-     * Filter the query by a related Nav object
-     * using the user_nav table as cross reference
-     *
-     * @param Nav $nav the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildUserQuery The current query, for fluid interface
-     */
-    public function filterByNav($nav, $comparison = Criteria::EQUAL)
-    {
-        return $this
-            ->useUserNavQuery()
-            ->filterByNav($nav, $comparison)
             ->endUse();
     }
 

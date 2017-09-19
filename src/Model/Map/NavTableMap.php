@@ -166,14 +166,13 @@ class NavTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, null, false);
-        $this->addRelation('UserNav', '\\Perfumerlabs\\Start\\Model\\UserNav', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('NavAccess', '\\Perfumerlabs\\Start\\Model\\NavAccess', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':nav_id',
     1 => ':id',
   ),
-), 'CASCADE', null, 'UserNavs', false);
-        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Users');
+), 'CASCADE', null, 'NavAccesses', false);
     } // buildRelations()
     /**
      * Method to invalidate the instance pool of all tables related to nav     * by a foreign key with ON DELETE CASCADE
@@ -182,7 +181,7 @@ class NavTableMap extends TableMap
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        UserNavTableMap::clearInstancePool();
+        NavAccessTableMap::clearInstancePool();
     }
 
     /**

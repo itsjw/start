@@ -2,8 +2,8 @@
 
 namespace Perfumerlabs\Start\Model\Map;
 
-use Perfumerlabs\Start\Model\Schedule;
-use Perfumerlabs\Start\Model\ScheduleQuery;
+use Perfumerlabs\Start\Model\NavAccess;
+use Perfumerlabs\Start\Model\NavAccessQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'schedule' table.
+ * This class defines the structure of the 'nav_access' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class ScheduleTableMap extends TableMap
+class NavAccessTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class ScheduleTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.ScheduleTableMap';
+    const CLASS_NAME = '.Map.NavAccessTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class ScheduleTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'schedule';
+    const TABLE_NAME = 'nav_access';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\Schedule';
+    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\NavAccess';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Schedule';
+    const CLASS_DEFAULT = 'NavAccess';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,22 +69,27 @@ class ScheduleTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'schedule.id';
+    const COL_ID = 'nav_access.id';
+
+    /**
+     * the column name for the nav_id field
+     */
+    const COL_NAV_ID = 'nav_access.nav_id';
+
+    /**
+     * the column name for the user_id field
+     */
+    const COL_USER_ID = 'nav_access.user_id';
 
     /**
      * the column name for the role_id field
      */
-    const COL_ROLE_ID = 'schedule.role_id';
-
-    /**
-     * the column name for the activity_id field
-     */
-    const COL_ACTIVITY_ID = 'schedule.activity_id';
+    const COL_ROLE_ID = 'nav_access.role_id';
 
     /**
      * The default string format for model objects of the related table
@@ -98,11 +103,11 @@ class ScheduleTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'RoleId', 'ActivityId', ),
-        self::TYPE_CAMELNAME     => array('id', 'roleId', 'activityId', ),
-        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID, ScheduleTableMap::COL_ROLE_ID, ScheduleTableMap::COL_ACTIVITY_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'role_id', 'activity_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'NavId', 'UserId', 'RoleId', ),
+        self::TYPE_CAMELNAME     => array('id', 'navId', 'userId', 'roleId', ),
+        self::TYPE_COLNAME       => array(NavAccessTableMap::COL_ID, NavAccessTableMap::COL_NAV_ID, NavAccessTableMap::COL_USER_ID, NavAccessTableMap::COL_ROLE_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'nav_id', 'user_id', 'role_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class ScheduleTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'RoleId' => 1, 'ActivityId' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'roleId' => 1, 'activityId' => 2, ),
-        self::TYPE_COLNAME       => array(ScheduleTableMap::COL_ID => 0, ScheduleTableMap::COL_ROLE_ID => 1, ScheduleTableMap::COL_ACTIVITY_ID => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'role_id' => 1, 'activity_id' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'NavId' => 1, 'UserId' => 2, 'RoleId' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'navId' => 1, 'userId' => 2, 'roleId' => 3, ),
+        self::TYPE_COLNAME       => array(NavAccessTableMap::COL_ID => 0, NavAccessTableMap::COL_NAV_ID => 1, NavAccessTableMap::COL_USER_ID => 2, NavAccessTableMap::COL_ROLE_ID => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'nav_id' => 1, 'user_id' => 2, 'role_id' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -129,17 +134,18 @@ class ScheduleTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('schedule');
-        $this->setPhpName('Schedule');
+        $this->setName('nav_access');
+        $this->setPhpName('NavAccess');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Perfumerlabs\\Start\\Model\\Schedule');
+        $this->setClassName('\\Perfumerlabs\\Start\\Model\\NavAccess');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
-        $this->setPrimaryKeyMethodInfo('schedule_id_seq');
+        $this->setPrimaryKeyMethodInfo('nav_access_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
+        $this->addForeignKey('nav_id', 'NavId', 'INTEGER', 'nav', 'id', true, null, null);
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
         $this->addForeignKey('role_id', 'RoleId', 'INTEGER', '_role', 'id', false, null, null);
-        $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
     } // initialize()
 
     /**
@@ -154,10 +160,17 @@ class ScheduleTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, null, false);
-        $this->addRelation('Activity', '\\Perfumerlabs\\Start\\Model\\Activity', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':activity_id',
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, null, false);
+        $this->addRelation('Nav', '\\Perfumerlabs\\Start\\Model\\Nav', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':nav_id',
     1 => ':id',
   ),
 ), 'CASCADE', null, null, false);
@@ -220,7 +233,7 @@ class ScheduleTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? ScheduleTableMap::CLASS_DEFAULT : ScheduleTableMap::OM_CLASS;
+        return $withPrefix ? NavAccessTableMap::CLASS_DEFAULT : NavAccessTableMap::OM_CLASS;
     }
 
     /**
@@ -234,22 +247,22 @@ class ScheduleTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Schedule object, last column rank)
+     * @return array           (NavAccess object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = ScheduleTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = ScheduleTableMap::getInstanceFromPool($key))) {
+        $key = NavAccessTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = NavAccessTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + ScheduleTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + NavAccessTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = ScheduleTableMap::OM_CLASS;
-            /** @var Schedule $obj */
+            $cls = NavAccessTableMap::OM_CLASS;
+            /** @var NavAccess $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            ScheduleTableMap::addInstanceToPool($obj, $key);
+            NavAccessTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -272,18 +285,18 @@ class ScheduleTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = ScheduleTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = ScheduleTableMap::getInstanceFromPool($key))) {
+            $key = NavAccessTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = NavAccessTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Schedule $obj */
+                /** @var NavAccess $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                ScheduleTableMap::addInstanceToPool($obj, $key);
+                NavAccessTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -304,13 +317,15 @@ class ScheduleTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(ScheduleTableMap::COL_ID);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_ROLE_ID);
-            $criteria->addSelectColumn(ScheduleTableMap::COL_ACTIVITY_ID);
+            $criteria->addSelectColumn(NavAccessTableMap::COL_ID);
+            $criteria->addSelectColumn(NavAccessTableMap::COL_NAV_ID);
+            $criteria->addSelectColumn(NavAccessTableMap::COL_USER_ID);
+            $criteria->addSelectColumn(NavAccessTableMap::COL_ROLE_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
+            $criteria->addSelectColumn($alias . '.nav_id');
+            $criteria->addSelectColumn($alias . '.user_id');
             $criteria->addSelectColumn($alias . '.role_id');
-            $criteria->addSelectColumn($alias . '.activity_id');
         }
     }
 
@@ -323,7 +338,7 @@ class ScheduleTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(ScheduleTableMap::DATABASE_NAME)->getTable(ScheduleTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(NavAccessTableMap::DATABASE_NAME)->getTable(NavAccessTableMap::TABLE_NAME);
     }
 
     /**
@@ -331,16 +346,16 @@ class ScheduleTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(ScheduleTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(ScheduleTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new ScheduleTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(NavAccessTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(NavAccessTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new NavAccessTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Schedule or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a NavAccess or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Schedule object or primary key or array of primary keys
+     * @param mixed               $values Criteria or NavAccess object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -351,27 +366,27 @@ class ScheduleTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(NavAccessTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Perfumerlabs\Start\Model\Schedule) { // it's a model object
+        } elseif ($values instanceof \Perfumerlabs\Start\Model\NavAccess) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(ScheduleTableMap::DATABASE_NAME);
-            $criteria->add(ScheduleTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(NavAccessTableMap::DATABASE_NAME);
+            $criteria->add(NavAccessTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = ScheduleQuery::create()->mergeWith($criteria);
+        $query = NavAccessQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            ScheduleTableMap::clearInstancePool();
+            NavAccessTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                ScheduleTableMap::removeInstanceFromPool($singleval);
+                NavAccessTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -379,20 +394,20 @@ class ScheduleTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the schedule table.
+     * Deletes all rows from the nav_access table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return ScheduleQuery::create()->doDeleteAll($con);
+        return NavAccessQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Schedule or Criteria object.
+     * Performs an INSERT on the database, given a NavAccess or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Schedule object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or NavAccess object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -401,22 +416,22 @@ class ScheduleTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(NavAccessTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Schedule object
+            $criteria = $criteria->buildCriteria(); // build Criteria from NavAccess object
         }
 
-        if ($criteria->containsKey(ScheduleTableMap::COL_ID) && $criteria->keyContainsValue(ScheduleTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ScheduleTableMap::COL_ID.')');
+        if ($criteria->containsKey(NavAccessTableMap::COL_ID) && $criteria->keyContainsValue(NavAccessTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.NavAccessTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = ScheduleQuery::create()->mergeWith($criteria);
+        $query = NavAccessQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -425,7 +440,7 @@ class ScheduleTableMap extends TableMap
         });
     }
 
-} // ScheduleTableMap
+} // NavAccessTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-ScheduleTableMap::buildTableMap();
+NavAccessTableMap::buildTableMap();

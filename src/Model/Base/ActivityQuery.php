@@ -68,17 +68,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery rightJoinWithNav() Adds a RIGHT JOIN clause and with to the query using the Nav relation
  * @method     ChildActivityQuery innerJoinWithNav() Adds a INNER JOIN clause and with to the query using the Nav relation
  *
- * @method     ChildActivityQuery leftJoinSchedule($relationAlias = null) Adds a LEFT JOIN clause to the query using the Schedule relation
- * @method     ChildActivityQuery rightJoinSchedule($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Schedule relation
- * @method     ChildActivityQuery innerJoinSchedule($relationAlias = null) Adds a INNER JOIN clause to the query using the Schedule relation
+ * @method     ChildActivityQuery leftJoinActivityAccess($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActivityAccess relation
+ * @method     ChildActivityQuery rightJoinActivityAccess($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActivityAccess relation
+ * @method     ChildActivityQuery innerJoinActivityAccess($relationAlias = null) Adds a INNER JOIN clause to the query using the ActivityAccess relation
  *
- * @method     ChildActivityQuery joinWithSchedule($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Schedule relation
+ * @method     ChildActivityQuery joinWithActivityAccess($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ActivityAccess relation
  *
- * @method     ChildActivityQuery leftJoinWithSchedule() Adds a LEFT JOIN clause and with to the query using the Schedule relation
- * @method     ChildActivityQuery rightJoinWithSchedule() Adds a RIGHT JOIN clause and with to the query using the Schedule relation
- * @method     ChildActivityQuery innerJoinWithSchedule() Adds a INNER JOIN clause and with to the query using the Schedule relation
+ * @method     ChildActivityQuery leftJoinWithActivityAccess() Adds a LEFT JOIN clause and with to the query using the ActivityAccess relation
+ * @method     ChildActivityQuery rightJoinWithActivityAccess() Adds a RIGHT JOIN clause and with to the query using the ActivityAccess relation
+ * @method     ChildActivityQuery innerJoinWithActivityAccess() Adds a INNER JOIN clause and with to the query using the ActivityAccess relation
  *
- * @method     \Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\NavQuery|\Perfumerlabs\Start\Model\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\NavQuery|\Perfumerlabs\Start\Model\ActivityAccessQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildActivity findOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query
  * @method     ChildActivity findOneOrCreate(ConnectionInterface $con = null) Return the first ChildActivity matching the query, or a new ChildActivity object populated from the query conditions when no match is found
@@ -714,40 +714,40 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Perfumerlabs\Start\Model\Schedule object
+     * Filter the query by a related \Perfumerlabs\Start\Model\ActivityAccess object
      *
-     * @param \Perfumerlabs\Start\Model\Schedule|ObjectCollection $schedule the related object to use as filter
+     * @param \Perfumerlabs\Start\Model\ActivityAccess|ObjectCollection $activityAccess the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildActivityQuery The current query, for fluid interface
      */
-    public function filterBySchedule($schedule, $comparison = null)
+    public function filterByActivityAccess($activityAccess, $comparison = null)
     {
-        if ($schedule instanceof \Perfumerlabs\Start\Model\Schedule) {
+        if ($activityAccess instanceof \Perfumerlabs\Start\Model\ActivityAccess) {
             return $this
-                ->addUsingAlias(ActivityTableMap::COL_ID, $schedule->getActivityId(), $comparison);
-        } elseif ($schedule instanceof ObjectCollection) {
+                ->addUsingAlias(ActivityTableMap::COL_ID, $activityAccess->getActivityId(), $comparison);
+        } elseif ($activityAccess instanceof ObjectCollection) {
             return $this
-                ->useScheduleQuery()
-                ->filterByPrimaryKeys($schedule->getPrimaryKeys())
+                ->useActivityAccessQuery()
+                ->filterByPrimaryKeys($activityAccess->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterBySchedule() only accepts arguments of type \Perfumerlabs\Start\Model\Schedule or Collection');
+            throw new PropelException('filterByActivityAccess() only accepts arguments of type \Perfumerlabs\Start\Model\ActivityAccess or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Schedule relation
+     * Adds a JOIN clause to the query using the ActivityAccess relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function joinSchedule($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinActivityAccess($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Schedule');
+        $relationMap = $tableMap->getRelation('ActivityAccess');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -762,14 +762,14 @@ abstract class ActivityQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Schedule');
+            $this->addJoinObject($join, 'ActivityAccess');
         }
 
         return $this;
     }
 
     /**
-     * Use the Schedule relation Schedule object
+     * Use the ActivityAccess relation ActivityAccess object
      *
      * @see useQuery()
      *
@@ -777,13 +777,13 @@ abstract class ActivityQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \Perfumerlabs\Start\Model\ScheduleQuery A secondary query class using the current class as primary query
+     * @return \Perfumerlabs\Start\Model\ActivityAccessQuery A secondary query class using the current class as primary query
      */
-    public function useScheduleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useActivityAccessQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinSchedule($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Schedule', '\Perfumerlabs\Start\Model\ScheduleQuery');
+            ->joinActivityAccess($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActivityAccess', '\Perfumerlabs\Start\Model\ActivityAccessQuery');
     }
 
     /**

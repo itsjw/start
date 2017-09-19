@@ -16,16 +16,18 @@ use App\Model\UserRoleQuery as ChildUserRoleQuery;
 use App\Model\Map\SessionTableMap;
 use App\Model\Map\UserRoleTableMap;
 use App\Model\Map\UserTableMap;
+use Perfumerlabs\Start\Model\ActivityAccess;
+use Perfumerlabs\Start\Model\ActivityAccessQuery;
 use Perfumerlabs\Start\Model\Duty;
 use Perfumerlabs\Start\Model\DutyQuery;
-use Perfumerlabs\Start\Model\Nav;
-use Perfumerlabs\Start\Model\NavQuery;
-use Perfumerlabs\Start\Model\UserNav;
-use Perfumerlabs\Start\Model\UserNavQuery;
+use Perfumerlabs\Start\Model\NavAccess;
+use Perfumerlabs\Start\Model\NavAccessQuery;
+use Perfumerlabs\Start\Model\Base\ActivityAccess as BaseActivityAccess;
 use Perfumerlabs\Start\Model\Base\Duty as BaseDuty;
-use Perfumerlabs\Start\Model\Base\UserNav as BaseUserNav;
+use Perfumerlabs\Start\Model\Base\NavAccess as BaseNavAccess;
+use Perfumerlabs\Start\Model\Map\ActivityAccessTableMap;
 use Perfumerlabs\Start\Model\Map\DutyTableMap;
-use Perfumerlabs\Start\Model\Map\UserNavTableMap;
+use Perfumerlabs\Start\Model\Map\NavAccessTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -158,10 +160,16 @@ abstract class User implements ActiveRecordInterface
     protected $collDutiesPartial;
 
     /**
-     * @var        ObjectCollection|UserNav[] Collection to store aggregation of UserNav objects.
+     * @var        ObjectCollection|NavAccess[] Collection to store aggregation of NavAccess objects.
      */
-    protected $collUserNavs;
-    protected $collUserNavsPartial;
+    protected $collNavAccesses;
+    protected $collNavAccessesPartial;
+
+    /**
+     * @var        ObjectCollection|ActivityAccess[] Collection to store aggregation of ActivityAccess objects.
+     */
+    protected $collActivityAccesses;
+    protected $collActivityAccessesPartial;
 
     /**
      * @var        ObjectCollection|ChildRole[] Cross Collection to store aggregation of ChildRole objects.
@@ -172,16 +180,6 @@ abstract class User implements ActiveRecordInterface
      * @var bool
      */
     protected $collRolesPartial;
-
-    /**
-     * @var        ObjectCollection|Nav[] Cross Collection to store aggregation of Nav objects.
-     */
-    protected $collNavs;
-
-    /**
-     * @var bool
-     */
-    protected $collNavsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -196,12 +194,6 @@ abstract class User implements ActiveRecordInterface
      * @var ObjectCollection|ChildRole[]
      */
     protected $rolesScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection|Nav[]
-     */
-    protected $navsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -223,9 +215,15 @@ abstract class User implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|UserNav[]
+     * @var ObjectCollection|NavAccess[]
      */
-    protected $userNavsScheduledForDeletion = null;
+    protected $navAccessesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ActivityAccess[]
+     */
+    protected $activityAccessesScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -914,10 +912,11 @@ abstract class User implements ActiveRecordInterface
 
             $this->collDuties = null;
 
-            $this->collUserNavs = null;
+            $this->collNavAccesses = null;
+
+            $this->collActivityAccesses = null;
 
             $this->collRoles = null;
-            $this->collNavs = null;
         } // if (deep)
     }
 
@@ -1073,35 +1072,6 @@ abstract class User implements ActiveRecordInterface
             }
 
 
-            if ($this->navsScheduledForDeletion !== null) {
-                if (!$this->navsScheduledForDeletion->isEmpty()) {
-                    $pks = array();
-                    foreach ($this->navsScheduledForDeletion as $entry) {
-                        $entryPk = [];
-
-                        $entryPk[1] = $this->getId();
-                        $entryPk[0] = $entry->getId();
-                        $pks[] = $entryPk;
-                    }
-
-                    \Perfumerlabs\Start\Model\UserNavQuery::create()
-                        ->filterByPrimaryKeys($pks)
-                        ->delete($con);
-
-                    $this->navsScheduledForDeletion = null;
-                }
-
-            }
-
-            if ($this->collNavs) {
-                foreach ($this->collNavs as $nav) {
-                    if (!$nav->isDeleted() && ($nav->isNew() || $nav->isModified())) {
-                        $nav->save($con);
-                    }
-                }
-            }
-
-
             if ($this->sessionsScheduledForDeletion !== null) {
                 if (!$this->sessionsScheduledForDeletion->isEmpty()) {
                     foreach ($this->sessionsScheduledForDeletion as $session) {
@@ -1155,17 +1125,34 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
-            if ($this->userNavsScheduledForDeletion !== null) {
-                if (!$this->userNavsScheduledForDeletion->isEmpty()) {
-                    \Perfumerlabs\Start\Model\UserNavQuery::create()
-                        ->filterByPrimaryKeys($this->userNavsScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->navAccessesScheduledForDeletion !== null) {
+                if (!$this->navAccessesScheduledForDeletion->isEmpty()) {
+                    \Perfumerlabs\Start\Model\NavAccessQuery::create()
+                        ->filterByPrimaryKeys($this->navAccessesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->userNavsScheduledForDeletion = null;
+                    $this->navAccessesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collUserNavs !== null) {
-                foreach ($this->collUserNavs as $referrerFK) {
+            if ($this->collNavAccesses !== null) {
+                foreach ($this->collNavAccesses as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->activityAccessesScheduledForDeletion !== null) {
+                if (!$this->activityAccessesScheduledForDeletion->isEmpty()) {
+                    \Perfumerlabs\Start\Model\ActivityAccessQuery::create()
+                        ->filterByPrimaryKeys($this->activityAccessesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->activityAccessesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collActivityAccesses !== null) {
+                foreach ($this->collActivityAccesses as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1447,20 +1434,35 @@ abstract class User implements ActiveRecordInterface
 
                 $result[$key] = $this->collDuties->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collUserNavs) {
+            if (null !== $this->collNavAccesses) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'userNavs';
+                        $key = 'navAccesses';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'user_navs';
+                        $key = 'nav_accesses';
                         break;
                     default:
-                        $key = 'UserNavs';
+                        $key = 'NavAccesses';
                 }
 
-                $result[$key] = $this->collUserNavs->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collNavAccesses->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collActivityAccesses) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'activityAccesses';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'activity_accesses';
+                        break;
+                    default:
+                        $key = 'ActivityAccesses';
+                }
+
+                $result[$key] = $this->collActivityAccesses->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1752,9 +1754,15 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getUserNavs() as $relObj) {
+            foreach ($this->getNavAccesses() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addUserNav($relObj->copy($deepCopy));
+                    $copyObj->addNavAccess($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getActivityAccesses() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addActivityAccess($relObj->copy($deepCopy));
                 }
             }
 
@@ -1808,8 +1816,11 @@ abstract class User implements ActiveRecordInterface
         if ('Duty' == $relationName) {
             return $this->initDuties();
         }
-        if ('UserNav' == $relationName) {
-            return $this->initUserNavs();
+        if ('NavAccess' == $relationName) {
+            return $this->initNavAccesses();
+        }
+        if ('ActivityAccess' == $relationName) {
+            return $this->initActivityAccesses();
         }
     }
 
@@ -2542,31 +2553,31 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collUserNavs collection
+     * Clears out the collNavAccesses collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addUserNavs()
+     * @see        addNavAccesses()
      */
-    public function clearUserNavs()
+    public function clearNavAccesses()
     {
-        $this->collUserNavs = null; // important to set this to NULL since that means it is uninitialized
+        $this->collNavAccesses = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collUserNavs collection loaded partially.
+     * Reset is the collNavAccesses collection loaded partially.
      */
-    public function resetPartialUserNavs($v = true)
+    public function resetPartialNavAccesses($v = true)
     {
-        $this->collUserNavsPartial = $v;
+        $this->collNavAccessesPartial = $v;
     }
 
     /**
-     * Initializes the collUserNavs collection.
+     * Initializes the collNavAccesses collection.
      *
-     * By default this just sets the collUserNavs collection to an empty array (like clearcollUserNavs());
+     * By default this just sets the collNavAccesses collection to an empty array (like clearcollNavAccesses());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -2575,20 +2586,20 @@ abstract class User implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initUserNavs($overrideExisting = true)
+    public function initNavAccesses($overrideExisting = true)
     {
-        if (null !== $this->collUserNavs && !$overrideExisting) {
+        if (null !== $this->collNavAccesses && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = UserNavTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = NavAccessTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collUserNavs = new $collectionClassName;
-        $this->collUserNavs->setModel('\Perfumerlabs\Start\Model\UserNav');
+        $this->collNavAccesses = new $collectionClassName;
+        $this->collNavAccesses->setModel('\Perfumerlabs\Start\Model\NavAccess');
     }
 
     /**
-     * Gets an array of UserNav objects which contain a foreign key that references this object.
+     * Gets an array of NavAccess objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -2598,111 +2609,108 @@ abstract class User implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|UserNav[] List of UserNav objects
+     * @return ObjectCollection|NavAccess[] List of NavAccess objects
      * @throws PropelException
      */
-    public function getUserNavs(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getNavAccesses(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collUserNavsPartial && !$this->isNew();
-        if (null === $this->collUserNavs || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collUserNavs) {
+        $partial = $this->collNavAccessesPartial && !$this->isNew();
+        if (null === $this->collNavAccesses || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collNavAccesses) {
                 // return empty collection
-                $this->initUserNavs();
+                $this->initNavAccesses();
             } else {
-                $collUserNavs = UserNavQuery::create(null, $criteria)
+                $collNavAccesses = NavAccessQuery::create(null, $criteria)
                     ->filterByUser($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collUserNavsPartial && count($collUserNavs)) {
-                        $this->initUserNavs(false);
+                    if (false !== $this->collNavAccessesPartial && count($collNavAccesses)) {
+                        $this->initNavAccesses(false);
 
-                        foreach ($collUserNavs as $obj) {
-                            if (false == $this->collUserNavs->contains($obj)) {
-                                $this->collUserNavs->append($obj);
+                        foreach ($collNavAccesses as $obj) {
+                            if (false == $this->collNavAccesses->contains($obj)) {
+                                $this->collNavAccesses->append($obj);
                             }
                         }
 
-                        $this->collUserNavsPartial = true;
+                        $this->collNavAccessesPartial = true;
                     }
 
-                    return $collUserNavs;
+                    return $collNavAccesses;
                 }
 
-                if ($partial && $this->collUserNavs) {
-                    foreach ($this->collUserNavs as $obj) {
+                if ($partial && $this->collNavAccesses) {
+                    foreach ($this->collNavAccesses as $obj) {
                         if ($obj->isNew()) {
-                            $collUserNavs[] = $obj;
+                            $collNavAccesses[] = $obj;
                         }
                     }
                 }
 
-                $this->collUserNavs = $collUserNavs;
-                $this->collUserNavsPartial = false;
+                $this->collNavAccesses = $collNavAccesses;
+                $this->collNavAccessesPartial = false;
             }
         }
 
-        return $this->collUserNavs;
+        return $this->collNavAccesses;
     }
 
     /**
-     * Sets a collection of UserNav objects related by a one-to-many relationship
+     * Sets a collection of NavAccess objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $userNavs A Propel collection.
+     * @param      Collection $navAccesses A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function setUserNavs(Collection $userNavs, ConnectionInterface $con = null)
+    public function setNavAccesses(Collection $navAccesses, ConnectionInterface $con = null)
     {
-        /** @var UserNav[] $userNavsToDelete */
-        $userNavsToDelete = $this->getUserNavs(new Criteria(), $con)->diff($userNavs);
+        /** @var NavAccess[] $navAccessesToDelete */
+        $navAccessesToDelete = $this->getNavAccesses(new Criteria(), $con)->diff($navAccesses);
 
 
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->userNavsScheduledForDeletion = clone $userNavsToDelete;
+        $this->navAccessesScheduledForDeletion = $navAccessesToDelete;
 
-        foreach ($userNavsToDelete as $userNavRemoved) {
-            $userNavRemoved->setUser(null);
+        foreach ($navAccessesToDelete as $navAccessRemoved) {
+            $navAccessRemoved->setUser(null);
         }
 
-        $this->collUserNavs = null;
-        foreach ($userNavs as $userNav) {
-            $this->addUserNav($userNav);
+        $this->collNavAccesses = null;
+        foreach ($navAccesses as $navAccess) {
+            $this->addNavAccess($navAccess);
         }
 
-        $this->collUserNavs = $userNavs;
-        $this->collUserNavsPartial = false;
+        $this->collNavAccesses = $navAccesses;
+        $this->collNavAccessesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related BaseUserNav objects.
+     * Returns the number of related BaseNavAccess objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related BaseUserNav objects.
+     * @return int             Count of related BaseNavAccess objects.
      * @throws PropelException
      */
-    public function countUserNavs(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countNavAccesses(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collUserNavsPartial && !$this->isNew();
-        if (null === $this->collUserNavs || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collUserNavs) {
+        $partial = $this->collNavAccessesPartial && !$this->isNew();
+        if (null === $this->collNavAccesses || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collNavAccesses) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getUserNavs());
+                return count($this->getNavAccesses());
             }
 
-            $query = UserNavQuery::create(null, $criteria);
+            $query = NavAccessQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -2712,28 +2720,28 @@ abstract class User implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collUserNavs);
+        return count($this->collNavAccesses);
     }
 
     /**
-     * Method called to associate a UserNav object to this object
-     * through the UserNav foreign key attribute.
+     * Method called to associate a NavAccess object to this object
+     * through the NavAccess foreign key attribute.
      *
-     * @param  UserNav $l UserNav
+     * @param  NavAccess $l NavAccess
      * @return $this|\App\Model\User The current object (for fluent API support)
      */
-    public function addUserNav(UserNav $l)
+    public function addNavAccess(NavAccess $l)
     {
-        if ($this->collUserNavs === null) {
-            $this->initUserNavs();
-            $this->collUserNavsPartial = true;
+        if ($this->collNavAccesses === null) {
+            $this->initNavAccesses();
+            $this->collNavAccessesPartial = true;
         }
 
-        if (!$this->collUserNavs->contains($l)) {
-            $this->doAddUserNav($l);
+        if (!$this->collNavAccesses->contains($l)) {
+            $this->doAddNavAccess($l);
 
-            if ($this->userNavsScheduledForDeletion and $this->userNavsScheduledForDeletion->contains($l)) {
-                $this->userNavsScheduledForDeletion->remove($this->userNavsScheduledForDeletion->search($l));
+            if ($this->navAccessesScheduledForDeletion and $this->navAccessesScheduledForDeletion->contains($l)) {
+                $this->navAccessesScheduledForDeletion->remove($this->navAccessesScheduledForDeletion->search($l));
             }
         }
 
@@ -2741,29 +2749,29 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * @param UserNav $userNav The UserNav object to add.
+     * @param NavAccess $navAccess The NavAccess object to add.
      */
-    protected function doAddUserNav(UserNav $userNav)
+    protected function doAddNavAccess(NavAccess $navAccess)
     {
-        $this->collUserNavs[]= $userNav;
-        $userNav->setUser($this);
+        $this->collNavAccesses[]= $navAccess;
+        $navAccess->setUser($this);
     }
 
     /**
-     * @param  UserNav $userNav The UserNav object to remove.
+     * @param  NavAccess $navAccess The NavAccess object to remove.
      * @return $this|ChildUser The current object (for fluent API support)
      */
-    public function removeUserNav(UserNav $userNav)
+    public function removeNavAccess(NavAccess $navAccess)
     {
-        if ($this->getUserNavs()->contains($userNav)) {
-            $pos = $this->collUserNavs->search($userNav);
-            $this->collUserNavs->remove($pos);
-            if (null === $this->userNavsScheduledForDeletion) {
-                $this->userNavsScheduledForDeletion = clone $this->collUserNavs;
-                $this->userNavsScheduledForDeletion->clear();
+        if ($this->getNavAccesses()->contains($navAccess)) {
+            $pos = $this->collNavAccesses->search($navAccess);
+            $this->collNavAccesses->remove($pos);
+            if (null === $this->navAccessesScheduledForDeletion) {
+                $this->navAccessesScheduledForDeletion = clone $this->collNavAccesses;
+                $this->navAccessesScheduledForDeletion->clear();
             }
-            $this->userNavsScheduledForDeletion[]= clone $userNav;
-            $userNav->setUser(null);
+            $this->navAccessesScheduledForDeletion[]= $navAccess;
+            $navAccess->setUser(null);
         }
 
         return $this;
@@ -2775,7 +2783,7 @@ abstract class User implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this User is new, it will return
      * an empty collection; or if this User has previously
-     * been saved, it will retrieve related UserNavs from storage.
+     * been saved, it will retrieve related NavAccesses from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -2784,14 +2792,314 @@ abstract class User implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|UserNav[] List of UserNav objects
+     * @return ObjectCollection|NavAccess[] List of NavAccess objects
      */
-    public function getUserNavsJoinNav(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getNavAccessesJoinRole(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = UserNavQuery::create(null, $criteria);
+        $query = NavAccessQuery::create(null, $criteria);
+        $query->joinWith('Role', $joinBehavior);
+
+        return $this->getNavAccesses($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related NavAccesses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|NavAccess[] List of NavAccess objects
+     */
+    public function getNavAccessesJoinNav(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = NavAccessQuery::create(null, $criteria);
         $query->joinWith('Nav', $joinBehavior);
 
-        return $this->getUserNavs($query, $con);
+        return $this->getNavAccesses($query, $con);
+    }
+
+    /**
+     * Clears out the collActivityAccesses collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addActivityAccesses()
+     */
+    public function clearActivityAccesses()
+    {
+        $this->collActivityAccesses = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collActivityAccesses collection loaded partially.
+     */
+    public function resetPartialActivityAccesses($v = true)
+    {
+        $this->collActivityAccessesPartial = $v;
+    }
+
+    /**
+     * Initializes the collActivityAccesses collection.
+     *
+     * By default this just sets the collActivityAccesses collection to an empty array (like clearcollActivityAccesses());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initActivityAccesses($overrideExisting = true)
+    {
+        if (null !== $this->collActivityAccesses && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = ActivityAccessTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collActivityAccesses = new $collectionClassName;
+        $this->collActivityAccesses->setModel('\Perfumerlabs\Start\Model\ActivityAccess');
+    }
+
+    /**
+     * Gets an array of ActivityAccess objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ActivityAccess[] List of ActivityAccess objects
+     * @throws PropelException
+     */
+    public function getActivityAccesses(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collActivityAccessesPartial && !$this->isNew();
+        if (null === $this->collActivityAccesses || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActivityAccesses) {
+                // return empty collection
+                $this->initActivityAccesses();
+            } else {
+                $collActivityAccesses = ActivityAccessQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collActivityAccessesPartial && count($collActivityAccesses)) {
+                        $this->initActivityAccesses(false);
+
+                        foreach ($collActivityAccesses as $obj) {
+                            if (false == $this->collActivityAccesses->contains($obj)) {
+                                $this->collActivityAccesses->append($obj);
+                            }
+                        }
+
+                        $this->collActivityAccessesPartial = true;
+                    }
+
+                    return $collActivityAccesses;
+                }
+
+                if ($partial && $this->collActivityAccesses) {
+                    foreach ($this->collActivityAccesses as $obj) {
+                        if ($obj->isNew()) {
+                            $collActivityAccesses[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collActivityAccesses = $collActivityAccesses;
+                $this->collActivityAccessesPartial = false;
+            }
+        }
+
+        return $this->collActivityAccesses;
+    }
+
+    /**
+     * Sets a collection of ActivityAccess objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $activityAccesses A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setActivityAccesses(Collection $activityAccesses, ConnectionInterface $con = null)
+    {
+        /** @var ActivityAccess[] $activityAccessesToDelete */
+        $activityAccessesToDelete = $this->getActivityAccesses(new Criteria(), $con)->diff($activityAccesses);
+
+
+        $this->activityAccessesScheduledForDeletion = $activityAccessesToDelete;
+
+        foreach ($activityAccessesToDelete as $activityAccessRemoved) {
+            $activityAccessRemoved->setUser(null);
+        }
+
+        $this->collActivityAccesses = null;
+        foreach ($activityAccesses as $activityAccess) {
+            $this->addActivityAccess($activityAccess);
+        }
+
+        $this->collActivityAccesses = $activityAccesses;
+        $this->collActivityAccessesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related BaseActivityAccess objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related BaseActivityAccess objects.
+     * @throws PropelException
+     */
+    public function countActivityAccesses(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collActivityAccessesPartial && !$this->isNew();
+        if (null === $this->collActivityAccesses || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActivityAccesses) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getActivityAccesses());
+            }
+
+            $query = ActivityAccessQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collActivityAccesses);
+    }
+
+    /**
+     * Method called to associate a ActivityAccess object to this object
+     * through the ActivityAccess foreign key attribute.
+     *
+     * @param  ActivityAccess $l ActivityAccess
+     * @return $this|\App\Model\User The current object (for fluent API support)
+     */
+    public function addActivityAccess(ActivityAccess $l)
+    {
+        if ($this->collActivityAccesses === null) {
+            $this->initActivityAccesses();
+            $this->collActivityAccessesPartial = true;
+        }
+
+        if (!$this->collActivityAccesses->contains($l)) {
+            $this->doAddActivityAccess($l);
+
+            if ($this->activityAccessesScheduledForDeletion and $this->activityAccessesScheduledForDeletion->contains($l)) {
+                $this->activityAccessesScheduledForDeletion->remove($this->activityAccessesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ActivityAccess $activityAccess The ActivityAccess object to add.
+     */
+    protected function doAddActivityAccess(ActivityAccess $activityAccess)
+    {
+        $this->collActivityAccesses[]= $activityAccess;
+        $activityAccess->setUser($this);
+    }
+
+    /**
+     * @param  ActivityAccess $activityAccess The ActivityAccess object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeActivityAccess(ActivityAccess $activityAccess)
+    {
+        if ($this->getActivityAccesses()->contains($activityAccess)) {
+            $pos = $this->collActivityAccesses->search($activityAccess);
+            $this->collActivityAccesses->remove($pos);
+            if (null === $this->activityAccessesScheduledForDeletion) {
+                $this->activityAccessesScheduledForDeletion = clone $this->collActivityAccesses;
+                $this->activityAccessesScheduledForDeletion->clear();
+            }
+            $this->activityAccessesScheduledForDeletion[]= $activityAccess;
+            $activityAccess->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related ActivityAccesses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ActivityAccess[] List of ActivityAccess objects
+     */
+    public function getActivityAccessesJoinRole(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActivityAccessQuery::create(null, $criteria);
+        $query->joinWith('Role', $joinBehavior);
+
+        return $this->getActivityAccesses($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related ActivityAccesses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ActivityAccess[] List of ActivityAccess objects
+     */
+    public function getActivityAccessesJoinActivity(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActivityAccessQuery::create(null, $criteria);
+        $query->joinWith('Activity', $joinBehavior);
+
+        return $this->getActivityAccesses($query, $con);
     }
 
     /**
@@ -3038,249 +3346,6 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collNavs collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addNavs()
-     */
-    public function clearNavs()
-    {
-        $this->collNavs = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Initializes the collNavs crossRef collection.
-     *
-     * By default this just sets the collNavs collection to an empty collection (like clearNavs());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @return void
-     */
-    public function initNavs()
-    {
-        $collectionClassName = UserNavTableMap::getTableMap()->getCollectionClassName();
-
-        $this->collNavs = new $collectionClassName;
-        $this->collNavsPartial = true;
-        $this->collNavs->setModel('\Perfumerlabs\Start\Model\Nav');
-    }
-
-    /**
-     * Checks if the collNavs collection is loaded.
-     *
-     * @return bool
-     */
-    public function isNavsLoaded()
-    {
-        return null !== $this->collNavs;
-    }
-
-    /**
-     * Gets a collection of Nav objects related by a many-to-many relationship
-     * to the current object by way of the user_nav cross-reference table.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildUser is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return ObjectCollection|Nav[] List of Nav objects
-     */
-    public function getNavs(Criteria $criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collNavsPartial && !$this->isNew();
-        if (null === $this->collNavs || null !== $criteria || $partial) {
-            if ($this->isNew()) {
-                // return empty collection
-                if (null === $this->collNavs) {
-                    $this->initNavs();
-                }
-            } else {
-
-                $query = NavQuery::create(null, $criteria)
-                    ->filterByUser($this);
-                $collNavs = $query->find($con);
-                if (null !== $criteria) {
-                    return $collNavs;
-                }
-
-                if ($partial && $this->collNavs) {
-                    //make sure that already added objects gets added to the list of the database.
-                    foreach ($this->collNavs as $obj) {
-                        if (!$collNavs->contains($obj)) {
-                            $collNavs[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collNavs = $collNavs;
-                $this->collNavsPartial = false;
-            }
-        }
-
-        return $this->collNavs;
-    }
-
-    /**
-     * Sets a collection of Nav objects related by a many-to-many relationship
-     * to the current object by way of the user_nav cross-reference table.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param  Collection $navs A Propel collection.
-     * @param  ConnectionInterface $con Optional connection object
-     * @return $this|ChildUser The current object (for fluent API support)
-     */
-    public function setNavs(Collection $navs, ConnectionInterface $con = null)
-    {
-        $this->clearNavs();
-        $currentNavs = $this->getNavs();
-
-        $navsScheduledForDeletion = $currentNavs->diff($navs);
-
-        foreach ($navsScheduledForDeletion as $toDelete) {
-            $this->removeNav($toDelete);
-        }
-
-        foreach ($navs as $nav) {
-            if (!$currentNavs->contains($nav)) {
-                $this->doAddNav($nav);
-            }
-        }
-
-        $this->collNavsPartial = false;
-        $this->collNavs = $navs;
-
-        return $this;
-    }
-
-    /**
-     * Gets the number of Nav objects related by a many-to-many relationship
-     * to the current object by way of the user_nav cross-reference table.
-     *
-     * @param      Criteria $criteria Optional query object to filter the query
-     * @param      boolean $distinct Set to true to force count distinct
-     * @param      ConnectionInterface $con Optional connection object
-     *
-     * @return int the number of related Nav objects
-     */
-    public function countNavs(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collNavsPartial && !$this->isNew();
-        if (null === $this->collNavs || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collNavs) {
-                return 0;
-            } else {
-
-                if ($partial && !$criteria) {
-                    return count($this->getNavs());
-                }
-
-                $query = NavQuery::create(null, $criteria);
-                if ($distinct) {
-                    $query->distinct();
-                }
-
-                return $query
-                    ->filterByUser($this)
-                    ->count($con);
-            }
-        } else {
-            return count($this->collNavs);
-        }
-    }
-
-    /**
-     * Associate a Nav to this object
-     * through the user_nav cross reference table.
-     *
-     * @param Nav $nav
-     * @return ChildUser The current object (for fluent API support)
-     */
-    public function addNav(Nav $nav)
-    {
-        if ($this->collNavs === null) {
-            $this->initNavs();
-        }
-
-        if (!$this->getNavs()->contains($nav)) {
-            // only add it if the **same** object is not already associated
-            $this->collNavs->push($nav);
-            $this->doAddNav($nav);
-        }
-
-        return $this;
-    }
-
-    /**
-     *
-     * @param Nav $nav
-     */
-    protected function doAddNav(Nav $nav)
-    {
-        $userNav = new UserNav();
-
-        $userNav->setNav($nav);
-
-        $userNav->setUser($this);
-
-        $this->addUserNav($userNav);
-
-        // set the back reference to this object directly as using provided method either results
-        // in endless loop or in multiple relations
-        if (!$nav->isUsersLoaded()) {
-            $nav->initUsers();
-            $nav->getUsers()->push($this);
-        } elseif (!$nav->getUsers()->contains($this)) {
-            $nav->getUsers()->push($this);
-        }
-
-    }
-
-    /**
-     * Remove nav of this object
-     * through the user_nav cross reference table.
-     *
-     * @param Nav $nav
-     * @return ChildUser The current object (for fluent API support)
-     */
-    public function removeNav(Nav $nav)
-    {
-        if ($this->getNavs()->contains($nav)) {
-            $userNav = new UserNav();
-            $userNav->setNav($nav);
-            if ($nav->isUsersLoaded()) {
-                //remove the back reference if available
-                $nav->getUsers()->removeObject($this);
-            }
-
-            $userNav->setUser($this);
-            $this->removeUserNav(clone $userNav);
-            $userNav->clear();
-
-            $this->collNavs->remove($this->collNavs->search($nav));
-
-            if (null === $this->navsScheduledForDeletion) {
-                $this->navsScheduledForDeletion = clone $this->collNavs;
-                $this->navsScheduledForDeletion->clear();
-            }
-
-            $this->navsScheduledForDeletion->push($nav);
-        }
-
-
-        return $this;
-    }
-
-    /**
      * Clears the current object, sets all attributes to their default values and removes
      * outgoing references as well as back-references (from other objects to this one. Results probably in a database
      * change of those foreign objects when you call `save` there).
@@ -3329,8 +3394,13 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collUserNavs) {
-                foreach ($this->collUserNavs as $o) {
+            if ($this->collNavAccesses) {
+                foreach ($this->collNavAccesses as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collActivityAccesses) {
+                foreach ($this->collActivityAccesses as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -3339,19 +3409,14 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collNavs) {
-                foreach ($this->collNavs as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
         $this->collSessions = null;
         $this->collUserRoles = null;
         $this->collDuties = null;
-        $this->collUserNavs = null;
+        $this->collNavAccesses = null;
+        $this->collActivityAccesses = null;
         $this->collRoles = null;
-        $this->collNavs = null;
     }
 
     /**

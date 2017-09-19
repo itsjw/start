@@ -2,10 +2,10 @@
 
 namespace Perfumerlabs\Start\Model;
 
-use Perfumerlabs\Start\Model\Base\ScheduleQuery as BaseScheduleQuery;
+use Perfumerlabs\Start\Model\Base\ActivityAccess as BaseActivityAccess;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'schedule' table.
+ * Skeleton subclass for representing a row from the 'activity_access' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use Perfumerlabs\Start\Model\Base\ScheduleQuery as BaseScheduleQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class ScheduleQuery extends BaseScheduleQuery
+class ActivityAccess extends BaseActivityAccess
 {
 
 }

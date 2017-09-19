@@ -12,10 +12,14 @@ use App\Model\UserRole as ChildUserRole;
 use App\Model\UserRoleQuery as ChildUserRoleQuery;
 use App\Model\Map\RoleTableMap;
 use App\Model\Map\UserRoleTableMap;
-use Perfumerlabs\Start\Model\Schedule;
-use Perfumerlabs\Start\Model\ScheduleQuery;
-use Perfumerlabs\Start\Model\Base\Schedule as BaseSchedule;
-use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
+use Perfumerlabs\Start\Model\ActivityAccess;
+use Perfumerlabs\Start\Model\ActivityAccessQuery;
+use Perfumerlabs\Start\Model\NavAccess;
+use Perfumerlabs\Start\Model\NavAccessQuery;
+use Perfumerlabs\Start\Model\Base\ActivityAccess as BaseActivityAccess;
+use Perfumerlabs\Start\Model\Base\NavAccess as BaseNavAccess;
+use Perfumerlabs\Start\Model\Map\ActivityAccessTableMap;
+use Perfumerlabs\Start\Model\Map\NavAccessTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -98,10 +102,16 @@ abstract class Role implements ActiveRecordInterface
     protected $collUserRolesPartial;
 
     /**
-     * @var        ObjectCollection|Schedule[] Collection to store aggregation of Schedule objects.
+     * @var        ObjectCollection|NavAccess[] Collection to store aggregation of NavAccess objects.
      */
-    protected $collSchedules;
-    protected $collSchedulesPartial;
+    protected $collNavAccesses;
+    protected $collNavAccessesPartial;
+
+    /**
+     * @var        ObjectCollection|ActivityAccess[] Collection to store aggregation of ActivityAccess objects.
+     */
+    protected $collActivityAccesses;
+    protected $collActivityAccessesPartial;
 
     /**
      * @var        ObjectCollection|ChildUser[] Cross Collection to store aggregation of ChildUser objects.
@@ -135,9 +145,15 @@ abstract class Role implements ActiveRecordInterface
 
     /**
      * An array of objects scheduled for deletion.
-     * @var ObjectCollection|Schedule[]
+     * @var ObjectCollection|NavAccess[]
      */
-    protected $schedulesScheduledForDeletion = null;
+    protected $navAccessesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ActivityAccess[]
+     */
+    protected $activityAccessesScheduledForDeletion = null;
 
     /**
      * Initializes internal state of App\Model\Base\Role object.
@@ -569,7 +585,9 @@ abstract class Role implements ActiveRecordInterface
 
             $this->collUserRoles = null;
 
-            $this->collSchedules = null;
+            $this->collNavAccesses = null;
+
+            $this->collActivityAccesses = null;
 
             $this->collUsers = null;
         } // if (deep)
@@ -732,17 +750,34 @@ abstract class Role implements ActiveRecordInterface
                 }
             }
 
-            if ($this->schedulesScheduledForDeletion !== null) {
-                if (!$this->schedulesScheduledForDeletion->isEmpty()) {
-                    \Perfumerlabs\Start\Model\ScheduleQuery::create()
-                        ->filterByPrimaryKeys($this->schedulesScheduledForDeletion->getPrimaryKeys(false))
+            if ($this->navAccessesScheduledForDeletion !== null) {
+                if (!$this->navAccessesScheduledForDeletion->isEmpty()) {
+                    \Perfumerlabs\Start\Model\NavAccessQuery::create()
+                        ->filterByPrimaryKeys($this->navAccessesScheduledForDeletion->getPrimaryKeys(false))
                         ->delete($con);
-                    $this->schedulesScheduledForDeletion = null;
+                    $this->navAccessesScheduledForDeletion = null;
                 }
             }
 
-            if ($this->collSchedules !== null) {
-                foreach ($this->collSchedules as $referrerFK) {
+            if ($this->collNavAccesses !== null) {
+                foreach ($this->collNavAccesses as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->activityAccessesScheduledForDeletion !== null) {
+                if (!$this->activityAccessesScheduledForDeletion->isEmpty()) {
+                    \Perfumerlabs\Start\Model\ActivityAccessQuery::create()
+                        ->filterByPrimaryKeys($this->activityAccessesScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->activityAccessesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collActivityAccesses !== null) {
+                foreach ($this->collActivityAccesses as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -932,20 +967,35 @@ abstract class Role implements ActiveRecordInterface
 
                 $result[$key] = $this->collUserRoles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collSchedules) {
+            if (null !== $this->collNavAccesses) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'schedules';
+                        $key = 'navAccesses';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'schedules';
+                        $key = 'nav_accesses';
                         break;
                     default:
-                        $key = 'Schedules';
+                        $key = 'NavAccesses';
                 }
 
-                $result[$key] = $this->collSchedules->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+                $result[$key] = $this->collNavAccesses->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collActivityAccesses) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'activityAccesses';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'activity_accesses';
+                        break;
+                    default:
+                        $key = 'ActivityAccesses';
+                }
+
+                $result[$key] = $this->collActivityAccesses->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1175,9 +1225,15 @@ abstract class Role implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getSchedules() as $relObj) {
+            foreach ($this->getNavAccesses() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addSchedule($relObj->copy($deepCopy));
+                    $copyObj->addNavAccess($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getActivityAccesses() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addActivityAccess($relObj->copy($deepCopy));
                 }
             }
 
@@ -1225,8 +1281,11 @@ abstract class Role implements ActiveRecordInterface
         if ('UserRole' == $relationName) {
             return $this->initUserRoles();
         }
-        if ('Schedule' == $relationName) {
-            return $this->initSchedules();
+        if ('NavAccess' == $relationName) {
+            return $this->initNavAccesses();
+        }
+        if ('ActivityAccess' == $relationName) {
+            return $this->initActivityAccesses();
         }
     }
 
@@ -1484,31 +1543,31 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collSchedules collection
+     * Clears out the collNavAccesses collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
      * them to be refetched by subsequent calls to accessor method.
      *
      * @return void
-     * @see        addSchedules()
+     * @see        addNavAccesses()
      */
-    public function clearSchedules()
+    public function clearNavAccesses()
     {
-        $this->collSchedules = null; // important to set this to NULL since that means it is uninitialized
+        $this->collNavAccesses = null; // important to set this to NULL since that means it is uninitialized
     }
 
     /**
-     * Reset is the collSchedules collection loaded partially.
+     * Reset is the collNavAccesses collection loaded partially.
      */
-    public function resetPartialSchedules($v = true)
+    public function resetPartialNavAccesses($v = true)
     {
-        $this->collSchedulesPartial = $v;
+        $this->collNavAccessesPartial = $v;
     }
 
     /**
-     * Initializes the collSchedules collection.
+     * Initializes the collNavAccesses collection.
      *
-     * By default this just sets the collSchedules collection to an empty array (like clearcollSchedules());
+     * By default this just sets the collNavAccesses collection to an empty array (like clearcollNavAccesses());
      * however, you may wish to override this method in your stub class to provide setting appropriate
      * to your application -- for example, setting the initial array to the values stored in database.
      *
@@ -1517,20 +1576,20 @@ abstract class Role implements ActiveRecordInterface
      *
      * @return void
      */
-    public function initSchedules($overrideExisting = true)
+    public function initNavAccesses($overrideExisting = true)
     {
-        if (null !== $this->collSchedules && !$overrideExisting) {
+        if (null !== $this->collNavAccesses && !$overrideExisting) {
             return;
         }
 
-        $collectionClassName = ScheduleTableMap::getTableMap()->getCollectionClassName();
+        $collectionClassName = NavAccessTableMap::getTableMap()->getCollectionClassName();
 
-        $this->collSchedules = new $collectionClassName;
-        $this->collSchedules->setModel('\Perfumerlabs\Start\Model\Schedule');
+        $this->collNavAccesses = new $collectionClassName;
+        $this->collNavAccesses->setModel('\Perfumerlabs\Start\Model\NavAccess');
     }
 
     /**
-     * Gets an array of Schedule objects which contain a foreign key that references this object.
+     * Gets an array of NavAccess objects which contain a foreign key that references this object.
      *
      * If the $criteria is not null, it is used to always fetch the results from the database.
      * Otherwise the results are fetched from the database the first time, then cached.
@@ -1540,108 +1599,108 @@ abstract class Role implements ActiveRecordInterface
      *
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
-     * @return ObjectCollection|Schedule[] List of Schedule objects
+     * @return ObjectCollection|NavAccess[] List of NavAccess objects
      * @throws PropelException
      */
-    public function getSchedules(Criteria $criteria = null, ConnectionInterface $con = null)
+    public function getNavAccesses(Criteria $criteria = null, ConnectionInterface $con = null)
     {
-        $partial = $this->collSchedulesPartial && !$this->isNew();
-        if (null === $this->collSchedules || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collSchedules) {
+        $partial = $this->collNavAccessesPartial && !$this->isNew();
+        if (null === $this->collNavAccesses || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collNavAccesses) {
                 // return empty collection
-                $this->initSchedules();
+                $this->initNavAccesses();
             } else {
-                $collSchedules = ScheduleQuery::create(null, $criteria)
+                $collNavAccesses = NavAccessQuery::create(null, $criteria)
                     ->filterByRole($this)
                     ->find($con);
 
                 if (null !== $criteria) {
-                    if (false !== $this->collSchedulesPartial && count($collSchedules)) {
-                        $this->initSchedules(false);
+                    if (false !== $this->collNavAccessesPartial && count($collNavAccesses)) {
+                        $this->initNavAccesses(false);
 
-                        foreach ($collSchedules as $obj) {
-                            if (false == $this->collSchedules->contains($obj)) {
-                                $this->collSchedules->append($obj);
+                        foreach ($collNavAccesses as $obj) {
+                            if (false == $this->collNavAccesses->contains($obj)) {
+                                $this->collNavAccesses->append($obj);
                             }
                         }
 
-                        $this->collSchedulesPartial = true;
+                        $this->collNavAccessesPartial = true;
                     }
 
-                    return $collSchedules;
+                    return $collNavAccesses;
                 }
 
-                if ($partial && $this->collSchedules) {
-                    foreach ($this->collSchedules as $obj) {
+                if ($partial && $this->collNavAccesses) {
+                    foreach ($this->collNavAccesses as $obj) {
                         if ($obj->isNew()) {
-                            $collSchedules[] = $obj;
+                            $collNavAccesses[] = $obj;
                         }
                     }
                 }
 
-                $this->collSchedules = $collSchedules;
-                $this->collSchedulesPartial = false;
+                $this->collNavAccesses = $collNavAccesses;
+                $this->collNavAccessesPartial = false;
             }
         }
 
-        return $this->collSchedules;
+        return $this->collNavAccesses;
     }
 
     /**
-     * Sets a collection of Schedule objects related by a one-to-many relationship
+     * Sets a collection of NavAccess objects related by a one-to-many relationship
      * to the current object.
      * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
      * and new objects from the given Propel collection.
      *
-     * @param      Collection $schedules A Propel collection.
+     * @param      Collection $navAccesses A Propel collection.
      * @param      ConnectionInterface $con Optional connection object
      * @return $this|ChildRole The current object (for fluent API support)
      */
-    public function setSchedules(Collection $schedules, ConnectionInterface $con = null)
+    public function setNavAccesses(Collection $navAccesses, ConnectionInterface $con = null)
     {
-        /** @var Schedule[] $schedulesToDelete */
-        $schedulesToDelete = $this->getSchedules(new Criteria(), $con)->diff($schedules);
+        /** @var NavAccess[] $navAccessesToDelete */
+        $navAccessesToDelete = $this->getNavAccesses(new Criteria(), $con)->diff($navAccesses);
 
 
-        $this->schedulesScheduledForDeletion = $schedulesToDelete;
+        $this->navAccessesScheduledForDeletion = $navAccessesToDelete;
 
-        foreach ($schedulesToDelete as $scheduleRemoved) {
-            $scheduleRemoved->setRole(null);
+        foreach ($navAccessesToDelete as $navAccessRemoved) {
+            $navAccessRemoved->setRole(null);
         }
 
-        $this->collSchedules = null;
-        foreach ($schedules as $schedule) {
-            $this->addSchedule($schedule);
+        $this->collNavAccesses = null;
+        foreach ($navAccesses as $navAccess) {
+            $this->addNavAccess($navAccess);
         }
 
-        $this->collSchedules = $schedules;
-        $this->collSchedulesPartial = false;
+        $this->collNavAccesses = $navAccesses;
+        $this->collNavAccessesPartial = false;
 
         return $this;
     }
 
     /**
-     * Returns the number of related BaseSchedule objects.
+     * Returns the number of related BaseNavAccess objects.
      *
      * @param      Criteria $criteria
      * @param      boolean $distinct
      * @param      ConnectionInterface $con
-     * @return int             Count of related BaseSchedule objects.
+     * @return int             Count of related BaseNavAccess objects.
      * @throws PropelException
      */
-    public function countSchedules(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    public function countNavAccesses(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
     {
-        $partial = $this->collSchedulesPartial && !$this->isNew();
-        if (null === $this->collSchedules || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collSchedules) {
+        $partial = $this->collNavAccessesPartial && !$this->isNew();
+        if (null === $this->collNavAccesses || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collNavAccesses) {
                 return 0;
             }
 
             if ($partial && !$criteria) {
-                return count($this->getSchedules());
+                return count($this->getNavAccesses());
             }
 
-            $query = ScheduleQuery::create(null, $criteria);
+            $query = NavAccessQuery::create(null, $criteria);
             if ($distinct) {
                 $query->distinct();
             }
@@ -1651,28 +1710,28 @@ abstract class Role implements ActiveRecordInterface
                 ->count($con);
         }
 
-        return count($this->collSchedules);
+        return count($this->collNavAccesses);
     }
 
     /**
-     * Method called to associate a Schedule object to this object
-     * through the Schedule foreign key attribute.
+     * Method called to associate a NavAccess object to this object
+     * through the NavAccess foreign key attribute.
      *
-     * @param  Schedule $l Schedule
+     * @param  NavAccess $l NavAccess
      * @return $this|\App\Model\Role The current object (for fluent API support)
      */
-    public function addSchedule(Schedule $l)
+    public function addNavAccess(NavAccess $l)
     {
-        if ($this->collSchedules === null) {
-            $this->initSchedules();
-            $this->collSchedulesPartial = true;
+        if ($this->collNavAccesses === null) {
+            $this->initNavAccesses();
+            $this->collNavAccessesPartial = true;
         }
 
-        if (!$this->collSchedules->contains($l)) {
-            $this->doAddSchedule($l);
+        if (!$this->collNavAccesses->contains($l)) {
+            $this->doAddNavAccess($l);
 
-            if ($this->schedulesScheduledForDeletion and $this->schedulesScheduledForDeletion->contains($l)) {
-                $this->schedulesScheduledForDeletion->remove($this->schedulesScheduledForDeletion->search($l));
+            if ($this->navAccessesScheduledForDeletion and $this->navAccessesScheduledForDeletion->contains($l)) {
+                $this->navAccessesScheduledForDeletion->remove($this->navAccessesScheduledForDeletion->search($l));
             }
         }
 
@@ -1680,29 +1739,29 @@ abstract class Role implements ActiveRecordInterface
     }
 
     /**
-     * @param Schedule $schedule The Schedule object to add.
+     * @param NavAccess $navAccess The NavAccess object to add.
      */
-    protected function doAddSchedule(Schedule $schedule)
+    protected function doAddNavAccess(NavAccess $navAccess)
     {
-        $this->collSchedules[]= $schedule;
-        $schedule->setRole($this);
+        $this->collNavAccesses[]= $navAccess;
+        $navAccess->setRole($this);
     }
 
     /**
-     * @param  Schedule $schedule The Schedule object to remove.
+     * @param  NavAccess $navAccess The NavAccess object to remove.
      * @return $this|ChildRole The current object (for fluent API support)
      */
-    public function removeSchedule(Schedule $schedule)
+    public function removeNavAccess(NavAccess $navAccess)
     {
-        if ($this->getSchedules()->contains($schedule)) {
-            $pos = $this->collSchedules->search($schedule);
-            $this->collSchedules->remove($pos);
-            if (null === $this->schedulesScheduledForDeletion) {
-                $this->schedulesScheduledForDeletion = clone $this->collSchedules;
-                $this->schedulesScheduledForDeletion->clear();
+        if ($this->getNavAccesses()->contains($navAccess)) {
+            $pos = $this->collNavAccesses->search($navAccess);
+            $this->collNavAccesses->remove($pos);
+            if (null === $this->navAccessesScheduledForDeletion) {
+                $this->navAccessesScheduledForDeletion = clone $this->collNavAccesses;
+                $this->navAccessesScheduledForDeletion->clear();
             }
-            $this->schedulesScheduledForDeletion[]= $schedule;
-            $schedule->setRole(null);
+            $this->navAccessesScheduledForDeletion[]= $navAccess;
+            $navAccess->setRole(null);
         }
 
         return $this;
@@ -1714,7 +1773,7 @@ abstract class Role implements ActiveRecordInterface
      * an identical criteria, it returns the collection.
      * Otherwise if this Role is new, it will return
      * an empty collection; or if this Role has previously
-     * been saved, it will retrieve related Schedules from storage.
+     * been saved, it will retrieve related NavAccesses from storage.
      *
      * This method is protected by default in order to keep the public
      * api reasonable.  You can provide public methods for those you
@@ -1723,14 +1782,314 @@ abstract class Role implements ActiveRecordInterface
      * @param      Criteria $criteria optional Criteria object to narrow the query
      * @param      ConnectionInterface $con optional connection object
      * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return ObjectCollection|Schedule[] List of Schedule objects
+     * @return ObjectCollection|NavAccess[] List of NavAccess objects
      */
-    public function getSchedulesJoinActivity(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    public function getNavAccessesJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
     {
-        $query = ScheduleQuery::create(null, $criteria);
+        $query = NavAccessQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
+
+        return $this->getNavAccesses($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Role is new, it will return
+     * an empty collection; or if this Role has previously
+     * been saved, it will retrieve related NavAccesses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Role.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|NavAccess[] List of NavAccess objects
+     */
+    public function getNavAccessesJoinNav(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = NavAccessQuery::create(null, $criteria);
+        $query->joinWith('Nav', $joinBehavior);
+
+        return $this->getNavAccesses($query, $con);
+    }
+
+    /**
+     * Clears out the collActivityAccesses collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addActivityAccesses()
+     */
+    public function clearActivityAccesses()
+    {
+        $this->collActivityAccesses = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collActivityAccesses collection loaded partially.
+     */
+    public function resetPartialActivityAccesses($v = true)
+    {
+        $this->collActivityAccessesPartial = $v;
+    }
+
+    /**
+     * Initializes the collActivityAccesses collection.
+     *
+     * By default this just sets the collActivityAccesses collection to an empty array (like clearcollActivityAccesses());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initActivityAccesses($overrideExisting = true)
+    {
+        if (null !== $this->collActivityAccesses && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = ActivityAccessTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collActivityAccesses = new $collectionClassName;
+        $this->collActivityAccesses->setModel('\Perfumerlabs\Start\Model\ActivityAccess');
+    }
+
+    /**
+     * Gets an array of ActivityAccess objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildRole is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ActivityAccess[] List of ActivityAccess objects
+     * @throws PropelException
+     */
+    public function getActivityAccesses(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collActivityAccessesPartial && !$this->isNew();
+        if (null === $this->collActivityAccesses || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collActivityAccesses) {
+                // return empty collection
+                $this->initActivityAccesses();
+            } else {
+                $collActivityAccesses = ActivityAccessQuery::create(null, $criteria)
+                    ->filterByRole($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collActivityAccessesPartial && count($collActivityAccesses)) {
+                        $this->initActivityAccesses(false);
+
+                        foreach ($collActivityAccesses as $obj) {
+                            if (false == $this->collActivityAccesses->contains($obj)) {
+                                $this->collActivityAccesses->append($obj);
+                            }
+                        }
+
+                        $this->collActivityAccessesPartial = true;
+                    }
+
+                    return $collActivityAccesses;
+                }
+
+                if ($partial && $this->collActivityAccesses) {
+                    foreach ($this->collActivityAccesses as $obj) {
+                        if ($obj->isNew()) {
+                            $collActivityAccesses[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collActivityAccesses = $collActivityAccesses;
+                $this->collActivityAccessesPartial = false;
+            }
+        }
+
+        return $this->collActivityAccesses;
+    }
+
+    /**
+     * Sets a collection of ActivityAccess objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $activityAccesses A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildRole The current object (for fluent API support)
+     */
+    public function setActivityAccesses(Collection $activityAccesses, ConnectionInterface $con = null)
+    {
+        /** @var ActivityAccess[] $activityAccessesToDelete */
+        $activityAccessesToDelete = $this->getActivityAccesses(new Criteria(), $con)->diff($activityAccesses);
+
+
+        $this->activityAccessesScheduledForDeletion = $activityAccessesToDelete;
+
+        foreach ($activityAccessesToDelete as $activityAccessRemoved) {
+            $activityAccessRemoved->setRole(null);
+        }
+
+        $this->collActivityAccesses = null;
+        foreach ($activityAccesses as $activityAccess) {
+            $this->addActivityAccess($activityAccess);
+        }
+
+        $this->collActivityAccesses = $activityAccesses;
+        $this->collActivityAccessesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related BaseActivityAccess objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related BaseActivityAccess objects.
+     * @throws PropelException
+     */
+    public function countActivityAccesses(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collActivityAccessesPartial && !$this->isNew();
+        if (null === $this->collActivityAccesses || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collActivityAccesses) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getActivityAccesses());
+            }
+
+            $query = ActivityAccessQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByRole($this)
+                ->count($con);
+        }
+
+        return count($this->collActivityAccesses);
+    }
+
+    /**
+     * Method called to associate a ActivityAccess object to this object
+     * through the ActivityAccess foreign key attribute.
+     *
+     * @param  ActivityAccess $l ActivityAccess
+     * @return $this|\App\Model\Role The current object (for fluent API support)
+     */
+    public function addActivityAccess(ActivityAccess $l)
+    {
+        if ($this->collActivityAccesses === null) {
+            $this->initActivityAccesses();
+            $this->collActivityAccessesPartial = true;
+        }
+
+        if (!$this->collActivityAccesses->contains($l)) {
+            $this->doAddActivityAccess($l);
+
+            if ($this->activityAccessesScheduledForDeletion and $this->activityAccessesScheduledForDeletion->contains($l)) {
+                $this->activityAccessesScheduledForDeletion->remove($this->activityAccessesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ActivityAccess $activityAccess The ActivityAccess object to add.
+     */
+    protected function doAddActivityAccess(ActivityAccess $activityAccess)
+    {
+        $this->collActivityAccesses[]= $activityAccess;
+        $activityAccess->setRole($this);
+    }
+
+    /**
+     * @param  ActivityAccess $activityAccess The ActivityAccess object to remove.
+     * @return $this|ChildRole The current object (for fluent API support)
+     */
+    public function removeActivityAccess(ActivityAccess $activityAccess)
+    {
+        if ($this->getActivityAccesses()->contains($activityAccess)) {
+            $pos = $this->collActivityAccesses->search($activityAccess);
+            $this->collActivityAccesses->remove($pos);
+            if (null === $this->activityAccessesScheduledForDeletion) {
+                $this->activityAccessesScheduledForDeletion = clone $this->collActivityAccesses;
+                $this->activityAccessesScheduledForDeletion->clear();
+            }
+            $this->activityAccessesScheduledForDeletion[]= $activityAccess;
+            $activityAccess->setRole(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Role is new, it will return
+     * an empty collection; or if this Role has previously
+     * been saved, it will retrieve related ActivityAccesses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Role.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ActivityAccess[] List of ActivityAccess objects
+     */
+    public function getActivityAccessesJoinUser(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActivityAccessQuery::create(null, $criteria);
+        $query->joinWith('User', $joinBehavior);
+
+        return $this->getActivityAccesses($query, $con);
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Role is new, it will return
+     * an empty collection; or if this Role has previously
+     * been saved, it will retrieve related ActivityAccesses from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Role.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|ActivityAccess[] List of ActivityAccess objects
+     */
+    public function getActivityAccessesJoinActivity(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ActivityAccessQuery::create(null, $criteria);
         $query->joinWith('Activity', $joinBehavior);
 
-        return $this->getSchedules($query, $con);
+        return $this->getActivityAccesses($query, $con);
     }
 
     /**
@@ -2009,8 +2368,13 @@ abstract class Role implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collSchedules) {
-                foreach ($this->collSchedules as $o) {
+            if ($this->collNavAccesses) {
+                foreach ($this->collNavAccesses as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collActivityAccesses) {
+                foreach ($this->collActivityAccesses as $o) {
                     $o->clearAllReferences($deep);
                 }
             }
@@ -2022,7 +2386,8 @@ abstract class Role implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collUserRoles = null;
-        $this->collSchedules = null;
+        $this->collNavAccesses = null;
+        $this->collActivityAccesses = null;
         $this->collUsers = null;
     }
 

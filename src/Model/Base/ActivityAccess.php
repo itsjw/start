@@ -4,12 +4,14 @@ namespace Perfumerlabs\Start\Model\Base;
 
 use \Exception;
 use \PDO;
+use App\Model\Role;
+use App\Model\RoleQuery;
 use App\Model\User;
 use App\Model\UserQuery;
-use Perfumerlabs\Start\Model\Nav as ChildNav;
-use Perfumerlabs\Start\Model\NavQuery as ChildNavQuery;
-use Perfumerlabs\Start\Model\UserNavQuery as ChildUserNavQuery;
-use Perfumerlabs\Start\Model\Map\UserNavTableMap;
+use Perfumerlabs\Start\Model\Activity as ChildActivity;
+use Perfumerlabs\Start\Model\ActivityAccessQuery as ChildActivityAccessQuery;
+use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
+use Perfumerlabs\Start\Model\Map\ActivityAccessTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -23,18 +25,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'user_nav' table.
+ * Base class that represents a row from the 'activity_access' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class UserNav implements ActiveRecordInterface
+abstract class ActivityAccess implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\UserNavTableMap';
+    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\ActivityAccessTableMap';
 
 
     /**
@@ -64,11 +66,18 @@ abstract class UserNav implements ActiveRecordInterface
     protected $virtualColumns = array();
 
     /**
-     * The value for the nav_id field.
+     * The value for the id field.
      *
      * @var        int
      */
-    protected $nav_id;
+    protected $id;
+
+    /**
+     * The value for the activity_id field.
+     *
+     * @var        int
+     */
+    protected $activity_id;
 
     /**
      * The value for the user_id field.
@@ -78,14 +87,26 @@ abstract class UserNav implements ActiveRecordInterface
     protected $user_id;
 
     /**
+     * The value for the role_id field.
+     *
+     * @var        int
+     */
+    protected $role_id;
+
+    /**
+     * @var        Role
+     */
+    protected $aRole;
+
+    /**
      * @var        User
      */
     protected $aUser;
 
     /**
-     * @var        ChildNav
+     * @var        ChildActivity
      */
-    protected $aNav;
+    protected $aActivity;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -96,7 +117,7 @@ abstract class UserNav implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Perfumerlabs\Start\Model\Base\UserNav object.
+     * Initializes internal state of Perfumerlabs\Start\Model\Base\ActivityAccess object.
      */
     public function __construct()
     {
@@ -191,9 +212,9 @@ abstract class UserNav implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>UserNav</code> instance.  If
-     * <code>obj</code> is an instance of <code>UserNav</code>, delegates to
-     * <code>equals(UserNav)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>ActivityAccess</code> instance.  If
+     * <code>obj</code> is an instance of <code>ActivityAccess</code>, delegates to
+     * <code>equals(ActivityAccess)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -259,7 +280,7 @@ abstract class UserNav implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|UserNav The current object, for fluid interface
+     * @return $this|ActivityAccess The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -321,13 +342,23 @@ abstract class UserNav implements ActiveRecordInterface
     }
 
     /**
-     * Get the [nav_id] column value.
+     * Get the [id] column value.
      *
      * @return int
      */
-    public function getNavId()
+    public function getId()
     {
-        return $this->nav_id;
+        return $this->id;
+    }
+
+    /**
+     * Get the [activity_id] column value.
+     *
+     * @return int
+     */
+    public function getActivityId()
+    {
+        return $this->activity_id;
     }
 
     /**
@@ -341,34 +372,64 @@ abstract class UserNav implements ActiveRecordInterface
     }
 
     /**
-     * Set the value of [nav_id] column.
+     * Get the [role_id] column value.
+     *
+     * @return int
+     */
+    public function getRoleId()
+    {
+        return $this->role_id;
+    }
+
+    /**
+     * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\UserNav The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
      */
-    public function setNavId($v)
+    public function setId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->nav_id !== $v) {
-            $this->nav_id = $v;
-            $this->modifiedColumns[UserNavTableMap::COL_NAV_ID] = true;
-        }
-
-        if ($this->aNav !== null && $this->aNav->getId() !== $v) {
-            $this->aNav = null;
+        if ($this->id !== $v) {
+            $this->id = $v;
+            $this->modifiedColumns[ActivityAccessTableMap::COL_ID] = true;
         }
 
         return $this;
-    } // setNavId()
+    } // setId()
+
+    /**
+     * Set the value of [activity_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
+     */
+    public function setActivityId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->activity_id !== $v) {
+            $this->activity_id = $v;
+            $this->modifiedColumns[ActivityAccessTableMap::COL_ACTIVITY_ID] = true;
+        }
+
+        if ($this->aActivity !== null && $this->aActivity->getId() !== $v) {
+            $this->aActivity = null;
+        }
+
+        return $this;
+    } // setActivityId()
 
     /**
      * Set the value of [user_id] column.
      *
      * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\UserNav The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
      */
     public function setUserId($v)
     {
@@ -378,7 +439,7 @@ abstract class UserNav implements ActiveRecordInterface
 
         if ($this->user_id !== $v) {
             $this->user_id = $v;
-            $this->modifiedColumns[UserNavTableMap::COL_USER_ID] = true;
+            $this->modifiedColumns[ActivityAccessTableMap::COL_USER_ID] = true;
         }
 
         if ($this->aUser !== null && $this->aUser->getId() !== $v) {
@@ -387,6 +448,30 @@ abstract class UserNav implements ActiveRecordInterface
 
         return $this;
     } // setUserId()
+
+    /**
+     * Set the value of [role_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
+     */
+    public function setRoleId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->role_id !== $v) {
+            $this->role_id = $v;
+            $this->modifiedColumns[ActivityAccessTableMap::COL_ROLE_ID] = true;
+        }
+
+        if ($this->aRole !== null && $this->aRole->getId() !== $v) {
+            $this->aRole = null;
+        }
+
+        return $this;
+    } // setRoleId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -424,11 +509,17 @@ abstract class UserNav implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : UserNavTableMap::translateFieldName('NavId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->nav_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ActivityAccessTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : UserNavTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ActivityAccessTableMap::translateFieldName('ActivityId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->activity_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityAccessTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->user_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityAccessTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->role_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -437,10 +528,10 @@ abstract class UserNav implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 2; // 2 = UserNavTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = ActivityAccessTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\UserNav'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\ActivityAccess'), 0, $e);
         }
     }
 
@@ -459,11 +550,14 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aNav !== null && $this->nav_id !== $this->aNav->getId()) {
-            $this->aNav = null;
+        if ($this->aActivity !== null && $this->activity_id !== $this->aActivity->getId()) {
+            $this->aActivity = null;
         }
         if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
             $this->aUser = null;
+        }
+        if ($this->aRole !== null && $this->role_id !== $this->aRole->getId()) {
+            $this->aRole = null;
         }
     } // ensureConsistency
 
@@ -488,13 +582,13 @@ abstract class UserNav implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(UserNavTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(ActivityAccessTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildUserNavQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildActivityAccessQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -504,8 +598,9 @@ abstract class UserNav implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aRole = null;
             $this->aUser = null;
-            $this->aNav = null;
+            $this->aActivity = null;
         } // if (deep)
     }
 
@@ -515,8 +610,8 @@ abstract class UserNav implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see UserNav::setDeleted()
-     * @see UserNav::isDeleted()
+     * @see ActivityAccess::setDeleted()
+     * @see ActivityAccess::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -525,11 +620,11 @@ abstract class UserNav implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserNavTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ActivityAccessTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildUserNavQuery::create()
+            $deleteQuery = ChildActivityAccessQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -564,7 +659,7 @@ abstract class UserNav implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserNavTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(ActivityAccessTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -583,7 +678,7 @@ abstract class UserNav implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                UserNavTableMap::addInstanceToPool($this);
+                ActivityAccessTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -614,6 +709,13 @@ abstract class UserNav implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
+            if ($this->aRole !== null) {
+                if ($this->aRole->isModified() || $this->aRole->isNew()) {
+                    $affectedRows += $this->aRole->save($con);
+                }
+                $this->setRole($this->aRole);
+            }
+
             if ($this->aUser !== null) {
                 if ($this->aUser->isModified() || $this->aUser->isNew()) {
                     $affectedRows += $this->aUser->save($con);
@@ -621,11 +723,11 @@ abstract class UserNav implements ActiveRecordInterface
                 $this->setUser($this->aUser);
             }
 
-            if ($this->aNav !== null) {
-                if ($this->aNav->isModified() || $this->aNav->isNew()) {
-                    $affectedRows += $this->aNav->save($con);
+            if ($this->aActivity !== null) {
+                if ($this->aActivity->isModified() || $this->aActivity->isNew()) {
+                    $affectedRows += $this->aActivity->save($con);
                 }
-                $this->setNav($this->aNav);
+                $this->setActivity($this->aActivity);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -659,17 +761,36 @@ abstract class UserNav implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[ActivityAccessTableMap::COL_ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ActivityAccessTableMap::COL_ID . ')');
+        }
+        if (null === $this->id) {
+            try {
+                $dataFetcher = $con->query("SELECT nextval('activity_access_id_seq')");
+                $this->id = (int) $dataFetcher->fetchColumn();
+            } catch (Exception $e) {
+                throw new PropelException('Unable to get sequence id.', 0, $e);
+            }
+        }
+
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(UserNavTableMap::COL_NAV_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'nav_id';
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(UserNavTableMap::COL_USER_ID)) {
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_ACTIVITY_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'activity_id';
+        }
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_USER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'user_id';
+        }
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_ROLE_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'role_id';
         }
 
         $sql = sprintf(
-            'INSERT INTO user_nav (%s) VALUES (%s)',
+            'INSERT INTO activity_access (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -678,11 +799,17 @@ abstract class UserNav implements ActiveRecordInterface
             $stmt = $con->prepare($sql);
             foreach ($modifiedColumns as $identifier => $columnName) {
                 switch ($columnName) {
-                    case 'nav_id':
-                        $stmt->bindValue($identifier, $this->nav_id, PDO::PARAM_INT);
+                    case 'id':
+                        $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                        break;
+                    case 'activity_id':
+                        $stmt->bindValue($identifier, $this->activity_id, PDO::PARAM_INT);
                         break;
                     case 'user_id':
                         $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
+                        break;
+                    case 'role_id':
+                        $stmt->bindValue($identifier, $this->role_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -723,7 +850,7 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserNavTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ActivityAccessTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -740,10 +867,16 @@ abstract class UserNav implements ActiveRecordInterface
     {
         switch ($pos) {
             case 0:
-                return $this->getNavId();
+                return $this->getId();
                 break;
             case 1:
+                return $this->getActivityId();
+                break;
+            case 2:
                 return $this->getUserId();
+                break;
+            case 3:
+                return $this->getRoleId();
                 break;
             default:
                 return null;
@@ -769,14 +902,16 @@ abstract class UserNav implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['UserNav'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['ActivityAccess'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['UserNav'][$this->hashCode()] = true;
-        $keys = UserNavTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['ActivityAccess'][$this->hashCode()] = true;
+        $keys = ActivityAccessTableMap::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getNavId(),
-            $keys[1] => $this->getUserId(),
+            $keys[0] => $this->getId(),
+            $keys[1] => $this->getActivityId(),
+            $keys[2] => $this->getUserId(),
+            $keys[3] => $this->getRoleId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -784,6 +919,21 @@ abstract class UserNav implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->aRole) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'role';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = '_role';
+                        break;
+                    default:
+                        $key = 'Role';
+                }
+
+                $result[$key] = $this->aRole->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->aUser) {
 
                 switch ($keyType) {
@@ -799,20 +949,20 @@ abstract class UserNav implements ActiveRecordInterface
 
                 $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aNav) {
+            if (null !== $this->aActivity) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'nav';
+                        $key = 'activity';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'nav';
+                        $key = 'activity';
                         break;
                     default:
-                        $key = 'Nav';
+                        $key = 'Activity';
                 }
 
-                $result[$key] = $this->aNav->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aActivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -828,11 +978,11 @@ abstract class UserNav implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Perfumerlabs\Start\Model\UserNav
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = UserNavTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = ActivityAccessTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -843,16 +993,22 @@ abstract class UserNav implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Perfumerlabs\Start\Model\UserNav
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess
      */
     public function setByPosition($pos, $value)
     {
         switch ($pos) {
             case 0:
-                $this->setNavId($value);
+                $this->setId($value);
                 break;
             case 1:
+                $this->setActivityId($value);
+                break;
+            case 2:
                 $this->setUserId($value);
+                break;
+            case 3:
+                $this->setRoleId($value);
                 break;
         } // switch()
 
@@ -878,13 +1034,19 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = UserNavTableMap::getFieldNames($keyType);
+        $keys = ActivityAccessTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setNavId($arr[$keys[0]]);
+            $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUserId($arr[$keys[1]]);
+            $this->setActivityId($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setUserId($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setRoleId($arr[$keys[3]]);
         }
     }
 
@@ -905,7 +1067,7 @@ abstract class UserNav implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Perfumerlabs\Start\Model\UserNav The current object, for fluid interface
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -925,13 +1087,19 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(UserNavTableMap::DATABASE_NAME);
+        $criteria = new Criteria(ActivityAccessTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(UserNavTableMap::COL_NAV_ID)) {
-            $criteria->add(UserNavTableMap::COL_NAV_ID, $this->nav_id);
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_ID)) {
+            $criteria->add(ActivityAccessTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(UserNavTableMap::COL_USER_ID)) {
-            $criteria->add(UserNavTableMap::COL_USER_ID, $this->user_id);
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_ACTIVITY_ID)) {
+            $criteria->add(ActivityAccessTableMap::COL_ACTIVITY_ID, $this->activity_id);
+        }
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_USER_ID)) {
+            $criteria->add(ActivityAccessTableMap::COL_USER_ID, $this->user_id);
+        }
+        if ($this->isColumnModified(ActivityAccessTableMap::COL_ROLE_ID)) {
+            $criteria->add(ActivityAccessTableMap::COL_ROLE_ID, $this->role_id);
         }
 
         return $criteria;
@@ -949,9 +1117,8 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildUserNavQuery::create();
-        $criteria->add(UserNavTableMap::COL_NAV_ID, $this->nav_id);
-        $criteria->add(UserNavTableMap::COL_USER_ID, $this->user_id);
+        $criteria = ChildActivityAccessQuery::create();
+        $criteria->add(ActivityAccessTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -964,25 +1131,10 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function hashCode()
     {
-        $validPk = null !== $this->getNavId() &&
-            null !== $this->getUserId();
+        $validPk = null !== $this->getId();
 
-        $validPrimaryKeyFKs = 2;
+        $validPrimaryKeyFKs = 0;
         $primaryKeyFKs = [];
-
-        //relation user_nav_fk_5804d8 to table _user
-        if ($this->aUser && $hash = spl_object_hash($this->aUser)) {
-            $primaryKeyFKs[] = $hash;
-        } else {
-            $validPrimaryKeyFKs = false;
-        }
-
-        //relation user_nav_fk_e124f1 to table nav
-        if ($this->aNav && $hash = spl_object_hash($this->aNav)) {
-            $primaryKeyFKs[] = $hash;
-        } else {
-            $validPrimaryKeyFKs = false;
-        }
 
         if ($validPk) {
             return crc32(json_encode($this->getPrimaryKey(), JSON_UNESCAPED_UNICODE));
@@ -994,29 +1146,23 @@ abstract class UserNav implements ActiveRecordInterface
     }
 
     /**
-     * Returns the composite primary key for this object.
-     * The array elements will be in same order as specified in XML.
-     * @return array
+     * Returns the primary key for this object (row).
+     * @return int
      */
     public function getPrimaryKey()
     {
-        $pks = array();
-        $pks[0] = $this->getNavId();
-        $pks[1] = $this->getUserId();
-
-        return $pks;
+        return $this->getId();
     }
 
     /**
-     * Set the [composite] primary key.
+     * Generic method to set the primary key (id column).
      *
-     * @param      array $keys The elements of the composite key (order must match the order in XML file).
+     * @param       int $key Primary key.
      * @return void
      */
-    public function setPrimaryKey($keys)
+    public function setPrimaryKey($key)
     {
-        $this->setNavId($keys[0]);
-        $this->setUserId($keys[1]);
+        $this->setId($key);
     }
 
     /**
@@ -1025,7 +1171,7 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-        return (null === $this->getNavId()) && (null === $this->getUserId());
+        return null === $this->getId();
     }
 
     /**
@@ -1034,17 +1180,19 @@ abstract class UserNav implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\UserNav (or compatible) type.
+     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\ActivityAccess (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setNavId($this->getNavId());
+        $copyObj->setActivityId($this->getActivityId());
         $copyObj->setUserId($this->getUserId());
+        $copyObj->setRoleId($this->getRoleId());
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1057,7 +1205,7 @@ abstract class UserNav implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Perfumerlabs\Start\Model\UserNav Clone of current object.
+     * @return \Perfumerlabs\Start\Model\ActivityAccess Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1071,10 +1219,61 @@ abstract class UserNav implements ActiveRecordInterface
     }
 
     /**
+     * Declares an association between this object and a Role object.
+     *
+     * @param  Role $v
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setRole(Role $v = null)
+    {
+        if ($v === null) {
+            $this->setRoleId(NULL);
+        } else {
+            $this->setRoleId($v->getId());
+        }
+
+        $this->aRole = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the Role object, it will not be re-added.
+        if ($v !== null) {
+            $v->addActivityAccess($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated Role object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return Role The associated Role object.
+     * @throws PropelException
+     */
+    public function getRole(ConnectionInterface $con = null)
+    {
+        if ($this->aRole === null && ($this->role_id !== null)) {
+            $this->aRole = RoleQuery::create()->findPk($this->role_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aRole->addActivityAccesses($this);
+             */
+        }
+
+        return $this->aRole;
+    }
+
+    /**
      * Declares an association between this object and a User object.
      *
      * @param  User $v
-     * @return $this|\Perfumerlabs\Start\Model\UserNav The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
      * @throws PropelException
      */
     public function setUser(User $v = null)
@@ -1090,7 +1289,7 @@ abstract class UserNav implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the User object, it will not be re-added.
         if ($v !== null) {
-            $v->addUserNav($this);
+            $v->addActivityAccess($this);
         }
 
 
@@ -1114,7 +1313,7 @@ abstract class UserNav implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aUser->addUserNavs($this);
+                $this->aUser->addActivityAccesses($this);
              */
         }
 
@@ -1122,26 +1321,26 @@ abstract class UserNav implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildNav object.
+     * Declares an association between this object and a ChildActivity object.
      *
-     * @param  ChildNav $v
-     * @return $this|\Perfumerlabs\Start\Model\UserNav The current object (for fluent API support)
+     * @param  ChildActivity $v
+     * @return $this|\Perfumerlabs\Start\Model\ActivityAccess The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setNav(ChildNav $v = null)
+    public function setActivity(ChildActivity $v = null)
     {
         if ($v === null) {
-            $this->setNavId(NULL);
+            $this->setActivityId(NULL);
         } else {
-            $this->setNavId($v->getId());
+            $this->setActivityId($v->getId());
         }
 
-        $this->aNav = $v;
+        $this->aActivity = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildNav object, it will not be re-added.
+        // If this object has already been added to the ChildActivity object, it will not be re-added.
         if ($v !== null) {
-            $v->addUserNav($this);
+            $v->addActivityAccess($this);
         }
 
 
@@ -1150,26 +1349,26 @@ abstract class UserNav implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildNav object
+     * Get the associated ChildActivity object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildNav The associated ChildNav object.
+     * @return ChildActivity The associated ChildActivity object.
      * @throws PropelException
      */
-    public function getNav(ConnectionInterface $con = null)
+    public function getActivity(ConnectionInterface $con = null)
     {
-        if ($this->aNav === null && ($this->nav_id !== null)) {
-            $this->aNav = ChildNavQuery::create()->findPk($this->nav_id, $con);
+        if ($this->aActivity === null && ($this->activity_id !== null)) {
+            $this->aActivity = ChildActivityQuery::create()->findPk($this->activity_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aNav->addUserNavs($this);
+                $this->aActivity->addActivityAccesses($this);
              */
         }
 
-        return $this->aNav;
+        return $this->aActivity;
     }
 
     /**
@@ -1179,14 +1378,19 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function clear()
     {
+        if (null !== $this->aRole) {
+            $this->aRole->removeActivityAccess($this);
+        }
         if (null !== $this->aUser) {
-            $this->aUser->removeUserNav($this);
+            $this->aUser->removeActivityAccess($this);
         }
-        if (null !== $this->aNav) {
-            $this->aNav->removeUserNav($this);
+        if (null !== $this->aActivity) {
+            $this->aActivity->removeActivityAccess($this);
         }
-        $this->nav_id = null;
+        $this->id = null;
+        $this->activity_id = null;
         $this->user_id = null;
+        $this->role_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1207,8 +1411,9 @@ abstract class UserNav implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
+        $this->aRole = null;
         $this->aUser = null;
-        $this->aNav = null;
+        $this->aActivity = null;
     }
 
     /**
@@ -1218,7 +1423,7 @@ abstract class UserNav implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(UserNavTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(ActivityAccessTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

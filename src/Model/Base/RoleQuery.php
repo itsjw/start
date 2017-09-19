@@ -7,7 +7,8 @@ use \PDO;
 use App\Model\Role as ChildRole;
 use App\Model\RoleQuery as ChildRoleQuery;
 use App\Model\Map\RoleTableMap;
-use Perfumerlabs\Start\Model\Schedule;
+use Perfumerlabs\Start\Model\ActivityAccess;
+use Perfumerlabs\Start\Model\NavAccess;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -47,17 +48,27 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildRoleQuery rightJoinWithUserRole() Adds a RIGHT JOIN clause and with to the query using the UserRole relation
  * @method     ChildRoleQuery innerJoinWithUserRole() Adds a INNER JOIN clause and with to the query using the UserRole relation
  *
- * @method     ChildRoleQuery leftJoinSchedule($relationAlias = null) Adds a LEFT JOIN clause to the query using the Schedule relation
- * @method     ChildRoleQuery rightJoinSchedule($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Schedule relation
- * @method     ChildRoleQuery innerJoinSchedule($relationAlias = null) Adds a INNER JOIN clause to the query using the Schedule relation
+ * @method     ChildRoleQuery leftJoinNavAccess($relationAlias = null) Adds a LEFT JOIN clause to the query using the NavAccess relation
+ * @method     ChildRoleQuery rightJoinNavAccess($relationAlias = null) Adds a RIGHT JOIN clause to the query using the NavAccess relation
+ * @method     ChildRoleQuery innerJoinNavAccess($relationAlias = null) Adds a INNER JOIN clause to the query using the NavAccess relation
  *
- * @method     ChildRoleQuery joinWithSchedule($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Schedule relation
+ * @method     ChildRoleQuery joinWithNavAccess($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the NavAccess relation
  *
- * @method     ChildRoleQuery leftJoinWithSchedule() Adds a LEFT JOIN clause and with to the query using the Schedule relation
- * @method     ChildRoleQuery rightJoinWithSchedule() Adds a RIGHT JOIN clause and with to the query using the Schedule relation
- * @method     ChildRoleQuery innerJoinWithSchedule() Adds a INNER JOIN clause and with to the query using the Schedule relation
+ * @method     ChildRoleQuery leftJoinWithNavAccess() Adds a LEFT JOIN clause and with to the query using the NavAccess relation
+ * @method     ChildRoleQuery rightJoinWithNavAccess() Adds a RIGHT JOIN clause and with to the query using the NavAccess relation
+ * @method     ChildRoleQuery innerJoinWithNavAccess() Adds a INNER JOIN clause and with to the query using the NavAccess relation
  *
- * @method     \App\Model\UserRoleQuery|\Perfumerlabs\Start\Model\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildRoleQuery leftJoinActivityAccess($relationAlias = null) Adds a LEFT JOIN clause to the query using the ActivityAccess relation
+ * @method     ChildRoleQuery rightJoinActivityAccess($relationAlias = null) Adds a RIGHT JOIN clause to the query using the ActivityAccess relation
+ * @method     ChildRoleQuery innerJoinActivityAccess($relationAlias = null) Adds a INNER JOIN clause to the query using the ActivityAccess relation
+ *
+ * @method     ChildRoleQuery joinWithActivityAccess($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the ActivityAccess relation
+ *
+ * @method     ChildRoleQuery leftJoinWithActivityAccess() Adds a LEFT JOIN clause and with to the query using the ActivityAccess relation
+ * @method     ChildRoleQuery rightJoinWithActivityAccess() Adds a RIGHT JOIN clause and with to the query using the ActivityAccess relation
+ * @method     ChildRoleQuery innerJoinWithActivityAccess() Adds a INNER JOIN clause and with to the query using the ActivityAccess relation
+ *
+ * @method     \App\Model\UserRoleQuery|\Perfumerlabs\Start\Model\NavAccessQuery|\Perfumerlabs\Start\Model\ActivityAccessQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildRole findOne(ConnectionInterface $con = null) Return the first ChildRole matching the query
  * @method     ChildRole findOneOrCreate(ConnectionInterface $con = null) Return the first ChildRole matching the query, or a new ChildRole object populated from the query conditions when no match is found
@@ -430,40 +441,40 @@ abstract class RoleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Perfumerlabs\Start\Model\Schedule object
+     * Filter the query by a related \Perfumerlabs\Start\Model\NavAccess object
      *
-     * @param \Perfumerlabs\Start\Model\Schedule|ObjectCollection $schedule the related object to use as filter
+     * @param \Perfumerlabs\Start\Model\NavAccess|ObjectCollection $navAccess the related object to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildRoleQuery The current query, for fluid interface
      */
-    public function filterBySchedule($schedule, $comparison = null)
+    public function filterByNavAccess($navAccess, $comparison = null)
     {
-        if ($schedule instanceof \Perfumerlabs\Start\Model\Schedule) {
+        if ($navAccess instanceof \Perfumerlabs\Start\Model\NavAccess) {
             return $this
-                ->addUsingAlias(RoleTableMap::COL_ID, $schedule->getRoleId(), $comparison);
-        } elseif ($schedule instanceof ObjectCollection) {
+                ->addUsingAlias(RoleTableMap::COL_ID, $navAccess->getRoleId(), $comparison);
+        } elseif ($navAccess instanceof ObjectCollection) {
             return $this
-                ->useScheduleQuery()
-                ->filterByPrimaryKeys($schedule->getPrimaryKeys())
+                ->useNavAccessQuery()
+                ->filterByPrimaryKeys($navAccess->getPrimaryKeys())
                 ->endUse();
         } else {
-            throw new PropelException('filterBySchedule() only accepts arguments of type \Perfumerlabs\Start\Model\Schedule or Collection');
+            throw new PropelException('filterByNavAccess() only accepts arguments of type \Perfumerlabs\Start\Model\NavAccess or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Schedule relation
+     * Adds a JOIN clause to the query using the NavAccess relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return $this|ChildRoleQuery The current query, for fluid interface
      */
-    public function joinSchedule($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinNavAccess($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Schedule');
+        $relationMap = $tableMap->getRelation('NavAccess');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -478,14 +489,14 @@ abstract class RoleQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Schedule');
+            $this->addJoinObject($join, 'NavAccess');
         }
 
         return $this;
     }
 
     /**
-     * Use the Schedule relation Schedule object
+     * Use the NavAccess relation NavAccess object
      *
      * @see useQuery()
      *
@@ -493,13 +504,86 @@ abstract class RoleQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return \Perfumerlabs\Start\Model\ScheduleQuery A secondary query class using the current class as primary query
+     * @return \Perfumerlabs\Start\Model\NavAccessQuery A secondary query class using the current class as primary query
      */
-    public function useScheduleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useNavAccessQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
-            ->joinSchedule($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Schedule', '\Perfumerlabs\Start\Model\ScheduleQuery');
+            ->joinNavAccess($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'NavAccess', '\Perfumerlabs\Start\Model\NavAccessQuery');
+    }
+
+    /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\ActivityAccess object
+     *
+     * @param \Perfumerlabs\Start\Model\ActivityAccess|ObjectCollection $activityAccess the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildRoleQuery The current query, for fluid interface
+     */
+    public function filterByActivityAccess($activityAccess, $comparison = null)
+    {
+        if ($activityAccess instanceof \Perfumerlabs\Start\Model\ActivityAccess) {
+            return $this
+                ->addUsingAlias(RoleTableMap::COL_ID, $activityAccess->getRoleId(), $comparison);
+        } elseif ($activityAccess instanceof ObjectCollection) {
+            return $this
+                ->useActivityAccessQuery()
+                ->filterByPrimaryKeys($activityAccess->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByActivityAccess() only accepts arguments of type \Perfumerlabs\Start\Model\ActivityAccess or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the ActivityAccess relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildRoleQuery The current query, for fluid interface
+     */
+    public function joinActivityAccess($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('ActivityAccess');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'ActivityAccess');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the ActivityAccess relation ActivityAccess object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\ActivityAccessQuery A secondary query class using the current class as primary query
+     */
+    public function useActivityAccessQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinActivityAccess($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'ActivityAccess', '\Perfumerlabs\Start\Model\ActivityAccessQuery');
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace Perfumerlabs\Start\Model;
 
-use Perfumerlabs\Start\Model\Base\UserNavQuery as BaseUserNavQuery;
+use Perfumerlabs\Start\Model\Base\NavAccess as BaseNavAccess;
 
 /**
- * Skeleton subclass for performing query and update operations on the 'user_nav' table.
+ * Skeleton subclass for representing a row from the 'nav_access' table.
  *
  *
  *
@@ -14,7 +14,7 @@ use Perfumerlabs\Start\Model\Base\UserNavQuery as BaseUserNavQuery;
  * long as it does not already exist in the output directory.
  *
  */
-class UserNavQuery extends BaseUserNavQuery
+class NavAccess extends BaseNavAccess
 {
 
 }

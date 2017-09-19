@@ -6,10 +6,12 @@ use \Exception;
 use \PDO;
 use App\Model\Role;
 use App\Model\RoleQuery;
-use Perfumerlabs\Start\Model\Activity as ChildActivity;
-use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
-use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
-use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
+use App\Model\User;
+use App\Model\UserQuery;
+use Perfumerlabs\Start\Model\Nav as ChildNav;
+use Perfumerlabs\Start\Model\NavAccessQuery as ChildNavAccessQuery;
+use Perfumerlabs\Start\Model\NavQuery as ChildNavQuery;
+use Perfumerlabs\Start\Model\Map\NavAccessTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -23,18 +25,18 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'schedule' table.
+ * Base class that represents a row from the 'nav_access' table.
  *
  *
  *
  * @package    propel.generator..Base
  */
-abstract class Schedule implements ActiveRecordInterface
+abstract class NavAccess implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\ScheduleTableMap';
+    const TABLE_MAP = '\\Perfumerlabs\\Start\\Model\\Map\\NavAccessTableMap';
 
 
     /**
@@ -71,6 +73,20 @@ abstract class Schedule implements ActiveRecordInterface
     protected $id;
 
     /**
+     * The value for the nav_id field.
+     *
+     * @var        int
+     */
+    protected $nav_id;
+
+    /**
+     * The value for the user_id field.
+     *
+     * @var        int
+     */
+    protected $user_id;
+
+    /**
      * The value for the role_id field.
      *
      * @var        int
@@ -78,21 +94,19 @@ abstract class Schedule implements ActiveRecordInterface
     protected $role_id;
 
     /**
-     * The value for the activity_id field.
-     *
-     * @var        int
-     */
-    protected $activity_id;
-
-    /**
      * @var        Role
      */
     protected $aRole;
 
     /**
-     * @var        ChildActivity
+     * @var        User
      */
-    protected $aActivity;
+    protected $aUser;
+
+    /**
+     * @var        ChildNav
+     */
+    protected $aNav;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -103,7 +117,7 @@ abstract class Schedule implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Perfumerlabs\Start\Model\Base\Schedule object.
+     * Initializes internal state of Perfumerlabs\Start\Model\Base\NavAccess object.
      */
     public function __construct()
     {
@@ -198,9 +212,9 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Schedule</code> instance.  If
-     * <code>obj</code> is an instance of <code>Schedule</code>, delegates to
-     * <code>equals(Schedule)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>NavAccess</code> instance.  If
+     * <code>obj</code> is an instance of <code>NavAccess</code>, delegates to
+     * <code>equals(NavAccess)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -266,7 +280,7 @@ abstract class Schedule implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return $this|Schedule The current object, for fluid interface
+     * @return $this|NavAccess The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -338,6 +352,26 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
+     * Get the [nav_id] column value.
+     *
+     * @return int
+     */
+    public function getNavId()
+    {
+        return $this->nav_id;
+    }
+
+    /**
+     * Get the [user_id] column value.
+     *
+     * @return int
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
      * Get the [role_id] column value.
      *
      * @return int
@@ -348,20 +382,10 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Get the [activity_id] column value.
-     *
-     * @return int
-     */
-    public function getActivityId()
-    {
-        return $this->activity_id;
-    }
-
-    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -371,17 +395,65 @@ abstract class Schedule implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[ScheduleTableMap::COL_ID] = true;
+            $this->modifiedColumns[NavAccessTableMap::COL_ID] = true;
         }
 
         return $this;
     } // setId()
 
     /**
+     * Set the value of [nav_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
+     */
+    public function setNavId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->nav_id !== $v) {
+            $this->nav_id = $v;
+            $this->modifiedColumns[NavAccessTableMap::COL_NAV_ID] = true;
+        }
+
+        if ($this->aNav !== null && $this->aNav->getId() !== $v) {
+            $this->aNav = null;
+        }
+
+        return $this;
+    } // setNavId()
+
+    /**
+     * Set the value of [user_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
+     */
+    public function setUserId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->user_id !== $v) {
+            $this->user_id = $v;
+            $this->modifiedColumns[NavAccessTableMap::COL_USER_ID] = true;
+        }
+
+        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
+            $this->aUser = null;
+        }
+
+        return $this;
+    } // setUserId()
+
+    /**
      * Set the value of [role_id] column.
      *
      * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
      */
     public function setRoleId($v)
     {
@@ -391,7 +463,7 @@ abstract class Schedule implements ActiveRecordInterface
 
         if ($this->role_id !== $v) {
             $this->role_id = $v;
-            $this->modifiedColumns[ScheduleTableMap::COL_ROLE_ID] = true;
+            $this->modifiedColumns[NavAccessTableMap::COL_ROLE_ID] = true;
         }
 
         if ($this->aRole !== null && $this->aRole->getId() !== $v) {
@@ -400,30 +472,6 @@ abstract class Schedule implements ActiveRecordInterface
 
         return $this;
     } // setRoleId()
-
-    /**
-     * Set the value of [activity_id] column.
-     *
-     * @param int $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
-     */
-    public function setActivityId($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->activity_id !== $v) {
-            $this->activity_id = $v;
-            $this->modifiedColumns[ScheduleTableMap::COL_ACTIVITY_ID] = true;
-        }
-
-        if ($this->aActivity !== null && $this->aActivity->getId() !== $v) {
-            $this->aActivity = null;
-        }
-
-        return $this;
-    } // setActivityId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -461,14 +509,17 @@ abstract class Schedule implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : ScheduleTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : NavAccessTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ScheduleTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->role_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : NavAccessTableMap::translateFieldName('NavId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->nav_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ScheduleTableMap::translateFieldName('ActivityId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->activity_id = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : NavAccessTableMap::translateFieldName('UserId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->user_id = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : NavAccessTableMap::translateFieldName('RoleId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->role_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -477,10 +528,10 @@ abstract class Schedule implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = ScheduleTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = NavAccessTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Schedule'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\NavAccess'), 0, $e);
         }
     }
 
@@ -499,11 +550,14 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aNav !== null && $this->nav_id !== $this->aNav->getId()) {
+            $this->aNav = null;
+        }
+        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
+            $this->aUser = null;
+        }
         if ($this->aRole !== null && $this->role_id !== $this->aRole->getId()) {
             $this->aRole = null;
-        }
-        if ($this->aActivity !== null && $this->activity_id !== $this->aActivity->getId()) {
-            $this->aActivity = null;
         }
     } // ensureConsistency
 
@@ -528,13 +582,13 @@ abstract class Schedule implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(ScheduleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(NavAccessTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildScheduleQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildNavAccessQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -545,7 +599,8 @@ abstract class Schedule implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aRole = null;
-            $this->aActivity = null;
+            $this->aUser = null;
+            $this->aNav = null;
         } // if (deep)
     }
 
@@ -555,8 +610,8 @@ abstract class Schedule implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see Schedule::setDeleted()
-     * @see Schedule::isDeleted()
+     * @see NavAccess::setDeleted()
+     * @see NavAccess::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -565,11 +620,11 @@ abstract class Schedule implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(NavAccessTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildScheduleQuery::create()
+            $deleteQuery = ChildNavAccessQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -604,7 +659,7 @@ abstract class Schedule implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(ScheduleTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(NavAccessTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -623,7 +678,7 @@ abstract class Schedule implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                ScheduleTableMap::addInstanceToPool($this);
+                NavAccessTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -661,11 +716,18 @@ abstract class Schedule implements ActiveRecordInterface
                 $this->setRole($this->aRole);
             }
 
-            if ($this->aActivity !== null) {
-                if ($this->aActivity->isModified() || $this->aActivity->isNew()) {
-                    $affectedRows += $this->aActivity->save($con);
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
                 }
-                $this->setActivity($this->aActivity);
+                $this->setUser($this->aUser);
+            }
+
+            if ($this->aNav !== null) {
+                if ($this->aNav->isModified() || $this->aNav->isNew()) {
+                    $affectedRows += $this->aNav->save($con);
+                }
+                $this->setNav($this->aNav);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -699,13 +761,13 @@ abstract class Schedule implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
-        $this->modifiedColumns[ScheduleTableMap::COL_ID] = true;
+        $this->modifiedColumns[NavAccessTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . ScheduleTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . NavAccessTableMap::COL_ID . ')');
         }
         if (null === $this->id) {
             try {
-                $dataFetcher = $con->query("SELECT nextval('schedule_id_seq')");
+                $dataFetcher = $con->query("SELECT nextval('nav_access_id_seq')");
                 $this->id = (int) $dataFetcher->fetchColumn();
             } catch (Exception $e) {
                 throw new PropelException('Unable to get sequence id.', 0, $e);
@@ -714,18 +776,21 @@ abstract class Schedule implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(ScheduleTableMap::COL_ID)) {
+        if ($this->isColumnModified(NavAccessTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'id';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ROLE_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'role_id';
+        if ($this->isColumnModified(NavAccessTableMap::COL_NAV_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'nav_id';
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITY_ID)) {
-            $modifiedColumns[':p' . $index++]  = 'activity_id';
+        if ($this->isColumnModified(NavAccessTableMap::COL_USER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'user_id';
+        }
+        if ($this->isColumnModified(NavAccessTableMap::COL_ROLE_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'role_id';
         }
 
         $sql = sprintf(
-            'INSERT INTO schedule (%s) VALUES (%s)',
+            'INSERT INTO nav_access (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -737,11 +802,14 @@ abstract class Schedule implements ActiveRecordInterface
                     case 'id':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
+                    case 'nav_id':
+                        $stmt->bindValue($identifier, $this->nav_id, PDO::PARAM_INT);
+                        break;
+                    case 'user_id':
+                        $stmt->bindValue($identifier, $this->user_id, PDO::PARAM_INT);
+                        break;
                     case 'role_id':
                         $stmt->bindValue($identifier, $this->role_id, PDO::PARAM_INT);
-                        break;
-                    case 'activity_id':
-                        $stmt->bindValue($identifier, $this->activity_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -782,7 +850,7 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ScheduleTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = NavAccessTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -802,10 +870,13 @@ abstract class Schedule implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getRoleId();
+                return $this->getNavId();
                 break;
             case 2:
-                return $this->getActivityId();
+                return $this->getUserId();
+                break;
+            case 3:
+                return $this->getRoleId();
                 break;
             default:
                 return null;
@@ -831,15 +902,16 @@ abstract class Schedule implements ActiveRecordInterface
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
 
-        if (isset($alreadyDumpedObjects['Schedule'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['NavAccess'][$this->hashCode()])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['Schedule'][$this->hashCode()] = true;
-        $keys = ScheduleTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['NavAccess'][$this->hashCode()] = true;
+        $keys = NavAccessTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getRoleId(),
-            $keys[2] => $this->getActivityId(),
+            $keys[1] => $this->getNavId(),
+            $keys[2] => $this->getUserId(),
+            $keys[3] => $this->getRoleId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -862,20 +934,35 @@ abstract class Schedule implements ActiveRecordInterface
 
                 $result[$key] = $this->aRole->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
-            if (null !== $this->aActivity) {
+            if (null !== $this->aUser) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'activity';
+                        $key = 'user';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'activity';
+                        $key = '_user';
                         break;
                     default:
-                        $key = 'Activity';
+                        $key = 'User';
                 }
 
-                $result[$key] = $this->aActivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aNav) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'nav';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'nav';
+                        break;
+                    default:
+                        $key = 'Nav';
+                }
+
+                $result[$key] = $this->aNav->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -891,11 +978,11 @@ abstract class Schedule implements ActiveRecordInterface
      *                one of the class type constants TableMap::TYPE_PHPNAME, TableMap::TYPE_CAMELNAME
      *                TableMap::TYPE_COLNAME, TableMap::TYPE_FIELDNAME, TableMap::TYPE_NUM.
      *                Defaults to TableMap::TYPE_PHPNAME.
-     * @return $this|\Perfumerlabs\Start\Model\Schedule
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = ScheduleTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = NavAccessTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -906,7 +993,7 @@ abstract class Schedule implements ActiveRecordInterface
      *
      * @param  int $pos position in xml schema
      * @param  mixed $value field value
-     * @return $this|\Perfumerlabs\Start\Model\Schedule
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess
      */
     public function setByPosition($pos, $value)
     {
@@ -915,10 +1002,13 @@ abstract class Schedule implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setRoleId($value);
+                $this->setNavId($value);
                 break;
             case 2:
-                $this->setActivityId($value);
+                $this->setUserId($value);
+                break;
+            case 3:
+                $this->setRoleId($value);
                 break;
         } // switch()
 
@@ -944,16 +1034,19 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = ScheduleTableMap::getFieldNames($keyType);
+        $keys = NavAccessTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setRoleId($arr[$keys[1]]);
+            $this->setNavId($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setActivityId($arr[$keys[2]]);
+            $this->setUserId($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setRoleId($arr[$keys[3]]);
         }
     }
 
@@ -974,7 +1067,7 @@ abstract class Schedule implements ActiveRecordInterface
      * @param string $data The source data to import from
      * @param string $keyType The type of keys the array uses.
      *
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object, for fluid interface
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object, for fluid interface
      */
     public function importFrom($parser, $data, $keyType = TableMap::TYPE_PHPNAME)
     {
@@ -994,16 +1087,19 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(ScheduleTableMap::DATABASE_NAME);
+        $criteria = new Criteria(NavAccessTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(ScheduleTableMap::COL_ID)) {
-            $criteria->add(ScheduleTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(NavAccessTableMap::COL_ID)) {
+            $criteria->add(NavAccessTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ROLE_ID)) {
-            $criteria->add(ScheduleTableMap::COL_ROLE_ID, $this->role_id);
+        if ($this->isColumnModified(NavAccessTableMap::COL_NAV_ID)) {
+            $criteria->add(NavAccessTableMap::COL_NAV_ID, $this->nav_id);
         }
-        if ($this->isColumnModified(ScheduleTableMap::COL_ACTIVITY_ID)) {
-            $criteria->add(ScheduleTableMap::COL_ACTIVITY_ID, $this->activity_id);
+        if ($this->isColumnModified(NavAccessTableMap::COL_USER_ID)) {
+            $criteria->add(NavAccessTableMap::COL_USER_ID, $this->user_id);
+        }
+        if ($this->isColumnModified(NavAccessTableMap::COL_ROLE_ID)) {
+            $criteria->add(NavAccessTableMap::COL_ROLE_ID, $this->role_id);
         }
 
         return $criteria;
@@ -1021,8 +1117,8 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = ChildScheduleQuery::create();
-        $criteria->add(ScheduleTableMap::COL_ID, $this->id);
+        $criteria = ChildNavAccessQuery::create();
+        $criteria->add(NavAccessTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1084,15 +1180,16 @@ abstract class Schedule implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\Schedule (or compatible) type.
+     * @param      object $copyObj An object of \Perfumerlabs\Start\Model\NavAccess (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setNavId($this->getNavId());
+        $copyObj->setUserId($this->getUserId());
         $copyObj->setRoleId($this->getRoleId());
-        $copyObj->setActivityId($this->getActivityId());
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1108,7 +1205,7 @@ abstract class Schedule implements ActiveRecordInterface
      * objects.
      *
      * @param  boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Perfumerlabs\Start\Model\Schedule Clone of current object.
+     * @return \Perfumerlabs\Start\Model\NavAccess Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1125,7 +1222,7 @@ abstract class Schedule implements ActiveRecordInterface
      * Declares an association between this object and a Role object.
      *
      * @param  Role $v
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
      * @throws PropelException
      */
     public function setRole(Role $v = null)
@@ -1141,7 +1238,7 @@ abstract class Schedule implements ActiveRecordInterface
         // Add binding for other direction of this n:n relationship.
         // If this object has already been added to the Role object, it will not be re-added.
         if ($v !== null) {
-            $v->addSchedule($this);
+            $v->addNavAccess($this);
         }
 
 
@@ -1165,7 +1262,7 @@ abstract class Schedule implements ActiveRecordInterface
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aRole->addSchedules($this);
+                $this->aRole->addNavAccesses($this);
              */
         }
 
@@ -1173,26 +1270,26 @@ abstract class Schedule implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildActivity object.
+     * Declares an association between this object and a User object.
      *
-     * @param  ChildActivity $v
-     * @return $this|\Perfumerlabs\Start\Model\Schedule The current object (for fluent API support)
+     * @param  User $v
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setActivity(ChildActivity $v = null)
+    public function setUser(User $v = null)
     {
         if ($v === null) {
-            $this->setActivityId(NULL);
+            $this->setUserId(NULL);
         } else {
-            $this->setActivityId($v->getId());
+            $this->setUserId($v->getId());
         }
 
-        $this->aActivity = $v;
+        $this->aUser = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildActivity object, it will not be re-added.
+        // If this object has already been added to the User object, it will not be re-added.
         if ($v !== null) {
-            $v->addSchedule($this);
+            $v->addNavAccess($this);
         }
 
 
@@ -1201,26 +1298,77 @@ abstract class Schedule implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildActivity object
+     * Get the associated User object
      *
      * @param  ConnectionInterface $con Optional Connection object.
-     * @return ChildActivity The associated ChildActivity object.
+     * @return User The associated User object.
      * @throws PropelException
      */
-    public function getActivity(ConnectionInterface $con = null)
+    public function getUser(ConnectionInterface $con = null)
     {
-        if ($this->aActivity === null && ($this->activity_id !== null)) {
-            $this->aActivity = ChildActivityQuery::create()->findPk($this->activity_id, $con);
+        if ($this->aUser === null && ($this->user_id !== null)) {
+            $this->aUser = UserQuery::create()->findPk($this->user_id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aActivity->addSchedules($this);
+                $this->aUser->addNavAccesses($this);
              */
         }
 
-        return $this->aActivity;
+        return $this->aUser;
+    }
+
+    /**
+     * Declares an association between this object and a ChildNav object.
+     *
+     * @param  ChildNav $v
+     * @return $this|\Perfumerlabs\Start\Model\NavAccess The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setNav(ChildNav $v = null)
+    {
+        if ($v === null) {
+            $this->setNavId(NULL);
+        } else {
+            $this->setNavId($v->getId());
+        }
+
+        $this->aNav = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildNav object, it will not be re-added.
+        if ($v !== null) {
+            $v->addNavAccess($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildNav object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildNav The associated ChildNav object.
+     * @throws PropelException
+     */
+    public function getNav(ConnectionInterface $con = null)
+    {
+        if ($this->aNav === null && ($this->nav_id !== null)) {
+            $this->aNav = ChildNavQuery::create()->findPk($this->nav_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aNav->addNavAccesses($this);
+             */
+        }
+
+        return $this->aNav;
     }
 
     /**
@@ -1231,14 +1379,18 @@ abstract class Schedule implements ActiveRecordInterface
     public function clear()
     {
         if (null !== $this->aRole) {
-            $this->aRole->removeSchedule($this);
+            $this->aRole->removeNavAccess($this);
         }
-        if (null !== $this->aActivity) {
-            $this->aActivity->removeSchedule($this);
+        if (null !== $this->aUser) {
+            $this->aUser->removeNavAccess($this);
+        }
+        if (null !== $this->aNav) {
+            $this->aNav->removeNavAccess($this);
         }
         $this->id = null;
+        $this->nav_id = null;
+        $this->user_id = null;
         $this->role_id = null;
-        $this->activity_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1260,7 +1412,8 @@ abstract class Schedule implements ActiveRecordInterface
         } // if ($deep)
 
         $this->aRole = null;
-        $this->aActivity = null;
+        $this->aUser = null;
+        $this->aNav = null;
     }
 
     /**
@@ -1270,7 +1423,7 @@ abstract class Schedule implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(ScheduleTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(NavAccessTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

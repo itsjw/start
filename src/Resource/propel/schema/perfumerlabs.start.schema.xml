@@ -46,9 +46,14 @@
         </foreign-key>
     </table>
 
-    <table name="user_nav" isCrossRef="true" namespace="\Perfumerlabs\Start\Model">
-        <column name="nav_id" type="integer" primaryKey="true"/>
-        <column name="user_id" type="integer" primaryKey="true"/>
+    <table name="nav_access" phpName="NavAccess" namespace="\Perfumerlabs\Start\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="nav_id" type="integer" required="true"/>
+        <column name="user_id" type="integer"/>
+        <column name="role_id" type="integer"/>
+        <foreign-key foreignTable="_role" onDelete="CASCADE">
+            <reference local="role_id" foreign="id"/>
+        </foreign-key>
         <foreign-key foreignTable="_user" onDelete="CASCADE">
             <reference local="user_id" foreign="id"/>
         </foreign-key>
@@ -57,12 +62,16 @@
         </foreign-key>
     </table>
 
-    <table name="schedule" phpName="Schedule" namespace="\Perfumerlabs\Start\Model">
+    <table name="activity_access" phpName="ActivityAccess" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="activity_id" type="integer" required="true"/>
+        <column name="user_id" type="integer"/>
         <column name="role_id" type="integer"/>
-        <column name="activity_id" type="integer"/>
         <foreign-key foreignTable="_role" onDelete="CASCADE">
             <reference local="role_id" foreign="id"/>
+        </foreign-key>
+        <foreign-key foreignTable="_user" onDelete="CASCADE">
+            <reference local="user_id" foreign="id"/>
         </foreign-key>
         <foreign-key foreignTable="activity" onDelete="CASCADE">
             <reference local="activity_id" foreign="id"/>

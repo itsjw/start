@@ -4,7 +4,8 @@ namespace App\Model\Map;
 
 use App\Model\User;
 use App\Model\UserQuery;
-use Perfumerlabs\Start\Model\Map\UserNavTableMap;
+use Perfumerlabs\Start\Model\Map\ActivityAccessTableMap;
+use Perfumerlabs\Start\Model\Map\NavAccessTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -199,15 +200,21 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Duties', false);
-        $this->addRelation('UserNav', '\\Perfumerlabs\\Start\\Model\\UserNav', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('NavAccess', '\\Perfumerlabs\\Start\\Model\\NavAccess', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':user_id',
     1 => ':id',
   ),
-), 'CASCADE', null, 'UserNavs', false);
+), 'CASCADE', null, 'NavAccesses', false);
+        $this->addRelation('ActivityAccess', '\\Perfumerlabs\\Start\\Model\\ActivityAccess', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), 'CASCADE', null, 'ActivityAccesses', false);
         $this->addRelation('Role', '\\App\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
-        $this->addRelation('Nav', '\\Perfumerlabs\\Start\\Model\\Nav', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Navs');
     } // buildRelations()
 
     /**
@@ -230,7 +237,8 @@ class UserTableMap extends TableMap
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
         UserRoleTableMap::clearInstancePool();
-        UserNavTableMap::clearInstancePool();
+        NavAccessTableMap::clearInstancePool();
+        ActivityAccessTableMap::clearInstancePool();
     }
 
     /**
