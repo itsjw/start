@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACE,iBAAY;EAAE,aAAa,EAAE,CAAC;AAC9B,kBAAa;EAAE,MAAM,EAAE,OAAO",
+"sources": ["../../../app/scss/activity/navs.scss"],
+"names": [],
+"file": "navs.css"
+}

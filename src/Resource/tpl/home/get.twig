@@ -18,8 +18,12 @@
 <div id="container">
     <div id="navbar" v-cloak>
         <div class="navbar-left">
-            {% for toolbar in toolbars %}
-                <span class="create-duty" @click="createDuty({{ toolbar.id }})">{{ toolbar.toolbar }}</span>
+            {% for nav in navs %}
+                {% if nav.activityId %}
+                    <span class="create-duty" @click="createDuty({{ nav.activityId }})">{{ nav.name }}</span>
+                {% else %}
+                    <span class="create-duty"><a href="{{ nav.link }}" target="_blank">{{ nav.name }}</a></span>
+                {% endif %}
             {% endfor %}
         </div>
 

@@ -4,6 +4,7 @@ namespace Perfumerlabs\Start\Controller;
 
 use Perfumer\Framework\Controller\TemplateController;
 use Perfumerlabs\Start\Model\ActivityQuery;
+use Perfumerlabs\Start\Model\NavQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 class HomeController extends TemplateController
@@ -14,13 +15,15 @@ class HomeController extends TemplateController
             $this->redirect('/login');
         }
 
-        $toolbars = ActivityQuery::create()
-            ->filterByToolbar(null, Criteria::ISNOTNULL)
-            ->orderByToolbar()
+        $navs = NavQuery::create()
+            ->useUserNavQuery()
+                ->filterByUserId((int) $this->getAuth()->getData())
+            ->endUse()
+            ->orderByPriority(Criteria::DESC)
             ->find();
 
         $this->getView()->addVars([
-            'toolbars' => $toolbars,
+            'navs' => $navs,
             'static_version' => $this->getStaticVersion()
         ]);
     }

@@ -6,7 +6,7 @@ html, body { height: 100%; width: 100% }
 #navbar {border-bottom: 1px solid #eeeeee; padding: 5px }
 #navbar > .navbar-left { float: left }
 #navbar > .navbar-right { float: right }
-#navbar a, #navbar span {color: #07c; text-decoration: none; cursor: pointer}
+#navbar a, #navbar span {color: #07c; text-decoration: none; cursor: pointer; margin-right: 15px }
 #navbar a:visited {color: #07c}
 #dashboard { width: 100%; flex: 1; padding: 10px 10px 0; margin: 0 auto; display: flex; flex-direction: row }
 #stickers-column { flex-direction: column; overflow-y: scroll }
