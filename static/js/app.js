@@ -10,6 +10,15 @@ var dashboard = new Vue({
         last_alert: 0
     },
     methods: {
+        getDutyIds: function () {
+            var ids = [];
+
+            for (i = 0; i < this.duties.length; i++) {
+                ids.push(this.duties[i].id);
+            }
+
+            return ids;
+        },
         toggleOnline: function () {
             this.online = !this.online;
         },
@@ -47,21 +56,23 @@ var dashboard = new Vue({
             }
 
             $this = this;
-            var have_ids = [];
-
-            for (i = 0; i < $this.duties.length; i++) {
-                have_ids.push($this.duties[i].id);
-            }
 
             var url = '/extra';
+            var have_ids = this.getDutyIds();
 
             if (have_ids.length > 0) {
                 url += '?have_ids=' + have_ids.join(',');
             }
 
             $this.$http.get(url).then(function(response) {
-                if (response.body.content) {
-                    for (i = 0; i < response.body.content.length; i++) {
+                var content = response.body.content;
+
+                if (content) {
+                    for (i = 0; i < content.length; i++) {
+                        if ($this.getDutyIds().indexOf(content[i].id) > -1) {
+                            continue;
+                        }
+
                         var process = (function (duty) {
                             return function () {
                                 if (duty.validation_url) {
@@ -92,7 +103,7 @@ var dashboard = new Vue({
                                     }
                                 }
                             }
-                        })(response.body.content[i]);
+                        })(content[i]);
 
                         process();
                     }
