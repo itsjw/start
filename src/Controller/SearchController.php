@@ -24,7 +24,7 @@ class SearchController extends ViewController
         if ($query) {
             $duties = DutyQuery::create()
                 ->joinWith('Activity')
-                ->filterByTag('%' . $query . '%', Criteria::ILIKE)
+                ->filterByDescription('%' . $query . '%', Criteria::ILIKE)
                 ->filterByClosedAt(null, Criteria::ISNULL)
                 ->filterByPickedAt(null, Criteria::ISNULL)
                 ->orderByRaisedAt()

@@ -293,7 +293,7 @@ var Duty = (function () {
         this.name = null;
         this.title = null;
         this.color = null;
-        this.tags = [];
+        this.description = '';
         this.comment = null;
         this.tmp_comment = null;
         this.iframe = null;
@@ -320,8 +320,8 @@ var Duty = (function () {
         if (object.color) {
             this.color = object.color;
         }
-        if (object.tags) {
-            this.tags = object.tags;
+        if (object.description) {
+            this.description = object.description;
         }
         if (object.comment) {
             this.comment = object.comment;
