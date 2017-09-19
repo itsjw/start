@@ -58,6 +58,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery rightJoinWithDuty() Adds a RIGHT JOIN clause and with to the query using the Duty relation
  * @method     ChildActivityQuery innerJoinWithDuty() Adds a INNER JOIN clause and with to the query using the Duty relation
  *
+ * @method     ChildActivityQuery leftJoinNav($relationAlias = null) Adds a LEFT JOIN clause to the query using the Nav relation
+ * @method     ChildActivityQuery rightJoinNav($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Nav relation
+ * @method     ChildActivityQuery innerJoinNav($relationAlias = null) Adds a INNER JOIN clause to the query using the Nav relation
+ *
+ * @method     ChildActivityQuery joinWithNav($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Nav relation
+ *
+ * @method     ChildActivityQuery leftJoinWithNav() Adds a LEFT JOIN clause and with to the query using the Nav relation
+ * @method     ChildActivityQuery rightJoinWithNav() Adds a RIGHT JOIN clause and with to the query using the Nav relation
+ * @method     ChildActivityQuery innerJoinWithNav() Adds a INNER JOIN clause and with to the query using the Nav relation
+ *
  * @method     ChildActivityQuery leftJoinSchedule($relationAlias = null) Adds a LEFT JOIN clause to the query using the Schedule relation
  * @method     ChildActivityQuery rightJoinSchedule($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Schedule relation
  * @method     ChildActivityQuery innerJoinSchedule($relationAlias = null) Adds a INNER JOIN clause to the query using the Schedule relation
@@ -68,7 +78,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery rightJoinWithSchedule() Adds a RIGHT JOIN clause and with to the query using the Schedule relation
  * @method     ChildActivityQuery innerJoinWithSchedule() Adds a INNER JOIN clause and with to the query using the Schedule relation
  *
- * @method     \Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\NavQuery|\Perfumerlabs\Start\Model\ScheduleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildActivity findOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query
  * @method     ChildActivity findOneOrCreate(ConnectionInterface $con = null) Return the first ChildActivity matching the query, or a new ChildActivity object populated from the query conditions when no match is found
@@ -628,6 +638,79 @@ abstract class ActivityQuery extends ModelCriteria
         return $this
             ->joinDuty($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Duty', '\Perfumerlabs\Start\Model\DutyQuery');
+    }
+
+    /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\Nav object
+     *
+     * @param \Perfumerlabs\Start\Model\Nav|ObjectCollection $nav the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByNav($nav, $comparison = null)
+    {
+        if ($nav instanceof \Perfumerlabs\Start\Model\Nav) {
+            return $this
+                ->addUsingAlias(ActivityTableMap::COL_ID, $nav->getActivityId(), $comparison);
+        } elseif ($nav instanceof ObjectCollection) {
+            return $this
+                ->useNavQuery()
+                ->filterByPrimaryKeys($nav->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByNav() only accepts arguments of type \Perfumerlabs\Start\Model\Nav or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Nav relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function joinNav($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Nav');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Nav');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Nav relation Nav object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\NavQuery A secondary query class using the current class as primary query
+     */
+    public function useNavQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinNav($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Nav', '\Perfumerlabs\Start\Model\NavQuery');
     }
 
     /**

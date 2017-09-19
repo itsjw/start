@@ -6,7 +6,7 @@ return [
             'connections' => [
                 'start' => [
                     'adapter' => 'pgsql',
-                    'dsn' => 'pgsql:host=localhost;port=5432;dbname=start',
+                    'dsn' => 'pgsql:host=db;port=5432;dbname=start',
                     'user' => 'postgres',
                     'password' => '',
                     'settings' => [

@@ -190,6 +190,13 @@ class ActivityTableMap extends TableMap
     1 => ':id',
   ),
 ), null, null, 'Duties', false);
+        $this->addRelation('Nav', '\\Perfumerlabs\\Start\\Model\\Nav', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':activity_id',
+    1 => ':id',
+  ),
+), null, null, 'Navs', false);
         $this->addRelation('Schedule', '\\Perfumerlabs\\Start\\Model\\Schedule', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (

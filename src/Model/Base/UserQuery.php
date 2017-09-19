@@ -7,6 +7,7 @@ use \PDO;
 use App\Model\User as ChildUser;
 use App\Model\UserQuery as ChildUserQuery;
 use App\Model\Map\UserTableMap;
+use Perfumerlabs\Start\Model\UserNav;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -66,7 +67,17 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery rightJoinWithUserRole() Adds a RIGHT JOIN clause and with to the query using the UserRole relation
  * @method     ChildUserQuery innerJoinWithUserRole() Adds a INNER JOIN clause and with to the query using the UserRole relation
  *
- * @method     \App\Model\SessionQuery|\App\Model\UserRoleQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     ChildUserQuery leftJoinUserNav($relationAlias = null) Adds a LEFT JOIN clause to the query using the UserNav relation
+ * @method     ChildUserQuery rightJoinUserNav($relationAlias = null) Adds a RIGHT JOIN clause to the query using the UserNav relation
+ * @method     ChildUserQuery innerJoinUserNav($relationAlias = null) Adds a INNER JOIN clause to the query using the UserNav relation
+ *
+ * @method     ChildUserQuery joinWithUserNav($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the UserNav relation
+ *
+ * @method     ChildUserQuery leftJoinWithUserNav() Adds a LEFT JOIN clause and with to the query using the UserNav relation
+ * @method     ChildUserQuery rightJoinWithUserNav() Adds a RIGHT JOIN clause and with to the query using the UserNav relation
+ * @method     ChildUserQuery innerJoinWithUserNav() Adds a INNER JOIN clause and with to the query using the UserNav relation
+ *
+ * @method     \App\Model\SessionQuery|\App\Model\UserRoleQuery|\Perfumerlabs\Start\Model\UserNavQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildUser findOne(ConnectionInterface $con = null) Return the first ChildUser matching the query
  * @method     ChildUser findOneOrCreate(ConnectionInterface $con = null) Return the first ChildUser matching the query, or a new ChildUser object populated from the query conditions when no match is found
@@ -710,6 +721,79 @@ abstract class UserQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\UserNav object
+     *
+     * @param \Perfumerlabs\Start\Model\UserNav|ObjectCollection $userNav the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByUserNav($userNav, $comparison = null)
+    {
+        if ($userNav instanceof \Perfumerlabs\Start\Model\UserNav) {
+            return $this
+                ->addUsingAlias(UserTableMap::COL_ID, $userNav->getUserId(), $comparison);
+        } elseif ($userNav instanceof ObjectCollection) {
+            return $this
+                ->useUserNavQuery()
+                ->filterByPrimaryKeys($userNav->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByUserNav() only accepts arguments of type \Perfumerlabs\Start\Model\UserNav or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the UserNav relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function joinUserNav($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('UserNav');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'UserNav');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the UserNav relation UserNav object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\UserNavQuery A secondary query class using the current class as primary query
+     */
+    public function useUserNavQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinUserNav($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'UserNav', '\Perfumerlabs\Start\Model\UserNavQuery');
+    }
+
+    /**
      * Filter the query by a related Role object
      * using the _user_role table as cross reference
      *
@@ -723,6 +807,23 @@ abstract class UserQuery extends ModelCriteria
         return $this
             ->useUserRoleQuery()
             ->filterByRole($role, $comparison)
+            ->endUse();
+    }
+
+    /**
+     * Filter the query by a related Nav object
+     * using the user_nav table as cross reference
+     *
+     * @param Nav $nav the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByNav($nav, $comparison = Criteria::EQUAL)
+    {
+        return $this
+            ->useUserNavQuery()
+            ->filterByNav($nav, $comparison)
             ->endUse();
     }
 

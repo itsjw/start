@@ -8,10 +8,13 @@ use Perfumerlabs\Start\Model\Activity as ChildActivity;
 use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
 use Perfumerlabs\Start\Model\Duty as ChildDuty;
 use Perfumerlabs\Start\Model\DutyQuery as ChildDutyQuery;
+use Perfumerlabs\Start\Model\Nav as ChildNav;
+use Perfumerlabs\Start\Model\NavQuery as ChildNavQuery;
 use Perfumerlabs\Start\Model\Schedule as ChildSchedule;
 use Perfumerlabs\Start\Model\ScheduleQuery as ChildScheduleQuery;
 use Perfumerlabs\Start\Model\Map\ActivityTableMap;
 use Perfumerlabs\Start\Model\Map\DutyTableMap;
+use Perfumerlabs\Start\Model\Map\NavTableMap;
 use Perfumerlabs\Start\Model\Map\ScheduleTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -140,6 +143,12 @@ abstract class Activity implements ActiveRecordInterface
     protected $collDutiesPartial;
 
     /**
+     * @var        ObjectCollection|ChildNav[] Collection to store aggregation of ChildNav objects.
+     */
+    protected $collNavs;
+    protected $collNavsPartial;
+
+    /**
      * @var        ObjectCollection|ChildSchedule[] Collection to store aggregation of ChildSchedule objects.
      */
     protected $collSchedules;
@@ -158,6 +167,12 @@ abstract class Activity implements ActiveRecordInterface
      * @var ObjectCollection|ChildDuty[]
      */
     protected $dutiesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildNav[]
+     */
+    protected $navsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -874,6 +889,8 @@ abstract class Activity implements ActiveRecordInterface
 
             $this->collDuties = null;
 
+            $this->collNavs = null;
+
             $this->collSchedules = null;
 
         } // if (deep)
@@ -1002,6 +1019,24 @@ abstract class Activity implements ActiveRecordInterface
 
             if ($this->collDuties !== null) {
                 foreach ($this->collDuties as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->navsScheduledForDeletion !== null) {
+                if (!$this->navsScheduledForDeletion->isEmpty()) {
+                    foreach ($this->navsScheduledForDeletion as $nav) {
+                        // need to save related object because we set the relation to null
+                        $nav->save($con);
+                    }
+                    $this->navsScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collNavs !== null) {
+                foreach ($this->collNavs as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1267,6 +1302,21 @@ abstract class Activity implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collDuties->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collNavs) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'navs';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'navs';
+                        break;
+                    default:
+                        $key = 'Navs';
+                }
+
+                $result[$key] = $this->collNavs->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collSchedules) {
 
@@ -1571,6 +1621,12 @@ abstract class Activity implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getNavs() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addNav($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getSchedules() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addSchedule($relObj->copy($deepCopy));
@@ -1620,6 +1676,9 @@ abstract class Activity implements ActiveRecordInterface
     {
         if ('Duty' == $relationName) {
             return $this->initDuties();
+        }
+        if ('Nav' == $relationName) {
+            return $this->initNavs();
         }
         if ('Schedule' == $relationName) {
             return $this->initSchedules();
@@ -1846,6 +1905,231 @@ abstract class Activity implements ActiveRecordInterface
             }
             $this->dutiesScheduledForDeletion[]= $duty;
             $duty->setActivity(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clears out the collNavs collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addNavs()
+     */
+    public function clearNavs()
+    {
+        $this->collNavs = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collNavs collection loaded partially.
+     */
+    public function resetPartialNavs($v = true)
+    {
+        $this->collNavsPartial = $v;
+    }
+
+    /**
+     * Initializes the collNavs collection.
+     *
+     * By default this just sets the collNavs collection to an empty array (like clearcollNavs());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initNavs($overrideExisting = true)
+    {
+        if (null !== $this->collNavs && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = NavTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collNavs = new $collectionClassName;
+        $this->collNavs->setModel('\Perfumerlabs\Start\Model\Nav');
+    }
+
+    /**
+     * Gets an array of ChildNav objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildActivity is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildNav[] List of ChildNav objects
+     * @throws PropelException
+     */
+    public function getNavs(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collNavsPartial && !$this->isNew();
+        if (null === $this->collNavs || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collNavs) {
+                // return empty collection
+                $this->initNavs();
+            } else {
+                $collNavs = ChildNavQuery::create(null, $criteria)
+                    ->filterByActivity($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collNavsPartial && count($collNavs)) {
+                        $this->initNavs(false);
+
+                        foreach ($collNavs as $obj) {
+                            if (false == $this->collNavs->contains($obj)) {
+                                $this->collNavs->append($obj);
+                            }
+                        }
+
+                        $this->collNavsPartial = true;
+                    }
+
+                    return $collNavs;
+                }
+
+                if ($partial && $this->collNavs) {
+                    foreach ($this->collNavs as $obj) {
+                        if ($obj->isNew()) {
+                            $collNavs[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collNavs = $collNavs;
+                $this->collNavsPartial = false;
+            }
+        }
+
+        return $this->collNavs;
+    }
+
+    /**
+     * Sets a collection of ChildNav objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $navs A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildActivity The current object (for fluent API support)
+     */
+    public function setNavs(Collection $navs, ConnectionInterface $con = null)
+    {
+        /** @var ChildNav[] $navsToDelete */
+        $navsToDelete = $this->getNavs(new Criteria(), $con)->diff($navs);
+
+
+        $this->navsScheduledForDeletion = $navsToDelete;
+
+        foreach ($navsToDelete as $navRemoved) {
+            $navRemoved->setActivity(null);
+        }
+
+        $this->collNavs = null;
+        foreach ($navs as $nav) {
+            $this->addNav($nav);
+        }
+
+        $this->collNavs = $navs;
+        $this->collNavsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Nav objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related Nav objects.
+     * @throws PropelException
+     */
+    public function countNavs(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collNavsPartial && !$this->isNew();
+        if (null === $this->collNavs || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collNavs) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getNavs());
+            }
+
+            $query = ChildNavQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByActivity($this)
+                ->count($con);
+        }
+
+        return count($this->collNavs);
+    }
+
+    /**
+     * Method called to associate a ChildNav object to this object
+     * through the ChildNav foreign key attribute.
+     *
+     * @param  ChildNav $l ChildNav
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function addNav(ChildNav $l)
+    {
+        if ($this->collNavs === null) {
+            $this->initNavs();
+            $this->collNavsPartial = true;
+        }
+
+        if (!$this->collNavs->contains($l)) {
+            $this->doAddNav($l);
+
+            if ($this->navsScheduledForDeletion and $this->navsScheduledForDeletion->contains($l)) {
+                $this->navsScheduledForDeletion->remove($this->navsScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildNav $nav The ChildNav object to add.
+     */
+    protected function doAddNav(ChildNav $nav)
+    {
+        $this->collNavs[]= $nav;
+        $nav->setActivity($this);
+    }
+
+    /**
+     * @param  ChildNav $nav The ChildNav object to remove.
+     * @return $this|ChildActivity The current object (for fluent API support)
+     */
+    public function removeNav(ChildNav $nav)
+    {
+        if ($this->getNavs()->contains($nav)) {
+            $pos = $this->collNavs->search($nav);
+            $this->collNavs->remove($pos);
+            if (null === $this->navsScheduledForDeletion) {
+                $this->navsScheduledForDeletion = clone $this->collNavs;
+                $this->navsScheduledForDeletion->clear();
+            }
+            $this->navsScheduledForDeletion[]= $nav;
+            $nav->setActivity(null);
         }
 
         return $this;
@@ -2141,6 +2425,11 @@ abstract class Activity implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collNavs) {
+                foreach ($this->collNavs as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collSchedules) {
                 foreach ($this->collSchedules as $o) {
                     $o->clearAllReferences($deep);
@@ -2149,6 +2438,7 @@ abstract class Activity implements ActiveRecordInterface
         } // if ($deep)
 
         $this->collDuties = null;
+        $this->collNavs = null;
         $this->collSchedules = null;
     }
 

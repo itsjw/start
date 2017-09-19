@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Model\Map;
+namespace Perfumerlabs\Start\Model\Map;
 
-use App\Model\User;
-use App\Model\UserQuery;
-use Perfumerlabs\Start\Model\Map\UserNavTableMap;
+use Perfumerlabs\Start\Model\Nav;
+use Perfumerlabs\Start\Model\NavQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -17,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the '_user' table.
+ * This class defines the structure of the 'nav' table.
  *
  *
  *
@@ -27,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class UserTableMap extends TableMap
+class NavTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -35,7 +34,7 @@ class UserTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.UserTableMap';
+    const CLASS_NAME = '.Map.NavTableMap';
 
     /**
      * The default database name for this class
@@ -45,22 +44,22 @@ class UserTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = '_user';
+    const TABLE_NAME = 'nav';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\App\\Model\\User';
+    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\Nav';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'User';
+    const CLASS_DEFAULT = 'Nav';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -70,47 +69,32 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = '_user.id';
+    const COL_ID = 'nav.id';
 
     /**
-     * the column name for the username field
+     * the column name for the activity_id field
      */
-    const COL_USERNAME = '_user.username';
+    const COL_ACTIVITY_ID = 'nav.activity_id';
 
     /**
-     * the column name for the password field
+     * the column name for the name field
      */
-    const COL_PASSWORD = '_user.password';
+    const COL_NAME = 'nav.name';
 
     /**
-     * the column name for the is_admin field
+     * the column name for the link field
      */
-    const COL_IS_ADMIN = '_user.is_admin';
+    const COL_LINK = 'nav.link';
 
     /**
-     * the column name for the is_disabled field
+     * the column name for the priority field
      */
-    const COL_IS_DISABLED = '_user.is_disabled';
-
-    /**
-     * the column name for the online_at field
-     */
-    const COL_ONLINE_AT = '_user.online_at';
-
-    /**
-     * the column name for the created_at field
-     */
-    const COL_CREATED_AT = '_user.created_at';
-
-    /**
-     * the column name for the updated_at field
-     */
-    const COL_UPDATED_AT = '_user.updated_at';
+    const COL_PRIORITY = 'nav.priority';
 
     /**
      * The default string format for model objects of the related table
@@ -124,11 +108,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Username', 'Password', 'IsAdmin', 'IsDisabled', 'OnlineAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'username', 'password', 'isAdmin', 'isDisabled', 'onlineAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_IS_ADMIN, UserTableMap::COL_IS_DISABLED, UserTableMap::COL_ONLINE_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'username', 'password', 'is_admin', 'is_disabled', 'online_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'ActivityId', 'Name', 'Link', 'Priority', ),
+        self::TYPE_CAMELNAME     => array('id', 'activityId', 'name', 'link', 'priority', ),
+        self::TYPE_COLNAME       => array(NavTableMap::COL_ID, NavTableMap::COL_ACTIVITY_ID, NavTableMap::COL_NAME, NavTableMap::COL_LINK, NavTableMap::COL_PRIORITY, ),
+        self::TYPE_FIELDNAME     => array('id', 'activity_id', 'name', 'link', 'priority', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -138,11 +122,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Password' => 2, 'IsAdmin' => 3, 'IsDisabled' => 4, 'OnlineAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'isAdmin' => 3, 'isDisabled' => 4, 'onlineAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_PASSWORD => 2, UserTableMap::COL_IS_ADMIN => 3, UserTableMap::COL_IS_DISABLED => 4, UserTableMap::COL_ONLINE_AT => 5, UserTableMap::COL_CREATED_AT => 6, UserTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'is_admin' => 3, 'is_disabled' => 4, 'online_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ActivityId' => 1, 'Name' => 2, 'Link' => 3, 'Priority' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'activityId' => 1, 'name' => 2, 'link' => 3, 'priority' => 4, ),
+        self::TYPE_COLNAME       => array(NavTableMap::COL_ID => 0, NavTableMap::COL_ACTIVITY_ID => 1, NavTableMap::COL_NAME => 2, NavTableMap::COL_LINK => 3, NavTableMap::COL_PRIORITY => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'activity_id' => 1, 'name' => 2, 'link' => 3, 'priority' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -155,22 +139,19 @@ class UserTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('_user');
-        $this->setPhpName('User');
+        $this->setName('nav');
+        $this->setPhpName('Nav');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\App\\Model\\User');
+        $this->setClassName('\\Perfumerlabs\\Start\\Model\\Nav');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
-        $this->setPrimaryKeyMethodInfo('_user_id_seq');
+        $this->setPrimaryKeyMethodInfo('nav_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('username', 'Username', 'VARCHAR', true, 255, null);
-        $this->addColumn('password', 'Password', 'VARCHAR', false, 255, null);
-        $this->addColumn('is_admin', 'IsAdmin', 'BOOLEAN', true, null, false);
-        $this->addColumn('is_disabled', 'IsDisabled', 'BOOLEAN', true, null, false);
-        $this->addColumn('online_at', 'OnlineAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('updated_at', 'UpdatedAt', 'TIMESTAMP', false, null, null);
+        $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
+        $this->addColumn('link', 'Link', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('priority', 'Priority', 'INTEGER', true, null, null);
     } // initialize()
 
     /**
@@ -178,51 +159,29 @@ class UserTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Session', '\\App\\Model\\Session', RelationMap::ONE_TO_MANY, array (
+        $this->addRelation('Activity', '\\Perfumerlabs\\Start\\Model\\Activity', RelationMap::MANY_TO_ONE, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':activity_id',
     1 => ':id',
   ),
-), null, null, 'Sessions', false);
-        $this->addRelation('UserRole', '\\App\\Model\\UserRole', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, 'UserRoles', false);
+), null, null, null, false);
         $this->addRelation('UserNav', '\\Perfumerlabs\\Start\\Model\\UserNav', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':user_id',
+    0 => ':nav_id',
     1 => ':id',
   ),
 ), 'CASCADE', null, 'UserNavs', false);
-        $this->addRelation('Role', '\\App\\Model\\Role', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Roles');
-        $this->addRelation('Nav', '\\Perfumerlabs\\Start\\Model\\Nav', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Navs');
+        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_MANY, array(), 'CASCADE', null, 'Users');
     } // buildRelations()
-
     /**
-     *
-     * Gets the list of behaviors registered for this table
-     *
-     * @return array Associative array (name => parameters) of behaviors
-     */
-    public function getBehaviors()
-    {
-        return array(
-            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'false', ),
-        );
-    } // getBehaviors()
-    /**
-     * Method to invalidate the instance pool of all tables related to _user     * by a foreign key with ON DELETE CASCADE
+     * Method to invalidate the instance pool of all tables related to nav     * by a foreign key with ON DELETE CASCADE
      */
     public static function clearRelatedInstancePool()
     {
         // Invalidate objects in related instance pools,
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        UserRoleTableMap::clearInstancePool();
         UserNavTableMap::clearInstancePool();
     }
 
@@ -283,7 +242,7 @@ class UserTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? UserTableMap::CLASS_DEFAULT : UserTableMap::OM_CLASS;
+        return $withPrefix ? NavTableMap::CLASS_DEFAULT : NavTableMap::OM_CLASS;
     }
 
     /**
@@ -297,22 +256,22 @@ class UserTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (User object, last column rank)
+     * @return array           (Nav object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = UserTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+        $key = NavTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = NavTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + UserTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + NavTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = UserTableMap::OM_CLASS;
-            /** @var User $obj */
+            $cls = NavTableMap::OM_CLASS;
+            /** @var Nav $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            UserTableMap::addInstanceToPool($obj, $key);
+            NavTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -335,18 +294,18 @@ class UserTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = UserTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = UserTableMap::getInstanceFromPool($key))) {
+            $key = NavTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = NavTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var User $obj */
+                /** @var Nav $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                UserTableMap::addInstanceToPool($obj, $key);
+                NavTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -367,23 +326,17 @@ class UserTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(UserTableMap::COL_ID);
-            $criteria->addSelectColumn(UserTableMap::COL_USERNAME);
-            $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
-            $criteria->addSelectColumn(UserTableMap::COL_IS_ADMIN);
-            $criteria->addSelectColumn(UserTableMap::COL_IS_DISABLED);
-            $criteria->addSelectColumn(UserTableMap::COL_ONLINE_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_CREATED_AT);
-            $criteria->addSelectColumn(UserTableMap::COL_UPDATED_AT);
+            $criteria->addSelectColumn(NavTableMap::COL_ID);
+            $criteria->addSelectColumn(NavTableMap::COL_ACTIVITY_ID);
+            $criteria->addSelectColumn(NavTableMap::COL_NAME);
+            $criteria->addSelectColumn(NavTableMap::COL_LINK);
+            $criteria->addSelectColumn(NavTableMap::COL_PRIORITY);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.username');
-            $criteria->addSelectColumn($alias . '.password');
-            $criteria->addSelectColumn($alias . '.is_admin');
-            $criteria->addSelectColumn($alias . '.is_disabled');
-            $criteria->addSelectColumn($alias . '.online_at');
-            $criteria->addSelectColumn($alias . '.created_at');
-            $criteria->addSelectColumn($alias . '.updated_at');
+            $criteria->addSelectColumn($alias . '.activity_id');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.link');
+            $criteria->addSelectColumn($alias . '.priority');
         }
     }
 
@@ -396,7 +349,7 @@ class UserTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME)->getTable(UserTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(NavTableMap::DATABASE_NAME)->getTable(NavTableMap::TABLE_NAME);
     }
 
     /**
@@ -404,16 +357,16 @@ class UserTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(UserTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(UserTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new UserTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(NavTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(NavTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new NavTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a User or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Nav or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or User object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Nav object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -424,27 +377,27 @@ class UserTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(NavTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \App\Model\User) { // it's a model object
+        } elseif ($values instanceof \Perfumerlabs\Start\Model\Nav) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(UserTableMap::DATABASE_NAME);
-            $criteria->add(UserTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(NavTableMap::DATABASE_NAME);
+            $criteria->add(NavTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = NavQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            UserTableMap::clearInstancePool();
+            NavTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                UserTableMap::removeInstanceFromPool($singleval);
+                NavTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -452,20 +405,20 @@ class UserTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the _user table.
+     * Deletes all rows from the nav table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return UserQuery::create()->doDeleteAll($con);
+        return NavQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a User or Criteria object.
+     * Performs an INSERT on the database, given a Nav or Criteria object.
      *
-     * @param mixed               $criteria Criteria or User object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Nav object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -474,22 +427,22 @@ class UserTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(UserTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(NavTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from User object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Nav object
         }
 
-        if ($criteria->containsKey(UserTableMap::COL_ID) && $criteria->keyContainsValue(UserTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.UserTableMap::COL_ID.')');
+        if ($criteria->containsKey(NavTableMap::COL_ID) && $criteria->keyContainsValue(NavTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.NavTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = UserQuery::create()->mergeWith($criteria);
+        $query = NavQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -498,7 +451,7 @@ class UserTableMap extends TableMap
         });
     }
 
-} // UserTableMap
+} // NavTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-UserTableMap::buildTableMap();
+NavTableMap::buildTableMap();
