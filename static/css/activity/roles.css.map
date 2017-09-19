@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACE,kBAAY;EAAE,aAAa,EAAE,CAAC;AAC9B,mBAAa;EAAE,MAAM,EAAE,OAAO",
+"sources": ["../../../app/scss/activity/roles.scss"],
+"names": [],
+"file": "roles.css"
+}
