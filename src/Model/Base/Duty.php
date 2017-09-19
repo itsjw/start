@@ -139,18 +139,11 @@ abstract class Duty implements ActiveRecordInterface
     protected $validation_url;
 
     /**
-     * The value for the tags field.
+     * The value for the description field.
      *
-     * @var        array
+     * @var        string
      */
-    protected $tags;
-
-    /**
-     * The unserialized $tags value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */
-    protected $tags_unserialized;
+    protected $description;
 
     /**
      * The value for the created_at field.
@@ -540,33 +533,14 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
-     * Get the [tags] column value.
+     * Get the [description] column value.
      *
-     * @return array
+     * @return string
      */
-    public function getTags()
+    public function getDescription()
     {
-        if (null === $this->tags_unserialized) {
-            $this->tags_unserialized = array();
-        }
-        if (!$this->tags_unserialized && null !== $this->tags) {
-            $tags_unserialized = substr($this->tags, 2, -2);
-            $this->tags_unserialized = '' !== $tags_unserialized ? explode(' | ', $tags_unserialized) : array();
-        }
-
-        return $this->tags_unserialized;
+        return $this->description;
     }
-
-    /**
-     * Test the presence of a value in the [tags] array column value.
-     * @param      mixed $value
-     *
-     * @return boolean
-     */
-    public function hasTag($value)
-    {
-        return in_array($value, $this->getTags());
-    } // hasTag()
 
     /**
      * Get the [optionally formatted] temporal [created_at] column value.
@@ -793,55 +767,24 @@ abstract class Duty implements ActiveRecordInterface
     } // setValidationUrl()
 
     /**
-     * Set the value of [tags] column.
+     * Set the value of [description] column.
      *
-     * @param array $v new value
+     * @param string $v new value
      * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
      */
-    public function setTags($v)
+    public function setDescription($v)
     {
-        if ($this->tags_unserialized !== $v) {
-            $this->tags_unserialized = $v;
-            $this->tags = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[DutyTableMap::COL_TAGS] = true;
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->description !== $v) {
+            $this->description = $v;
+            $this->modifiedColumns[DutyTableMap::COL_DESCRIPTION] = true;
         }
 
         return $this;
-    } // setTags()
-
-    /**
-     * Adds a value to the [tags] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function addTag($value)
-    {
-        $currentArray = $this->getTags();
-        $currentArray []= $value;
-        $this->setTags($currentArray);
-
-        return $this;
-    } // addTag()
-
-    /**
-     * Removes a value from the [tags] array column value.
-     * @param  mixed $value
-     *
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function removeTag($value)
-    {
-        $targetArray = array();
-        foreach ($this->getTags() as $element) {
-            if ($element != $value) {
-                $targetArray []= $element;
-            }
-        }
-        $this->setTags($targetArray);
-
-        return $this;
-    } // removeTag()
+    } // setDescription()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -929,9 +872,8 @@ abstract class Duty implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('ValidationUrl', TableMap::TYPE_PHPNAME, $indexType)];
             $this->validation_url = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->tags = $col;
-            $this->tags_unserialized = null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->description = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
@@ -1223,8 +1165,8 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_VALIDATION_URL)) {
             $modifiedColumns[':p' . $index++]  = 'validation_url';
         }
-        if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
-            $modifiedColumns[':p' . $index++]  = 'tags';
+        if ($this->isColumnModified(DutyTableMap::COL_DESCRIPTION)) {
+            $modifiedColumns[':p' . $index++]  = 'description';
         }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
@@ -1270,8 +1212,8 @@ abstract class Duty implements ActiveRecordInterface
                     case 'validation_url':
                         $stmt->bindValue($identifier, $this->validation_url, PDO::PARAM_STR);
                         break;
-                    case 'tags':
-                        $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
+                    case 'description':
+                        $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1362,7 +1304,7 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getValidationUrl();
                 break;
             case 10:
-                return $this->getTags();
+                return $this->getDescription();
                 break;
             case 11:
                 return $this->getCreatedAt();
@@ -1407,7 +1349,7 @@ abstract class Duty implements ActiveRecordInterface
             $keys[7] => $this->getPickedAt(),
             $keys[8] => $this->getClosedAt(),
             $keys[9] => $this->getValidationUrl(),
-            $keys[10] => $this->getTags(),
+            $keys[10] => $this->getDescription(),
             $keys[11] => $this->getCreatedAt(),
         );
         if ($result[$keys[6]] instanceof \DateTime) {
@@ -1527,11 +1469,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setValidationUrl($value);
                 break;
             case 10:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setTags($value);
+                $this->setDescription($value);
                 break;
             case 11:
                 $this->setCreatedAt($value);
@@ -1593,7 +1531,7 @@ abstract class Duty implements ActiveRecordInterface
             $this->setValidationUrl($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setTags($arr[$keys[10]]);
+            $this->setDescription($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
             $this->setCreatedAt($arr[$keys[11]]);
@@ -1669,8 +1607,8 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_VALIDATION_URL)) {
             $criteria->add(DutyTableMap::COL_VALIDATION_URL, $this->validation_url);
         }
-        if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
-            $criteria->add(DutyTableMap::COL_TAGS, $this->tags);
+        if ($this->isColumnModified(DutyTableMap::COL_DESCRIPTION)) {
+            $criteria->add(DutyTableMap::COL_DESCRIPTION, $this->description);
         }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $criteria->add(DutyTableMap::COL_CREATED_AT, $this->created_at);
@@ -1770,7 +1708,7 @@ abstract class Duty implements ActiveRecordInterface
         $copyObj->setPickedAt($this->getPickedAt());
         $copyObj->setClosedAt($this->getClosedAt());
         $copyObj->setValidationUrl($this->getValidationUrl());
-        $copyObj->setTags($this->getTags());
+        $copyObj->setDescription($this->getDescription());
         $copyObj->setCreatedAt($this->getCreatedAt());
 
         if ($deepCopy) {
@@ -2154,8 +2092,7 @@ abstract class Duty implements ActiveRecordInterface
         $this->picked_at = null;
         $this->closed_at = null;
         $this->validation_url = null;
-        $this->tags = null;
-        $this->tags_unserialized = null;
+        $this->description = null;
         $this->created_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

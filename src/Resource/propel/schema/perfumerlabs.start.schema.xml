@@ -11,7 +11,7 @@
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
         <column name="validation_url" type="varchar" size="255"/>
-        <column name="tags" type="array"/>
+        <column name="description" type="longvarchar"/>
         <behavior name="timestampable">
             <parameter name="disable_updated_at" value="true"/>
         </behavior>
