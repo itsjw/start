@@ -192,6 +192,13 @@ class UserTableMap extends TableMap
     1 => ':id',
   ),
 ), 'CASCADE', null, 'UserRoles', false);
+        $this->addRelation('Duty', '\\Perfumerlabs\\Start\\Model\\Duty', RelationMap::ONE_TO_MANY, array (
+  0 =>
+  array (
+    0 => ':user_id',
+    1 => ':id',
+  ),
+), null, null, 'Duties', false);
         $this->addRelation('UserNav', '\\Perfumerlabs\\Start\\Model\\UserNav', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (

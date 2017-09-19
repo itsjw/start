@@ -18,6 +18,9 @@
         <foreign-key foreignTable="activity" phpName="Activity">
             <reference local="activity_id" foreign="id"/>
         </foreign-key>
+        <foreign-key foreignTable="_user" phpName="User">
+            <reference local="user_id" foreign="id"/>
+        </foreign-key>
     </table>
 
     <table name="activity" phpName="Activity" namespace="\Perfumerlabs\Start\Model">

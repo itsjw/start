@@ -4,6 +4,7 @@ namespace Perfumerlabs\Start\Model\Base;
 
 use \Exception;
 use \PDO;
+use App\Model\User;
 use Perfumerlabs\Start\Model\Duty as ChildDuty;
 use Perfumerlabs\Start\Model\DutyQuery as ChildDutyQuery;
 use Perfumerlabs\Start\Model\Map\DutyTableMap;
@@ -64,6 +65,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery rightJoinWithActivity() Adds a RIGHT JOIN clause and with to the query using the Activity relation
  * @method     ChildDutyQuery innerJoinWithActivity() Adds a INNER JOIN clause and with to the query using the Activity relation
  *
+ * @method     ChildDutyQuery leftJoinUser($relationAlias = null) Adds a LEFT JOIN clause to the query using the User relation
+ * @method     ChildDutyQuery rightJoinUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the User relation
+ * @method     ChildDutyQuery innerJoinUser($relationAlias = null) Adds a INNER JOIN clause to the query using the User relation
+ *
+ * @method     ChildDutyQuery joinWithUser($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the User relation
+ *
+ * @method     ChildDutyQuery leftJoinWithUser() Adds a LEFT JOIN clause and with to the query using the User relation
+ * @method     ChildDutyQuery rightJoinWithUser() Adds a RIGHT JOIN clause and with to the query using the User relation
+ * @method     ChildDutyQuery innerJoinWithUser() Adds a INNER JOIN clause and with to the query using the User relation
+ *
  * @method     ChildDutyQuery leftJoinRelatedTag($relationAlias = null) Adds a LEFT JOIN clause to the query using the RelatedTag relation
  * @method     ChildDutyQuery rightJoinRelatedTag($relationAlias = null) Adds a RIGHT JOIN clause to the query using the RelatedTag relation
  * @method     ChildDutyQuery innerJoinRelatedTag($relationAlias = null) Adds a INNER JOIN clause to the query using the RelatedTag relation
@@ -74,7 +85,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery rightJoinWithRelatedTag() Adds a RIGHT JOIN clause and with to the query using the RelatedTag relation
  * @method     ChildDutyQuery innerJoinWithRelatedTag() Adds a INNER JOIN clause and with to the query using the RelatedTag relation
  *
- * @method     \Perfumerlabs\Start\Model\ActivityQuery|\Perfumerlabs\Start\Model\RelatedTagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Perfumerlabs\Start\Model\ActivityQuery|\App\Model\UserQuery|\Perfumerlabs\Start\Model\RelatedTagQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildDuty findOne(ConnectionInterface $con = null) Return the first ChildDuty matching the query
  * @method     ChildDuty findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDuty matching the query, or a new ChildDuty object populated from the query conditions when no match is found
@@ -359,6 +370,8 @@ abstract class DutyQuery extends ModelCriteria
      * $query->filterByUserId(array(12, 34)); // WHERE user_id IN (12, 34)
      * $query->filterByUserId(array('min' => 12)); // WHERE user_id > 12
      * </code>
+     *
+     * @see       filterByUser()
      *
      * @param     mixed $userId The value to use as filter.
      *              Use scalar values for equality.
@@ -806,6 +819,83 @@ abstract class DutyQuery extends ModelCriteria
         return $this
             ->joinActivity($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Activity', '\Perfumerlabs\Start\Model\ActivityQuery');
+    }
+
+    /**
+     * Filter the query by a related \App\Model\User object
+     *
+     * @param \App\Model\User|ObjectCollection $user The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByUser($user, $comparison = null)
+    {
+        if ($user instanceof \App\Model\User) {
+            return $this
+                ->addUsingAlias(DutyTableMap::COL_USER_ID, $user->getId(), $comparison);
+        } elseif ($user instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(DutyTableMap::COL_USER_ID, $user->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByUser() only accepts arguments of type \App\Model\User or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the User relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function joinUser($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('User');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'User');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the User relation User object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \App\Model\UserQuery A secondary query class using the current class as primary query
+     */
+    public function useUserQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinUser($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'User', '\App\Model\UserQuery');
     }
 
     /**

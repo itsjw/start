@@ -16,11 +16,15 @@ use App\Model\UserRoleQuery as ChildUserRoleQuery;
 use App\Model\Map\SessionTableMap;
 use App\Model\Map\UserRoleTableMap;
 use App\Model\Map\UserTableMap;
+use Perfumerlabs\Start\Model\Duty;
+use Perfumerlabs\Start\Model\DutyQuery;
 use Perfumerlabs\Start\Model\Nav;
 use Perfumerlabs\Start\Model\NavQuery;
 use Perfumerlabs\Start\Model\UserNav;
 use Perfumerlabs\Start\Model\UserNavQuery;
+use Perfumerlabs\Start\Model\Base\Duty as BaseDuty;
 use Perfumerlabs\Start\Model\Base\UserNav as BaseUserNav;
+use Perfumerlabs\Start\Model\Map\DutyTableMap;
 use Perfumerlabs\Start\Model\Map\UserNavTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -148,6 +152,12 @@ abstract class User implements ActiveRecordInterface
     protected $collUserRolesPartial;
 
     /**
+     * @var        ObjectCollection|Duty[] Collection to store aggregation of Duty objects.
+     */
+    protected $collDuties;
+    protected $collDutiesPartial;
+
+    /**
      * @var        ObjectCollection|UserNav[] Collection to store aggregation of UserNav objects.
      */
     protected $collUserNavs;
@@ -204,6 +214,12 @@ abstract class User implements ActiveRecordInterface
      * @var ObjectCollection|ChildUserRole[]
      */
     protected $userRolesScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|Duty[]
+     */
+    protected $dutiesScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -896,6 +912,8 @@ abstract class User implements ActiveRecordInterface
 
             $this->collUserRoles = null;
 
+            $this->collDuties = null;
+
             $this->collUserNavs = null;
 
             $this->collRoles = null;
@@ -1113,6 +1131,24 @@ abstract class User implements ActiveRecordInterface
 
             if ($this->collUserRoles !== null) {
                 foreach ($this->collUserRoles as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->dutiesScheduledForDeletion !== null) {
+                if (!$this->dutiesScheduledForDeletion->isEmpty()) {
+                    foreach ($this->dutiesScheduledForDeletion as $duty) {
+                        // need to save related object because we set the relation to null
+                        $duty->save($con);
+                    }
+                    $this->dutiesScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collDuties !== null) {
+                foreach ($this->collDuties as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1395,6 +1431,21 @@ abstract class User implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->collUserRoles->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collDuties) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'duties';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'duties';
+                        break;
+                    default:
+                        $key = 'Duties';
+                }
+
+                $result[$key] = $this->collDuties->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collUserNavs) {
 
@@ -1695,6 +1746,12 @@ abstract class User implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getDuties() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDuty($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getUserNavs() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addUserNav($relObj->copy($deepCopy));
@@ -1747,6 +1804,9 @@ abstract class User implements ActiveRecordInterface
         }
         if ('UserRole' == $relationName) {
             return $this->initUserRoles();
+        }
+        if ('Duty' == $relationName) {
+            return $this->initDuties();
         }
         if ('UserNav' == $relationName) {
             return $this->initUserNavs();
@@ -2229,6 +2289,256 @@ abstract class User implements ActiveRecordInterface
         $query->joinWith('Role', $joinBehavior);
 
         return $this->getUserRoles($query, $con);
+    }
+
+    /**
+     * Clears out the collDuties collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addDuties()
+     */
+    public function clearDuties()
+    {
+        $this->collDuties = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collDuties collection loaded partially.
+     */
+    public function resetPartialDuties($v = true)
+    {
+        $this->collDutiesPartial = $v;
+    }
+
+    /**
+     * Initializes the collDuties collection.
+     *
+     * By default this just sets the collDuties collection to an empty array (like clearcollDuties());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDuties($overrideExisting = true)
+    {
+        if (null !== $this->collDuties && !$overrideExisting) {
+            return;
+        }
+
+        $collectionClassName = DutyTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collDuties = new $collectionClassName;
+        $this->collDuties->setModel('\Perfumerlabs\Start\Model\Duty');
+    }
+
+    /**
+     * Gets an array of Duty objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildUser is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return ObjectCollection|Duty[] List of Duty objects
+     * @throws PropelException
+     */
+    public function getDuties(Criteria $criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDutiesPartial && !$this->isNew();
+        if (null === $this->collDuties || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDuties) {
+                // return empty collection
+                $this->initDuties();
+            } else {
+                $collDuties = DutyQuery::create(null, $criteria)
+                    ->filterByUser($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collDutiesPartial && count($collDuties)) {
+                        $this->initDuties(false);
+
+                        foreach ($collDuties as $obj) {
+                            if (false == $this->collDuties->contains($obj)) {
+                                $this->collDuties->append($obj);
+                            }
+                        }
+
+                        $this->collDutiesPartial = true;
+                    }
+
+                    return $collDuties;
+                }
+
+                if ($partial && $this->collDuties) {
+                    foreach ($this->collDuties as $obj) {
+                        if ($obj->isNew()) {
+                            $collDuties[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDuties = $collDuties;
+                $this->collDutiesPartial = false;
+            }
+        }
+
+        return $this->collDuties;
+    }
+
+    /**
+     * Sets a collection of Duty objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $duties A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function setDuties(Collection $duties, ConnectionInterface $con = null)
+    {
+        /** @var Duty[] $dutiesToDelete */
+        $dutiesToDelete = $this->getDuties(new Criteria(), $con)->diff($duties);
+
+
+        $this->dutiesScheduledForDeletion = $dutiesToDelete;
+
+        foreach ($dutiesToDelete as $dutyRemoved) {
+            $dutyRemoved->setUser(null);
+        }
+
+        $this->collDuties = null;
+        foreach ($duties as $duty) {
+            $this->addDuty($duty);
+        }
+
+        $this->collDuties = $duties;
+        $this->collDutiesPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related BaseDuty objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related BaseDuty objects.
+     * @throws PropelException
+     */
+    public function countDuties(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDutiesPartial && !$this->isNew();
+        if (null === $this->collDuties || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDuties) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDuties());
+            }
+
+            $query = DutyQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByUser($this)
+                ->count($con);
+        }
+
+        return count($this->collDuties);
+    }
+
+    /**
+     * Method called to associate a Duty object to this object
+     * through the Duty foreign key attribute.
+     *
+     * @param  Duty $l Duty
+     * @return $this|\App\Model\User The current object (for fluent API support)
+     */
+    public function addDuty(Duty $l)
+    {
+        if ($this->collDuties === null) {
+            $this->initDuties();
+            $this->collDutiesPartial = true;
+        }
+
+        if (!$this->collDuties->contains($l)) {
+            $this->doAddDuty($l);
+
+            if ($this->dutiesScheduledForDeletion and $this->dutiesScheduledForDeletion->contains($l)) {
+                $this->dutiesScheduledForDeletion->remove($this->dutiesScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Duty $duty The Duty object to add.
+     */
+    protected function doAddDuty(Duty $duty)
+    {
+        $this->collDuties[]= $duty;
+        $duty->setUser($this);
+    }
+
+    /**
+     * @param  Duty $duty The Duty object to remove.
+     * @return $this|ChildUser The current object (for fluent API support)
+     */
+    public function removeDuty(Duty $duty)
+    {
+        if ($this->getDuties()->contains($duty)) {
+            $pos = $this->collDuties->search($duty);
+            $this->collDuties->remove($pos);
+            if (null === $this->dutiesScheduledForDeletion) {
+                $this->dutiesScheduledForDeletion = clone $this->collDuties;
+                $this->dutiesScheduledForDeletion->clear();
+            }
+            $this->dutiesScheduledForDeletion[]= $duty;
+            $duty->setUser(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this User is new, it will return
+     * an empty collection; or if this User has previously
+     * been saved, it will retrieve related Duties from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in User.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return ObjectCollection|Duty[] List of Duty objects
+     */
+    public function getDutiesJoinActivity(Criteria $criteria = null, ConnectionInterface $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = DutyQuery::create(null, $criteria);
+        $query->joinWith('Activity', $joinBehavior);
+
+        return $this->getDuties($query, $con);
     }
 
     /**
@@ -3014,6 +3324,11 @@ abstract class User implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collDuties) {
+                foreach ($this->collDuties as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collUserNavs) {
                 foreach ($this->collUserNavs as $o) {
                     $o->clearAllReferences($deep);
@@ -3033,6 +3348,7 @@ abstract class User implements ActiveRecordInterface
 
         $this->collSessions = null;
         $this->collUserRoles = null;
+        $this->collDuties = null;
         $this->collUserNavs = null;
         $this->collRoles = null;
         $this->collNavs = null;

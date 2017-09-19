@@ -5,6 +5,8 @@ namespace Perfumerlabs\Start\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
+use App\Model\User;
+use App\Model\UserQuery;
 use Perfumerlabs\Start\Model\Activity as ChildActivity;
 use Perfumerlabs\Start\Model\ActivityQuery as ChildActivityQuery;
 use Perfumerlabs\Start\Model\Duty as ChildDuty;
@@ -156,6 +158,11 @@ abstract class Duty implements ActiveRecordInterface
      * @var        ChildActivity
      */
     protected $aActivity;
+
+    /**
+     * @var        User
+     */
+    protected $aUser;
 
     /**
      * @var        ObjectCollection|ChildRelatedTag[] Collection to store aggregation of ChildRelatedTag objects.
@@ -599,6 +606,10 @@ abstract class Duty implements ActiveRecordInterface
             $this->modifiedColumns[DutyTableMap::COL_USER_ID] = true;
         }
 
+        if ($this->aUser !== null && $this->aUser->getId() !== $v) {
+            $this->aUser = null;
+        }
+
         return $this;
     } // setUserId()
 
@@ -907,6 +918,9 @@ abstract class Duty implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aUser !== null && $this->user_id !== $this->aUser->getId()) {
+            $this->aUser = null;
+        }
         if ($this->aActivity !== null && $this->activity_id !== $this->aActivity->getId()) {
             $this->aActivity = null;
         }
@@ -950,6 +964,7 @@ abstract class Duty implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aActivity = null;
+            $this->aUser = null;
             $this->collRelatedTags = null;
 
         } // if (deep)
@@ -1070,6 +1085,13 @@ abstract class Duty implements ActiveRecordInterface
                     $affectedRows += $this->aActivity->save($con);
                 }
                 $this->setActivity($this->aActivity);
+            }
+
+            if ($this->aUser !== null) {
+                if ($this->aUser->isModified() || $this->aUser->isNew()) {
+                    $affectedRows += $this->aUser->save($con);
+                }
+                $this->setUser($this->aUser);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1388,6 +1410,21 @@ abstract class Duty implements ActiveRecordInterface
                 }
 
                 $result[$key] = $this->aActivity->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->aUser) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'user';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = '_user';
+                        break;
+                    default:
+                        $key = 'User';
+                }
+
+                $result[$key] = $this->aUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
             if (null !== $this->collRelatedTags) {
 
@@ -1803,6 +1840,57 @@ abstract class Duty implements ActiveRecordInterface
         return $this->aActivity;
     }
 
+    /**
+     * Declares an association between this object and a User object.
+     *
+     * @param  User $v
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setUser(User $v = null)
+    {
+        if ($v === null) {
+            $this->setUserId(NULL);
+        } else {
+            $this->setUserId($v->getId());
+        }
+
+        $this->aUser = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the User object, it will not be re-added.
+        if ($v !== null) {
+            $v->addDuty($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated User object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return User The associated User object.
+     * @throws PropelException
+     */
+    public function getUser(ConnectionInterface $con = null)
+    {
+        if ($this->aUser === null && ($this->user_id !== null)) {
+            $this->aUser = UserQuery::create()->findPk($this->user_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aUser->addDuties($this);
+             */
+        }
+
+        return $this->aUser;
+    }
+
 
     /**
      * Initializes a collection based on the name of a relation.
@@ -2082,6 +2170,9 @@ abstract class Duty implements ActiveRecordInterface
         if (null !== $this->aActivity) {
             $this->aActivity->removeDuty($this);
         }
+        if (null !== $this->aUser) {
+            $this->aUser->removeDuty($this);
+        }
         $this->id = null;
         $this->user_id = null;
         $this->activity_id = null;
@@ -2121,6 +2212,7 @@ abstract class Duty implements ActiveRecordInterface
 
         $this->collRelatedTags = null;
         $this->aActivity = null;
+        $this->aUser = null;
     }
 
     /**

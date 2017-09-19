@@ -183,7 +183,7 @@ class DutyTableMap extends TableMap
         $this->setPrimaryKeyMethodInfo('duty_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('user_id', 'UserId', 'INTEGER', false, null, null);
+        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
         $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
         $this->addColumn('title', 'Title', 'LONGVARCHAR', false, null, null);
         $this->addColumn('query', 'Query', 'LONGVARCHAR', false, null, null);
@@ -205,6 +205,13 @@ class DutyTableMap extends TableMap
   0 =>
   array (
     0 => ':activity_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
+        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':user_id',
     1 => ':id',
   ),
 ), null, null, null, false);

@@ -24,7 +24,7 @@ class DutyFormatter
             'postponable' => $duty->getActivity()->isPostponable(),
             'comment' => $duty->getComment(),
             'validation_url' => $duty->getValidationUrl(),
-            'description' => $duty->getDescription() ?: []
+            'description' => $duty->getDescription()
         ];
 
         $iframe = $duty->getActivity()->getIframe() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getName();
