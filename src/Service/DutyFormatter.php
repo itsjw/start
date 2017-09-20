@@ -16,8 +16,7 @@ class DutyFormatter
     {
         $array = [
             'id' => $duty->getId(),
-            'name' => $user->getUsername(),
-            'title' => $duty->getTitle(),
+            'name' => $duty->getActivity()->getName(),
             'color' => $duty->getActivity()->getColor(),
             'readonly' => $duty->getActivity()->isReadonly(),
             'writable' => $duty->getActivity()->isWritable(),

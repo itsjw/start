@@ -4,7 +4,6 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="activity_id" type="integer"/>
-        <column name="title" type="longvarchar"/>
         <column name="query" type="longvarchar"/>
         <column name="comment" type="longvarchar"/>
         <column name="raised_at" type="timestamp"/>

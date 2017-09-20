@@ -46,17 +46,15 @@
 
             <div id="stickers" v-if="!searching">
                 <div class="sticker" v-for="duty in duties" :key="duty.id" :style="{borderLeft: '20px solid ' + duty.color}" @click="openDutyBySticker(duty)" :class="{active: duty.shown}">
-                    <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
-                    <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
-                    <div v-if="duty.description" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.description }}' }}</div>
+                    <div style="">{{ '{{ duty.name }}' }}</div>
+                    <div v-if="duty.description" style="margin-top: 5px; color: #aaa; font-size: smaller">{{ '{{ duty.description }}' }}</div>
                 </div>
             </div>
 
             <div id="searching" v-if="results.length > 0 && searching">
                 <div class="sticker" v-for="duty in results" :style="{borderLeft: '20px solid ' + duty.color}" @click="pickDuty(duty)">
-                    <div style="color: #cccccc; font-size: smaller">{{ '{{ duty.name }}' }}</div>
-                    <div style="margin-top: 5px">{{ '{{ duty.title }}' }}</div>
-                    <div v-if="duty.description" style="margin-top: 5px; font-size: smaller">{{ '{{ duty.description }}' }}</div>
+                    <div style="">{{ '{{ duty.name }}' }}</div>
+                    <div v-if="duty.description" style="margin-top: 5px; color: #aaa; font-size: smaller">{{ '{{ duty.description }}' }}</div>
                 </div>
             </div>
 

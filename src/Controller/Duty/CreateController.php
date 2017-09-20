@@ -24,7 +24,6 @@ class CreateController extends ViewController
         $duty = new Duty();
         $duty->setActivity($activity);
         $duty->setUserId((int) $this->getAuth()->getData());
-        $duty->setTitle($activity->getToolbar());
         $duty->setRaisedAt(new \DateTime());
         $duty->setPickedAt(new \DateTime());
         $duty->save();
