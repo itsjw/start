@@ -23,13 +23,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNavQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildNavQuery orderByActivityId($order = Criteria::ASC) Order by the activity_id column
  * @method     ChildNavQuery orderByName($order = Criteria::ASC) Order by the name column
- * @method     ChildNavQuery orderByLink($order = Criteria::ASC) Order by the link column
+ * @method     ChildNavQuery orderByUrl($order = Criteria::ASC) Order by the url column
  * @method     ChildNavQuery orderByPriority($order = Criteria::ASC) Order by the priority column
  *
  * @method     ChildNavQuery groupById() Group by the id column
  * @method     ChildNavQuery groupByActivityId() Group by the activity_id column
  * @method     ChildNavQuery groupByName() Group by the name column
- * @method     ChildNavQuery groupByLink() Group by the link column
+ * @method     ChildNavQuery groupByUrl() Group by the url column
  * @method     ChildNavQuery groupByPriority() Group by the priority column
  *
  * @method     ChildNavQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -68,7 +68,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNav findOneById(int $id) Return the first ChildNav filtered by the id column
  * @method     ChildNav findOneByActivityId(int $activity_id) Return the first ChildNav filtered by the activity_id column
  * @method     ChildNav findOneByName(string $name) Return the first ChildNav filtered by the name column
- * @method     ChildNav findOneByLink(string $link) Return the first ChildNav filtered by the link column
+ * @method     ChildNav findOneByUrl(string $url) Return the first ChildNav filtered by the url column
  * @method     ChildNav findOneByPriority(int $priority) Return the first ChildNav filtered by the priority column *
 
  * @method     ChildNav requirePk($key, ConnectionInterface $con = null) Return the ChildNav by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -77,14 +77,14 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildNav requireOneById(int $id) Return the first ChildNav filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildNav requireOneByActivityId(int $activity_id) Return the first ChildNav filtered by the activity_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildNav requireOneByName(string $name) Return the first ChildNav filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildNav requireOneByLink(string $link) Return the first ChildNav filtered by the link column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildNav requireOneByUrl(string $url) Return the first ChildNav filtered by the url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildNav requireOneByPriority(int $priority) Return the first ChildNav filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildNav[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildNav objects based on current ModelCriteria
  * @method     ChildNav[]|ObjectCollection findById(int $id) Return ChildNav objects filtered by the id column
  * @method     ChildNav[]|ObjectCollection findByActivityId(int $activity_id) Return ChildNav objects filtered by the activity_id column
  * @method     ChildNav[]|ObjectCollection findByName(string $name) Return ChildNav objects filtered by the name column
- * @method     ChildNav[]|ObjectCollection findByLink(string $link) Return ChildNav objects filtered by the link column
+ * @method     ChildNav[]|ObjectCollection findByUrl(string $url) Return ChildNav objects filtered by the url column
  * @method     ChildNav[]|ObjectCollection findByPriority(int $priority) Return ChildNav objects filtered by the priority column
  * @method     ChildNav[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -184,7 +184,7 @@ abstract class NavQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, activity_id, name, link, priority FROM nav WHERE id = :p0';
+        $sql = 'SELECT id, activity_id, name, url, priority FROM nav WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -384,28 +384,28 @@ abstract class NavQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the link column
+     * Filter the query on the url column
      *
      * Example usage:
      * <code>
-     * $query->filterByLink('fooValue');   // WHERE link = 'fooValue'
-     * $query->filterByLink('%fooValue%', Criteria::LIKE); // WHERE link LIKE '%fooValue%'
+     * $query->filterByUrl('fooValue');   // WHERE url = 'fooValue'
+     * $query->filterByUrl('%fooValue%', Criteria::LIKE); // WHERE url LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $link The value to use as filter.
+     * @param     string $url The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildNavQuery The current query, for fluid interface
      */
-    public function filterByLink($link = null, $comparison = null)
+    public function filterByUrl($url = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($link)) {
+            if (is_array($url)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(NavTableMap::COL_LINK, $link, $comparison);
+        return $this->addUsingAlias(NavTableMap::COL_URL, $url, $comparison);
     }
 
     /**

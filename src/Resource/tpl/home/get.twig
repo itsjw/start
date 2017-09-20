@@ -20,9 +20,9 @@
         <div class="navbar-left">
             {% for nav in navs %}
                 {% if nav.activityId %}
-                    <span class="create-duty" @click="createDuty({{ nav.activityId }})">{{ nav.name }}</span>
+                    <span class="create-duty" @click="createDuty({{ nav.id }})">{{ nav.name }}</span>
                 {% else %}
-                    <span class="create-duty"><a href="{{ nav.link }}" target="_blank">{{ nav.name }}</a></span>
+                    <span class="create-duty"><a href="{{ nav.url }}" target="_blank">{{ nav.name }}</a></span>
                 {% endif %}
             {% endfor %}
         </div>

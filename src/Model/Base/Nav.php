@@ -88,11 +88,11 @@ abstract class Nav implements ActiveRecordInterface
     protected $name;
 
     /**
-     * The value for the link field.
+     * The value for the url field.
      *
      * @var        string
      */
-    protected $link;
+    protected $url;
 
     /**
      * The value for the priority field.
@@ -382,13 +382,13 @@ abstract class Nav implements ActiveRecordInterface
     }
 
     /**
-     * Get the [link] column value.
+     * Get the [url] column value.
      *
      * @return string
      */
-    public function getLink()
+    public function getUrl()
     {
-        return $this->link;
+        return $this->url;
     }
 
     /**
@@ -466,24 +466,24 @@ abstract class Nav implements ActiveRecordInterface
     } // setName()
 
     /**
-     * Set the value of [link] column.
+     * Set the value of [url] column.
      *
      * @param string $v new value
      * @return $this|\Perfumerlabs\Start\Model\Nav The current object (for fluent API support)
      */
-    public function setLink($v)
+    public function setUrl($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->link !== $v) {
-            $this->link = $v;
-            $this->modifiedColumns[NavTableMap::COL_LINK] = true;
+        if ($this->url !== $v) {
+            $this->url = $v;
+            $this->modifiedColumns[NavTableMap::COL_URL] = true;
         }
 
         return $this;
-    } // setLink()
+    } // setUrl()
 
     /**
      * Set the value of [priority] column.
@@ -550,8 +550,8 @@ abstract class Nav implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : NavTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : NavTableMap::translateFieldName('Link', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->link = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : NavTableMap::translateFieldName('Url', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->url = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : NavTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
             $this->priority = (null !== $col) ? (int) $col : null;
@@ -817,8 +817,8 @@ abstract class Nav implements ActiveRecordInterface
         if ($this->isColumnModified(NavTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
-        if ($this->isColumnModified(NavTableMap::COL_LINK)) {
-            $modifiedColumns[':p' . $index++]  = 'link';
+        if ($this->isColumnModified(NavTableMap::COL_URL)) {
+            $modifiedColumns[':p' . $index++]  = 'url';
         }
         if ($this->isColumnModified(NavTableMap::COL_PRIORITY)) {
             $modifiedColumns[':p' . $index++]  = 'priority';
@@ -843,8 +843,8 @@ abstract class Nav implements ActiveRecordInterface
                     case 'name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
                         break;
-                    case 'link':
-                        $stmt->bindValue($identifier, $this->link, PDO::PARAM_STR);
+                    case 'url':
+                        $stmt->bindValue($identifier, $this->url, PDO::PARAM_STR);
                         break;
                     case 'priority':
                         $stmt->bindValue($identifier, $this->priority, PDO::PARAM_INT);
@@ -914,7 +914,7 @@ abstract class Nav implements ActiveRecordInterface
                 return $this->getName();
                 break;
             case 3:
-                return $this->getLink();
+                return $this->getUrl();
                 break;
             case 4:
                 return $this->getPriority();
@@ -952,7 +952,7 @@ abstract class Nav implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getActivityId(),
             $keys[2] => $this->getName(),
-            $keys[3] => $this->getLink(),
+            $keys[3] => $this->getUrl(),
             $keys[4] => $this->getPriority(),
         );
         $virtualColumns = $this->virtualColumns;
@@ -1035,7 +1035,7 @@ abstract class Nav implements ActiveRecordInterface
                 $this->setName($value);
                 break;
             case 3:
-                $this->setLink($value);
+                $this->setUrl($value);
                 break;
             case 4:
                 $this->setPriority($value);
@@ -1076,7 +1076,7 @@ abstract class Nav implements ActiveRecordInterface
             $this->setName($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setLink($arr[$keys[3]]);
+            $this->setUrl($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setPriority($arr[$keys[4]]);
@@ -1131,8 +1131,8 @@ abstract class Nav implements ActiveRecordInterface
         if ($this->isColumnModified(NavTableMap::COL_NAME)) {
             $criteria->add(NavTableMap::COL_NAME, $this->name);
         }
-        if ($this->isColumnModified(NavTableMap::COL_LINK)) {
-            $criteria->add(NavTableMap::COL_LINK, $this->link);
+        if ($this->isColumnModified(NavTableMap::COL_URL)) {
+            $criteria->add(NavTableMap::COL_URL, $this->url);
         }
         if ($this->isColumnModified(NavTableMap::COL_PRIORITY)) {
             $criteria->add(NavTableMap::COL_PRIORITY, $this->priority);
@@ -1225,7 +1225,7 @@ abstract class Nav implements ActiveRecordInterface
     {
         $copyObj->setActivityId($this->getActivityId());
         $copyObj->setName($this->getName());
-        $copyObj->setLink($this->getLink());
+        $copyObj->setUrl($this->getUrl());
         $copyObj->setPriority($this->getPriority());
 
         if ($deepCopy) {
@@ -1624,7 +1624,7 @@ abstract class Nav implements ActiveRecordInterface
         $this->id = null;
         $this->activity_id = null;
         $this->name = null;
-        $this->link = null;
+        $this->url = null;
         $this->priority = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

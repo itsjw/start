@@ -9,6 +9,7 @@ use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
 use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumerlabs\Start\Model\Duty;
+use Perfumerlabs\Start\Model\NavQuery;
 
 class CreateController extends ViewController
 {
@@ -17,12 +18,13 @@ class CreateController extends ViewController
 
     public function post()
     {
-        $activity_id = (int) $this->f('activity_id');
+        $nav_id = (int) $this->f('nav_id');
 
-        $activity = ActivityQuery::create()->findPk($activity_id);
+        $nav = NavQuery::create()->findPk($nav_id);
 
         $duty = new Duty();
-        $duty->setActivity($activity);
+        $duty->setActivityId($nav->getActivityId());
+        $duty->setIframeUrl($nav->getUrl());
         $duty->setUserId((int) $this->getAuth()->getData());
         $duty->setRaisedAt(new \DateTime());
         $duty->setPickedAt(new \DateTime());

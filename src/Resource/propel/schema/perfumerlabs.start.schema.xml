@@ -47,7 +47,7 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="activity_id" type="integer"/>
         <column name="name" type="varchar" size="255" required="true"/>
-        <column name="link" type="longvarchar"/>
+        <column name="url" type="longvarchar"/>
         <column name="priority" type="integer" required="true"/>
         <foreign-key foreignTable="activity" phpName="Activity">
             <reference local="activity_id" foreign="id"/>

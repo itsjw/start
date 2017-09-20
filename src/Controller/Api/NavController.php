@@ -27,20 +27,20 @@ class NavController extends LayoutController
             'id' => $nav->getId(),
             'name' => $nav->getName(),
             'activity_id' => $nav->getActivityId(),
-            'link' => $nav->getLink(),
+            'url' => $nav->getUrl(),
             'priority' => $nav->getPriority()
         ]);
     }
 
     public function post()
     {
-        $fields = $this->f(['name', 'activity_id', 'priority', 'link']);
+        $fields = $this->f(['name', 'activity_id', 'priority', 'url']);
 
         $nav = new Nav();
         $nav->setName((string) $fields['name']);
         $nav->setActivityId($fields['activity_id']);
         $nav->setPriority((int) $fields['priority']);
-        $nav->setLink($fields['link']);
+        $nav->setUrl($fields['url']);
         $nav->save();
 
         $this->getExternalResponse()->setStatusCode(201);
@@ -49,7 +49,7 @@ class NavController extends LayoutController
             'id' => $nav->getId(),
             'name' => $nav->getName(),
             'activity_id' => $nav->getActivityId(),
-            'link' => $nav->getLink(),
+            'url' => $nav->getUrl(),
             'priority' => $nav->getPriority()
         ]);
     }
@@ -70,19 +70,19 @@ class NavController extends LayoutController
             $this->setStatusAndExit(false);
         }
 
-        $fields = $this->f(['name', 'activity_id', 'priority', 'link']);
+        $fields = $this->f(['name', 'activity_id', 'priority', 'url']);
 
         $nav->setName((string) $fields['name']);
         $nav->setActivityId($fields['activity_id']);
         $nav->setPriority((int) $fields['priority']);
-        $nav->setLink($fields['link']);
+        $nav->setUrl($fields['url']);
         $nav->save();
 
         $this->setContent([
             'id' => $nav->getId(),
             'name' => $nav->getName(),
             'activity_id' => $nav->getActivityId(),
-            'link' => $nav->getLink(),
+            'url' => $nav->getUrl(),
             'priority' => $nav->getPriority()
         ]);
     }

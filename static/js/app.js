@@ -274,8 +274,8 @@ var dashboard = new Vue({
 var navbar = new Vue({
     el: '#navbar',
     methods: {
-        createDuty: function (activity_id) {
-            this.$http.post('/duty/create', {activity_id: activity_id}).then(function(response) {
+        createDuty: function (nav_id) {
+            this.$http.post('/duty/create', {nav_id: nav_id}).then(function(response) {
                 var duty = dashboard.appendDuty(response.body.content);
                 dashboard.openDutyBySticker(duty);
             }, function(response) {

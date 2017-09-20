@@ -19,7 +19,7 @@ class NavsController extends LayoutController
                 'id' => $nav->getId(),
                 'name' => $nav->getName(),
                 'activity_id' => $nav->getActivityId(),
-                'link' => $nav->getLink(),
+                'url' => $nav->getUrl(),
                 'priority' => $nav->getPriority()
             ];
         }

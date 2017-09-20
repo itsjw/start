@@ -87,9 +87,9 @@ class NavTableMap extends TableMap
     const COL_NAME = 'nav.name';
 
     /**
-     * the column name for the link field
+     * the column name for the url field
      */
-    const COL_LINK = 'nav.link';
+    const COL_URL = 'nav.url';
 
     /**
      * the column name for the priority field
@@ -108,10 +108,10 @@ class NavTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'ActivityId', 'Name', 'Link', 'Priority', ),
-        self::TYPE_CAMELNAME     => array('id', 'activityId', 'name', 'link', 'priority', ),
-        self::TYPE_COLNAME       => array(NavTableMap::COL_ID, NavTableMap::COL_ACTIVITY_ID, NavTableMap::COL_NAME, NavTableMap::COL_LINK, NavTableMap::COL_PRIORITY, ),
-        self::TYPE_FIELDNAME     => array('id', 'activity_id', 'name', 'link', 'priority', ),
+        self::TYPE_PHPNAME       => array('Id', 'ActivityId', 'Name', 'Url', 'Priority', ),
+        self::TYPE_CAMELNAME     => array('id', 'activityId', 'name', 'url', 'priority', ),
+        self::TYPE_COLNAME       => array(NavTableMap::COL_ID, NavTableMap::COL_ACTIVITY_ID, NavTableMap::COL_NAME, NavTableMap::COL_URL, NavTableMap::COL_PRIORITY, ),
+        self::TYPE_FIELDNAME     => array('id', 'activity_id', 'name', 'url', 'priority', ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
@@ -122,10 +122,10 @@ class NavTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'ActivityId' => 1, 'Name' => 2, 'Link' => 3, 'Priority' => 4, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'activityId' => 1, 'name' => 2, 'link' => 3, 'priority' => 4, ),
-        self::TYPE_COLNAME       => array(NavTableMap::COL_ID => 0, NavTableMap::COL_ACTIVITY_ID => 1, NavTableMap::COL_NAME => 2, NavTableMap::COL_LINK => 3, NavTableMap::COL_PRIORITY => 4, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'activity_id' => 1, 'name' => 2, 'link' => 3, 'priority' => 4, ),
+        self::TYPE_PHPNAME       => array('Id' => 0, 'ActivityId' => 1, 'Name' => 2, 'Url' => 3, 'Priority' => 4, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'activityId' => 1, 'name' => 2, 'url' => 3, 'priority' => 4, ),
+        self::TYPE_COLNAME       => array(NavTableMap::COL_ID => 0, NavTableMap::COL_ACTIVITY_ID => 1, NavTableMap::COL_NAME => 2, NavTableMap::COL_URL => 3, NavTableMap::COL_PRIORITY => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'activity_id' => 1, 'name' => 2, 'url' => 3, 'priority' => 4, ),
         self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
@@ -150,7 +150,7 @@ class NavTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', true, 255, null);
-        $this->addColumn('link', 'Link', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('url', 'Url', 'LONGVARCHAR', false, null, null);
         $this->addColumn('priority', 'Priority', 'INTEGER', true, null, null);
     } // initialize()
 
@@ -328,13 +328,13 @@ class NavTableMap extends TableMap
             $criteria->addSelectColumn(NavTableMap::COL_ID);
             $criteria->addSelectColumn(NavTableMap::COL_ACTIVITY_ID);
             $criteria->addSelectColumn(NavTableMap::COL_NAME);
-            $criteria->addSelectColumn(NavTableMap::COL_LINK);
+            $criteria->addSelectColumn(NavTableMap::COL_URL);
             $criteria->addSelectColumn(NavTableMap::COL_PRIORITY);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.activity_id');
             $criteria->addSelectColumn($alias . '.name');
-            $criteria->addSelectColumn($alias . '.link');
+            $criteria->addSelectColumn($alias . '.url');
             $criteria->addSelectColumn($alias . '.priority');
         }
     }
