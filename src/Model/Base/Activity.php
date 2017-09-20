@@ -85,6 +85,13 @@ abstract class Activity implements ActiveRecordInterface
     protected $name;
 
     /**
+     * The value for the code field.
+     *
+     * @var        string
+     */
+    protected $code;
+
+    /**
      * The value for the iframe field.
      *
      * @var        string
@@ -441,6 +448,16 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [code] column value.
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
      * Get the [iframe] column value.
      *
      * @return string
@@ -579,6 +596,26 @@ abstract class Activity implements ActiveRecordInterface
 
         return $this;
     } // setName()
+
+    /**
+     * Set the value of [code] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setCode($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->code !== $v) {
+            $this->code = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_CODE] = true;
+        }
+
+        return $this;
+    } // setCode()
 
     /**
      * Set the value of [iframe] column.
@@ -798,25 +835,28 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : ActivityTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
             $this->name = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Iframe', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->code = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Iframe', TableMap::TYPE_PHPNAME, $indexType)];
             $this->iframe = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readonly = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->writable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->postponable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
             $this->toolbar = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
             $this->priority = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -826,7 +866,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -1101,6 +1141,9 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_NAME)) {
             $modifiedColumns[':p' . $index++]  = 'name';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
+            $modifiedColumns[':p' . $index++]  = 'code';
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_IFRAME)) {
             $modifiedColumns[':p' . $index++]  = 'iframe';
         }
@@ -1138,6 +1181,9 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'name':
                         $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+                        break;
+                    case 'code':
+                        $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
                         break;
                     case 'iframe':
                         $stmt->bindValue($identifier, $this->iframe, PDO::PARAM_STR);
@@ -1222,24 +1268,27 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getName();
                 break;
             case 2:
-                return $this->getIframe();
+                return $this->getCode();
                 break;
             case 3:
-                return $this->getReadonly();
+                return $this->getIframe();
                 break;
             case 4:
-                return $this->getWritable();
+                return $this->getReadonly();
                 break;
             case 5:
-                return $this->getPostponable();
+                return $this->getWritable();
                 break;
             case 6:
-                return $this->getColor();
+                return $this->getPostponable();
                 break;
             case 7:
-                return $this->getToolbar();
+                return $this->getColor();
                 break;
             case 8:
+                return $this->getToolbar();
+                break;
+            case 9:
                 return $this->getPriority();
                 break;
             default:
@@ -1274,13 +1323,14 @@ abstract class Activity implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
-            $keys[2] => $this->getIframe(),
-            $keys[3] => $this->getReadonly(),
-            $keys[4] => $this->getWritable(),
-            $keys[5] => $this->getPostponable(),
-            $keys[6] => $this->getColor(),
-            $keys[7] => $this->getToolbar(),
-            $keys[8] => $this->getPriority(),
+            $keys[2] => $this->getCode(),
+            $keys[3] => $this->getIframe(),
+            $keys[4] => $this->getReadonly(),
+            $keys[5] => $this->getWritable(),
+            $keys[6] => $this->getPostponable(),
+            $keys[7] => $this->getColor(),
+            $keys[8] => $this->getToolbar(),
+            $keys[9] => $this->getPriority(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1374,24 +1424,27 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setName($value);
                 break;
             case 2:
-                $this->setIframe($value);
+                $this->setCode($value);
                 break;
             case 3:
-                $this->setReadonly($value);
+                $this->setIframe($value);
                 break;
             case 4:
-                $this->setWritable($value);
+                $this->setReadonly($value);
                 break;
             case 5:
-                $this->setPostponable($value);
+                $this->setWritable($value);
                 break;
             case 6:
-                $this->setColor($value);
+                $this->setPostponable($value);
                 break;
             case 7:
-                $this->setToolbar($value);
+                $this->setColor($value);
                 break;
             case 8:
+                $this->setToolbar($value);
+                break;
+            case 9:
                 $this->setPriority($value);
                 break;
         } // switch()
@@ -1427,25 +1480,28 @@ abstract class Activity implements ActiveRecordInterface
             $this->setName($arr[$keys[1]]);
         }
         if (array_key_exists($keys[2], $arr)) {
-            $this->setIframe($arr[$keys[2]]);
+            $this->setCode($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setReadonly($arr[$keys[3]]);
+            $this->setIframe($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setWritable($arr[$keys[4]]);
+            $this->setReadonly($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setPostponable($arr[$keys[5]]);
+            $this->setWritable($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setColor($arr[$keys[6]]);
+            $this->setPostponable($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setToolbar($arr[$keys[7]]);
+            $this->setColor($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setPriority($arr[$keys[8]]);
+            $this->setToolbar($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setPriority($arr[$keys[9]]);
         }
     }
 
@@ -1493,6 +1549,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_NAME)) {
             $criteria->add(ActivityTableMap::COL_NAME, $this->name);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
+            $criteria->add(ActivityTableMap::COL_CODE, $this->code);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_IFRAME)) {
             $criteria->add(ActivityTableMap::COL_IFRAME, $this->iframe);
@@ -1602,6 +1661,7 @@ abstract class Activity implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setName($this->getName());
+        $copyObj->setCode($this->getCode());
         $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
         $copyObj->setWritable($this->getWritable());
@@ -2444,6 +2504,7 @@ abstract class Activity implements ActiveRecordInterface
     {
         $this->id = null;
         $this->name = null;
+        $this->code = null;
         $this->iframe = null;
         $this->readonly = null;
         $this->writable = null;

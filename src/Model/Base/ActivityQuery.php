@@ -22,6 +22,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
  * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
  * @method     ChildActivityQuery orderByWritable($order = Criteria::ASC) Order by the writable column
@@ -32,6 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
+ * @method     ChildActivityQuery groupByCode() Group by the code column
  * @method     ChildActivityQuery groupByIframe() Group by the iframe column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
  * @method     ChildActivityQuery groupByWritable() Group by the writable column
@@ -85,6 +87,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
+ * @method     ChildActivity findOneByCode(string $code) Return the first ChildActivity filtered by the code column
  * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
  * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
  * @method     ChildActivity findOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column
@@ -98,6 +101,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByCode(string $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -109,6 +113,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
+ * @method     ChildActivity[]|ObjectCollection findByCode(string $code) Return ChildActivity objects filtered by the code column
  * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
  * @method     ChildActivity[]|ObjectCollection findByWritable(boolean $writable) Return ChildActivity objects filtered by the writable column
@@ -214,7 +219,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, iframe, readonly, writable, postponable, color, toolbar, priority FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, code, iframe, readonly, writable, postponable, color, toolbar, priority FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -368,6 +373,31 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the code column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCode('fooValue');   // WHERE code = 'fooValue'
+     * $query->filterByCode('%fooValue%', Criteria::LIKE); // WHERE code LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $code The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByCode($code = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($code)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_CODE, $code, $comparison);
     }
 
     /**

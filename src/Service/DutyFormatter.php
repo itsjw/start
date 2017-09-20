@@ -27,7 +27,7 @@ class DutyFormatter
             'description' => $duty->getDescription()
         ];
 
-        $iframe = $duty->getActivity()->getIframe() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getName();
+        $iframe = $duty->getActivity()->getIframe() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getCode();
 
         if ($duty->getQuery()) {
             $iframe .= '&' . $duty->getQuery();

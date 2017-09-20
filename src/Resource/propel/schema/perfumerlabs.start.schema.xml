@@ -26,6 +26,7 @@
     <table name="activity" phpName="Activity" namespace="\Perfumerlabs\Start\Model">
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255"/>
+        <column name="code" type="varchar" size="255"/>
         <column name="iframe" type="varchar" size="255"/>
         <column name="readonly" type="boolean" required="true" defaultValue="false"/>
         <column name="writable" type="boolean" required="true" defaultValue="false"/>
