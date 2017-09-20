@@ -61,7 +61,7 @@ class UserTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -71,7 +71,7 @@ class UserTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -87,6 +87,16 @@ class UserTableMap extends TableMap
      * the column name for the password field
      */
     const COL_PASSWORD = '_user.password';
+
+    /**
+     * the column name for the first_name field
+     */
+    const COL_FIRST_NAME = '_user.first_name';
+
+    /**
+     * the column name for the last_name field
+     */
+    const COL_LAST_NAME = '_user.last_name';
 
     /**
      * the column name for the is_admin field
@@ -125,11 +135,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Username', 'Password', 'IsAdmin', 'IsDisabled', 'OnlineAt', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'username', 'password', 'isAdmin', 'isDisabled', 'onlineAt', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_IS_ADMIN, UserTableMap::COL_IS_DISABLED, UserTableMap::COL_ONLINE_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'username', 'password', 'is_admin', 'is_disabled', 'online_at', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'Username', 'Password', 'FirstName', 'LastName', 'IsAdmin', 'IsDisabled', 'OnlineAt', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_CAMELNAME     => array('id', 'username', 'password', 'firstName', 'lastName', 'isAdmin', 'isDisabled', 'onlineAt', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID, UserTableMap::COL_USERNAME, UserTableMap::COL_PASSWORD, UserTableMap::COL_FIRST_NAME, UserTableMap::COL_LAST_NAME, UserTableMap::COL_IS_ADMIN, UserTableMap::COL_IS_DISABLED, UserTableMap::COL_ONLINE_AT, UserTableMap::COL_CREATED_AT, UserTableMap::COL_UPDATED_AT, ),
+        self::TYPE_FIELDNAME     => array('id', 'username', 'password', 'first_name', 'last_name', 'is_admin', 'is_disabled', 'online_at', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -139,11 +149,11 @@ class UserTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Password' => 2, 'IsAdmin' => 3, 'IsDisabled' => 4, 'OnlineAt' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'isAdmin' => 3, 'isDisabled' => 4, 'onlineAt' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
-        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_PASSWORD => 2, UserTableMap::COL_IS_ADMIN => 3, UserTableMap::COL_IS_DISABLED => 4, UserTableMap::COL_ONLINE_AT => 5, UserTableMap::COL_CREATED_AT => 6, UserTableMap::COL_UPDATED_AT => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'is_admin' => 3, 'is_disabled' => 4, 'online_at' => 5, 'created_at' => 6, 'updated_at' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Username' => 1, 'Password' => 2, 'FirstName' => 3, 'LastName' => 4, 'IsAdmin' => 5, 'IsDisabled' => 6, 'OnlineAt' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'firstName' => 3, 'lastName' => 4, 'isAdmin' => 5, 'isDisabled' => 6, 'onlineAt' => 7, 'createdAt' => 8, 'updatedAt' => 9, ),
+        self::TYPE_COLNAME       => array(UserTableMap::COL_ID => 0, UserTableMap::COL_USERNAME => 1, UserTableMap::COL_PASSWORD => 2, UserTableMap::COL_FIRST_NAME => 3, UserTableMap::COL_LAST_NAME => 4, UserTableMap::COL_IS_ADMIN => 5, UserTableMap::COL_IS_DISABLED => 6, UserTableMap::COL_ONLINE_AT => 7, UserTableMap::COL_CREATED_AT => 8, UserTableMap::COL_UPDATED_AT => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'username' => 1, 'password' => 2, 'first_name' => 3, 'last_name' => 4, 'is_admin' => 5, 'is_disabled' => 6, 'online_at' => 7, 'created_at' => 8, 'updated_at' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -167,6 +177,8 @@ class UserTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('username', 'Username', 'VARCHAR', true, 255, null);
         $this->addColumn('password', 'Password', 'VARCHAR', false, 255, null);
+        $this->addColumn('first_name', 'FirstName', 'VARCHAR', false, 255, null);
+        $this->addColumn('last_name', 'LastName', 'VARCHAR', false, 255, null);
         $this->addColumn('is_admin', 'IsAdmin', 'BOOLEAN', true, null, false);
         $this->addColumn('is_disabled', 'IsDisabled', 'BOOLEAN', true, null, false);
         $this->addColumn('online_at', 'OnlineAt', 'TIMESTAMP', false, null, null);
@@ -385,6 +397,8 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn(UserTableMap::COL_ID);
             $criteria->addSelectColumn(UserTableMap::COL_USERNAME);
             $criteria->addSelectColumn(UserTableMap::COL_PASSWORD);
+            $criteria->addSelectColumn(UserTableMap::COL_FIRST_NAME);
+            $criteria->addSelectColumn(UserTableMap::COL_LAST_NAME);
             $criteria->addSelectColumn(UserTableMap::COL_IS_ADMIN);
             $criteria->addSelectColumn(UserTableMap::COL_IS_DISABLED);
             $criteria->addSelectColumn(UserTableMap::COL_ONLINE_AT);
@@ -394,6 +408,8 @@ class UserTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.username');
             $criteria->addSelectColumn($alias . '.password');
+            $criteria->addSelectColumn($alias . '.first_name');
+            $criteria->addSelectColumn($alias . '.last_name');
             $criteria->addSelectColumn($alias . '.is_admin');
             $criteria->addSelectColumn($alias . '.is_disabled');
             $criteria->addSelectColumn($alias . '.online_at');

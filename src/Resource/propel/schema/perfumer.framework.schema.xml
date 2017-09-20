@@ -43,6 +43,8 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="username" type="varchar" size="255" required="true"/>
         <column name="password" type="varchar" size="255"/>
+        <column name="first_name" type="varchar" size="255"/>
+        <column name="last_name" type="varchar" size="255"/>
         <column name="is_admin" type="boolean" required="true" defaultValue="false"/>
         <column name="is_disabled" type="boolean" required="true" defaultValue="false"/>
         <column name="online_at" type="timestamp"/>

@@ -26,6 +26,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildUserQuery orderByUsername($order = Criteria::ASC) Order by the username column
  * @method     ChildUserQuery orderByPassword($order = Criteria::ASC) Order by the password column
+ * @method     ChildUserQuery orderByFirstName($order = Criteria::ASC) Order by the first_name column
+ * @method     ChildUserQuery orderByLastName($order = Criteria::ASC) Order by the last_name column
  * @method     ChildUserQuery orderByIsAdmin($order = Criteria::ASC) Order by the is_admin column
  * @method     ChildUserQuery orderByIsDisabled($order = Criteria::ASC) Order by the is_disabled column
  * @method     ChildUserQuery orderByOnlineAt($order = Criteria::ASC) Order by the online_at column
@@ -35,6 +37,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUserQuery groupById() Group by the id column
  * @method     ChildUserQuery groupByUsername() Group by the username column
  * @method     ChildUserQuery groupByPassword() Group by the password column
+ * @method     ChildUserQuery groupByFirstName() Group by the first_name column
+ * @method     ChildUserQuery groupByLastName() Group by the last_name column
  * @method     ChildUserQuery groupByIsAdmin() Group by the is_admin column
  * @method     ChildUserQuery groupByIsDisabled() Group by the is_disabled column
  * @method     ChildUserQuery groupByOnlineAt() Group by the online_at column
@@ -107,6 +111,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser findOneById(int $id) Return the first ChildUser filtered by the id column
  * @method     ChildUser findOneByUsername(string $username) Return the first ChildUser filtered by the username column
  * @method     ChildUser findOneByPassword(string $password) Return the first ChildUser filtered by the password column
+ * @method     ChildUser findOneByFirstName(string $first_name) Return the first ChildUser filtered by the first_name column
+ * @method     ChildUser findOneByLastName(string $last_name) Return the first ChildUser filtered by the last_name column
  * @method     ChildUser findOneByIsAdmin(boolean $is_admin) Return the first ChildUser filtered by the is_admin column
  * @method     ChildUser findOneByIsDisabled(boolean $is_disabled) Return the first ChildUser filtered by the is_disabled column
  * @method     ChildUser findOneByOnlineAt(string $online_at) Return the first ChildUser filtered by the online_at column
@@ -119,6 +125,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser requireOneById(int $id) Return the first ChildUser filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByUsername(string $username) Return the first ChildUser filtered by the username column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByPassword(string $password) Return the first ChildUser filtered by the password column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByFirstName(string $first_name) Return the first ChildUser filtered by the first_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildUser requireOneByLastName(string $last_name) Return the first ChildUser filtered by the last_name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByIsAdmin(boolean $is_admin) Return the first ChildUser filtered by the is_admin column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByIsDisabled(boolean $is_disabled) Return the first ChildUser filtered by the is_disabled column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildUser requireOneByOnlineAt(string $online_at) Return the first ChildUser filtered by the online_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -129,6 +137,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildUser[]|ObjectCollection findById(int $id) Return ChildUser objects filtered by the id column
  * @method     ChildUser[]|ObjectCollection findByUsername(string $username) Return ChildUser objects filtered by the username column
  * @method     ChildUser[]|ObjectCollection findByPassword(string $password) Return ChildUser objects filtered by the password column
+ * @method     ChildUser[]|ObjectCollection findByFirstName(string $first_name) Return ChildUser objects filtered by the first_name column
+ * @method     ChildUser[]|ObjectCollection findByLastName(string $last_name) Return ChildUser objects filtered by the last_name column
  * @method     ChildUser[]|ObjectCollection findByIsAdmin(boolean $is_admin) Return ChildUser objects filtered by the is_admin column
  * @method     ChildUser[]|ObjectCollection findByIsDisabled(boolean $is_disabled) Return ChildUser objects filtered by the is_disabled column
  * @method     ChildUser[]|ObjectCollection findByOnlineAt(string $online_at) Return ChildUser objects filtered by the online_at column
@@ -232,7 +242,7 @@ abstract class UserQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, username, password, is_admin, is_disabled, online_at, created_at, updated_at FROM _user WHERE id = :p0';
+        $sql = 'SELECT id, username, password, first_name, last_name, is_admin, is_disabled, online_at, created_at, updated_at FROM _user WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -411,6 +421,56 @@ abstract class UserQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(UserTableMap::COL_PASSWORD, $password, $comparison);
+    }
+
+    /**
+     * Filter the query on the first_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByFirstName('fooValue');   // WHERE first_name = 'fooValue'
+     * $query->filterByFirstName('%fooValue%', Criteria::LIKE); // WHERE first_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $firstName The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByFirstName($firstName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($firstName)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_FIRST_NAME, $firstName, $comparison);
+    }
+
+    /**
+     * Filter the query on the last_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLastName('fooValue');   // WHERE last_name = 'fooValue'
+     * $query->filterByLastName('%fooValue%', Criteria::LIKE); // WHERE last_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $lastName The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildUserQuery The current query, for fluid interface
+     */
+    public function filterByLastName($lastName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($lastName)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(UserTableMap::COL_LAST_NAME, $lastName, $comparison);
     }
 
     /**

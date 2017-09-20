@@ -105,6 +105,20 @@ abstract class User implements ActiveRecordInterface
     protected $password;
 
     /**
+     * The value for the first_name field.
+     *
+     * @var        string
+     */
+    protected $first_name;
+
+    /**
+     * The value for the last_name field.
+     *
+     * @var        string
+     */
+    protected $last_name;
+
+    /**
      * The value for the is_admin field.
      *
      * Note: this column has a database default value of: false
@@ -495,6 +509,26 @@ abstract class User implements ActiveRecordInterface
     }
 
     /**
+     * Get the [first_name] column value.
+     *
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->first_name;
+    }
+
+    /**
+     * Get the [last_name] column value.
+     *
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->last_name;
+    }
+
+    /**
      * Get the [is_admin] column value.
      *
      * @return boolean
@@ -653,6 +687,46 @@ abstract class User implements ActiveRecordInterface
 
         return $this;
     } // setPassword()
+
+    /**
+     * Set the value of [first_name] column.
+     *
+     * @param string $v new value
+     * @return $this|\App\Model\User The current object (for fluent API support)
+     */
+    public function setFirstName($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->first_name !== $v) {
+            $this->first_name = $v;
+            $this->modifiedColumns[UserTableMap::COL_FIRST_NAME] = true;
+        }
+
+        return $this;
+    } // setFirstName()
+
+    /**
+     * Set the value of [last_name] column.
+     *
+     * @param string $v new value
+     * @return $this|\App\Model\User The current object (for fluent API support)
+     */
+    public function setLastName($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->last_name !== $v) {
+            $this->last_name = $v;
+            $this->modifiedColumns[UserTableMap::COL_LAST_NAME] = true;
+        }
+
+        return $this;
+    } // setLastName()
 
     /**
      * Sets the value of the [is_admin] column.
@@ -823,19 +897,25 @@ abstract class User implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : UserTableMap::translateFieldName('Password', TableMap::TYPE_PHPNAME, $indexType)];
             $this->password = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('IsAdmin', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : UserTableMap::translateFieldName('FirstName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->first_name = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('LastName', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->last_name = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('IsAdmin', TableMap::TYPE_PHPNAME, $indexType)];
             $this->is_admin = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : UserTableMap::translateFieldName('IsDisabled', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('IsDisabled', TableMap::TYPE_PHPNAME, $indexType)];
             $this->is_disabled = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : UserTableMap::translateFieldName('OnlineAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('OnlineAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->online_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : UserTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : UserTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -845,7 +925,7 @@ abstract class User implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = UserTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = UserTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\App\\Model\\User'), 0, $e);
@@ -1203,6 +1283,12 @@ abstract class User implements ActiveRecordInterface
         if ($this->isColumnModified(UserTableMap::COL_PASSWORD)) {
             $modifiedColumns[':p' . $index++]  = 'password';
         }
+        if ($this->isColumnModified(UserTableMap::COL_FIRST_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'first_name';
+        }
+        if ($this->isColumnModified(UserTableMap::COL_LAST_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'last_name';
+        }
         if ($this->isColumnModified(UserTableMap::COL_IS_ADMIN)) {
             $modifiedColumns[':p' . $index++]  = 'is_admin';
         }
@@ -1237,6 +1323,12 @@ abstract class User implements ActiveRecordInterface
                         break;
                     case 'password':
                         $stmt->bindValue($identifier, $this->password, PDO::PARAM_STR);
+                        break;
+                    case 'first_name':
+                        $stmt->bindValue($identifier, $this->first_name, PDO::PARAM_STR);
+                        break;
+                    case 'last_name':
+                        $stmt->bindValue($identifier, $this->last_name, PDO::PARAM_STR);
                         break;
                     case 'is_admin':
                         $stmt->bindValue($identifier, $this->is_admin, PDO::PARAM_BOOL);
@@ -1318,18 +1410,24 @@ abstract class User implements ActiveRecordInterface
                 return $this->getPassword();
                 break;
             case 3:
-                return $this->getIsAdmin();
+                return $this->getFirstName();
                 break;
             case 4:
-                return $this->getIsDisabled();
+                return $this->getLastName();
                 break;
             case 5:
-                return $this->getOnlineAt();
+                return $this->getIsAdmin();
                 break;
             case 6:
-                return $this->getCreatedAt();
+                return $this->getIsDisabled();
                 break;
             case 7:
+                return $this->getOnlineAt();
+                break;
+            case 8:
+                return $this->getCreatedAt();
+                break;
+            case 9:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1365,22 +1463,24 @@ abstract class User implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUsername(),
             $keys[2] => $this->getPassword(),
-            $keys[3] => $this->getIsAdmin(),
-            $keys[4] => $this->getIsDisabled(),
-            $keys[5] => $this->getOnlineAt(),
-            $keys[6] => $this->getCreatedAt(),
-            $keys[7] => $this->getUpdatedAt(),
+            $keys[3] => $this->getFirstName(),
+            $keys[4] => $this->getLastName(),
+            $keys[5] => $this->getIsAdmin(),
+            $keys[6] => $this->getIsDisabled(),
+            $keys[7] => $this->getOnlineAt(),
+            $keys[8] => $this->getCreatedAt(),
+            $keys[9] => $this->getUpdatedAt(),
         );
-        if ($result[$keys[5]] instanceof \DateTime) {
-            $result[$keys[5]] = $result[$keys[5]]->format('c');
-        }
-
-        if ($result[$keys[6]] instanceof \DateTime) {
-            $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
         if ($result[$keys[7]] instanceof \DateTime) {
             $result[$keys[7]] = $result[$keys[7]]->format('c');
+        }
+
+        if ($result[$keys[8]] instanceof \DateTime) {
+            $result[$keys[8]] = $result[$keys[8]]->format('c');
+        }
+
+        if ($result[$keys[9]] instanceof \DateTime) {
+            $result[$keys[9]] = $result[$keys[9]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1508,18 +1608,24 @@ abstract class User implements ActiveRecordInterface
                 $this->setPassword($value);
                 break;
             case 3:
-                $this->setIsAdmin($value);
+                $this->setFirstName($value);
                 break;
             case 4:
-                $this->setIsDisabled($value);
+                $this->setLastName($value);
                 break;
             case 5:
-                $this->setOnlineAt($value);
+                $this->setIsAdmin($value);
                 break;
             case 6:
-                $this->setCreatedAt($value);
+                $this->setIsDisabled($value);
                 break;
             case 7:
+                $this->setOnlineAt($value);
+                break;
+            case 8:
+                $this->setCreatedAt($value);
+                break;
+            case 9:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1558,19 +1664,25 @@ abstract class User implements ActiveRecordInterface
             $this->setPassword($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setIsAdmin($arr[$keys[3]]);
+            $this->setFirstName($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setIsDisabled($arr[$keys[4]]);
+            $this->setLastName($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setOnlineAt($arr[$keys[5]]);
+            $this->setIsAdmin($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setCreatedAt($arr[$keys[6]]);
+            $this->setIsDisabled($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setUpdatedAt($arr[$keys[7]]);
+            $this->setOnlineAt($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setCreatedAt($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setUpdatedAt($arr[$keys[9]]);
         }
     }
 
@@ -1621,6 +1733,12 @@ abstract class User implements ActiveRecordInterface
         }
         if ($this->isColumnModified(UserTableMap::COL_PASSWORD)) {
             $criteria->add(UserTableMap::COL_PASSWORD, $this->password);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_FIRST_NAME)) {
+            $criteria->add(UserTableMap::COL_FIRST_NAME, $this->first_name);
+        }
+        if ($this->isColumnModified(UserTableMap::COL_LAST_NAME)) {
+            $criteria->add(UserTableMap::COL_LAST_NAME, $this->last_name);
         }
         if ($this->isColumnModified(UserTableMap::COL_IS_ADMIN)) {
             $criteria->add(UserTableMap::COL_IS_ADMIN, $this->is_admin);
@@ -1725,6 +1843,8 @@ abstract class User implements ActiveRecordInterface
     {
         $copyObj->setUsername($this->getUsername());
         $copyObj->setPassword($this->getPassword());
+        $copyObj->setFirstName($this->getFirstName());
+        $copyObj->setLastName($this->getLastName());
         $copyObj->setIsAdmin($this->getIsAdmin());
         $copyObj->setIsDisabled($this->getIsDisabled());
         $copyObj->setOnlineAt($this->getOnlineAt());
@@ -3355,6 +3475,8 @@ abstract class User implements ActiveRecordInterface
         $this->id = null;
         $this->username = null;
         $this->password = null;
+        $this->first_name = null;
+        $this->last_name = null;
         $this->is_admin = null;
         $this->is_disabled = null;
         $this->online_at = null;
