@@ -2,41 +2,51 @@
 
 namespace Perfumerlabs\Start\Controller\Api;
 
-use App\Model\RoleQuery;
+use App\Model\UserQuery;
+use App\Model\UserRoleQuery;
 use Perfumerlabs\Start\Model\ActivityAccessQuery;
 use Perfumerlabs\Start\Model\NavAccessQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
-class RolesController extends LayoutController
+class UsersController extends LayoutController
 {
     public function get()
     {
-        $roles = RoleQuery::create()
-            ->orderByName()
+        $users = UserQuery::create()
+            ->orderByUsername()
             ->find();
 
         $content = [];
 
-        foreach ($roles as $role) {
+        foreach ($users as $user) {
+            $roles = UserRoleQuery::create()
+                ->filterByUser($user)
+                ->select('role_id')
+                ->find()
+                ->getData();
+
             $activities = ActivityAccessQuery::create()
-                ->filterByRole($role)
+                ->filterByUser($user)
                 ->filterByActivityId(null, Criteria::ISNOTNULL)
                 ->select('activity_id')
                 ->find()
                 ->getData();
 
             $navs = NavAccessQuery::create()
-                ->filterByRole($role)
+                ->filterByUser($user)
                 ->filterByNavId(null, Criteria::ISNOTNULL)
                 ->select('nav_id')
                 ->find()
                 ->getData();
 
             $content[] = [
-                'id' => $role->getId(),
-                'name' => $role->getName(),
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'first_name' => $user->getFirstName(),
+                'last_name' => $user->getLastName(),
                 'activities' => $activities,
                 'navs' => $navs,
+                'roles' => $roles,
             ];
         }
 

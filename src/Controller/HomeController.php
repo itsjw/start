@@ -2,8 +2,8 @@
 
 namespace Perfumerlabs\Start\Controller;
 
+use App\Model\UserRoleQuery;
 use Perfumer\Framework\Controller\TemplateController;
-use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumerlabs\Start\Model\NavQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
@@ -15,9 +15,19 @@ class HomeController extends TemplateController
             $this->redirect('/login');
         }
 
+        $user_id = (int) $this->getAuth()->getData();
+
+        $roles = UserRoleQuery::create()
+            ->filterByUserId($user_id)
+            ->select('role_id')
+            ->find()
+            ->getData();
+
         $navs = NavQuery::create()
-            ->useUserNavQuery()
-                ->filterByUserId((int) $this->getAuth()->getData())
+            ->useNavAccessQuery()
+                ->filterByUserId($user_id)
+                ->_or()
+                ->filterByRoleId($roles, Criteria::IN)
             ->endUse()
             ->orderByPriority(Criteria::DESC)
             ->find();
