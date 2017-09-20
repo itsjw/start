@@ -3,6 +3,7 @@ var roles = new Vue({
     data: {
         roles: [],
         form_activities: [],
+        form_navs: [],
         creating: false,
         index: null,
         form: {}
@@ -22,6 +23,14 @@ var roles = new Vue({
             this.$http.get('/api/activities').then(function(response) {
                 if (response.body.content) {
                     this.form_activities = response.body.content;
+                }
+            }, function(response) {
+                console.log(response);
+            });
+
+            this.$http.get('/api/navs').then(function(response) {
+                if (response.body.content) {
+                    this.form_navs = response.body.content;
                 }
             }, function(response) {
                 console.log(response);
@@ -78,7 +87,9 @@ var roles = new Vue({
         },
         resetForm: function () {
             this.form = {
-                name: ''
+                name: '',
+                activities: [],
+                navs: []
             };
         }
     }

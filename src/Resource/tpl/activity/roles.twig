@@ -51,6 +51,28 @@
                 </div>
             </div>
 
+            <div class="field">
+                <label class="label">Разрешенные активити</label>
+                <div class="control">
+                    <div class="select is-multiple">
+                        <select v-model="form.activities" multiple size="10">
+                            <option v-for="activity in form_activities" :value="activity.id">{{ '{{ activity.name }}' }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Разрешенная навигация</label>
+                <div class="control">
+                    <div class="select is-multiple">
+                        <select v-model="form.navs" multiple size="10">
+                            <option v-for="activity in form_navs" :value="activity.id">{{ '{{ activity.name }}' }}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <div class="field is-grouped">
                 <div class="control">
                     <button class="button is-link" @click="saveForm()">Сохранить</button>

@@ -58,7 +58,7 @@
                 <div class="control">
                     <div class="select">
                         <select v-model="form.activity_id">
-                            <option v-for="activity in form_activities" v-bind:value="activity.id">{{ '{{ activity.name }}' }}</option>
+                            <option v-for="activity in form_activities" :value="activity.id">{{ '{{ activity.name }}' }}</option>
                         </select>
                     </div>
                 </div>
