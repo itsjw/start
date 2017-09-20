@@ -33,6 +33,7 @@ class ActivityController extends LayoutController
             'postponing' => $activity->getPostponable(),
             'closing' => $activity->getReadonly(),
             'commenting' => $activity->getWritable(),
+            'vendor_id' => $activity->getVendorId(),
             'vendor' => [
                 'id' => $vendor->getId(),
                 'name' => $vendor->getName(),
@@ -67,6 +68,7 @@ class ActivityController extends LayoutController
             'postponing' => $activity->getPostponable(),
             'closing' => $activity->getReadonly(),
             'commenting' => $activity->getWritable(),
+            'vendor_id' => $activity->getVendorId(),
             'vendor' => [
                 'id' => $vendor->getId(),
                 'name' => $vendor->getName(),
@@ -107,12 +109,12 @@ class ActivityController extends LayoutController
         $this->setContent([
             'id' => $activity->getId(),
             'name' => $activity->getName(),
-            'iframe' => $activity->getIframe(),
             'priority' => $activity->getPriority(),
             'color' => $activity->getColor(),
             'postponing' => $activity->getPostponable(),
             'closing' => $activity->getReadonly(),
             'commenting' => $activity->getWritable(),
+            'vendor_id' => $activity->getVendorId(),
             'vendor' => [
                 'id' => $vendor->getId(),
                 'name' => $vendor->getName(),

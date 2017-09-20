@@ -28,6 +28,7 @@
             <tr>
                 <th></th>
                 <th>Название</th>
+                <th>Вендор</th>
                 <th>Приоритет</th>
                 <th></th>
             </tr>
@@ -36,7 +37,8 @@
             <tr v-for="(activity, index) in activities">
                 <td>{{ '{{ index + 1 }}' }}</td>
                 <td class="name" @click="editActivity(activity)">{{ '{{ activity.name }}' }}</td>
-                <td>{{ '{{ activity.priority }}' }}</td>
+                <td class="name" @click="editActivity(activity)">{{ '{{ activity.vendor.name }}' }}</td>
+                <td class="name" @click="editActivity(activity)">{{ '{{ activity.priority }}' }}</td>
                 <td><a class="button is-text is-pulled-right" @click="deleteActivity(activity)">Удалить</a></td>
             </tr>
             <tr v-if="activities.length == 0">
@@ -54,9 +56,13 @@
             </div>
 
             <div class="field">
-                <label class="label">Iframe</label>
+                <label class="label">Вендор</label>
                 <div class="control">
-                    <input class="input" type="text" v-model="form.iframe">
+                    <div class="select">
+                        <select v-model="form.vendor_id">
+                            <option v-for="vendor in form_vendors" :value="vendor.id">{{ '{{ vendor.name }}' }}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 

@@ -1,8 +1,7 @@
-var activities = new Vue({
-    el: '#activities',
+var vendors = new Vue({
+    el: '#vendors',
     data: {
-        activities: [],
-        form_vendors: [],
+        vendors: [],
         creating: false,
         index: null,
         form: {}
@@ -11,43 +10,35 @@ var activities = new Vue({
         init: function () {
             this.resetForm();
 
-            this.$http.get('/api/activities').then(function(response) {
-                if (response.body.content) {
-                    this.activities = response.body.content;
-                }
-            }, function(response) {
-                console.log(response);
-            });
-
             this.$http.get('/api/vendors').then(function(response) {
                 if (response.body.content) {
-                    this.form_vendors = response.body.content;
+                    this.vendors = response.body.content;
                 }
             }, function(response) {
                 console.log(response);
             });
         },
-        editActivity: function (activity) {
-            this.form = JSON.parse(JSON.stringify(activity));
+        editVendor: function (vendor) {
+            this.form = JSON.parse(JSON.stringify(vendor));
             this.creating = true;
-            this.index = this.activities.indexOf(activity);
+            this.index = this.vendors.indexOf(vendor);
         },
         saveForm: function () {
             var $this = this;
             var request = null;
 
             if (this.form.id) {
-                request = this.$http.put('/api/activity/' + this.form.id, this.form);
+                request = this.$http.put('/api/vendor/' + this.form.id, this.form);
             } else {
-                request = this.$http.post('/api/activity', this.form);
+                request = this.$http.post('/api/vendor', this.form);
             }
 
             request.then(function(response) {
                 if ([200, 201].indexOf(response.status) > -1) {
                     if ($this.index !== null) {
-                        $this.activities[$this.index] = response.body.content;
+                        $this.vendors[$this.index] = response.body.content;
                     } else {
-                        $this.activities.push(response.body.content);
+                        $this.vendors.push(response.body.content);
                     }
 
                     $this.cancelForm();
@@ -56,16 +47,16 @@ var activities = new Vue({
                 console.log(response);
             });
         },
-        deleteActivity: function (activity) {
+        deleteVendor: function (vendor) {
             if (!confirm('Вы уверены?')) {
                 return;
             }
 
             var $this = this;
 
-            this.$http.delete('/api/activity/' + activity.id).then(function(response) {
+            this.$http.delete('/api/vendor/' + vendor.id).then(function(response) {
                 if (response.status === 200) {
-                    $this.activities.splice($this.activities.indexOf(activity), 1);
+                    $this.vendors.splice($this.vendors.indexOf(vendor), 1);
                 }
             }, function(response) {
                 console.log(response);
@@ -79,14 +70,10 @@ var activities = new Vue({
         resetForm: function () {
             this.form = {
                 name: '',
-                priority: '',
-                color: '',
-                commenting: false,
-                postponing: false,
-                closing: true
+                hostname: ''
             };
         }
     }
 });
 
-activities.init();
+vendors.init();
