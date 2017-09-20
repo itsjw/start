@@ -3,24 +3,28 @@
 namespace Perfumerlabs\Start\Service;
 
 use App\Model\User;
-use Perfumerlabs\Start\Model\ScheduleQuery;
+use App\Model\UserRoleQuery;
+use Perfumerlabs\Start\Model\ActivityAccessQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 
 class Start
 {
     public function getAllowedActivities(User $user)
     {
-        $roles = $user->getRoles();
-        $activities = [];
+        $role_ids = UserRoleQuery::create()
+            ->filterByUser($user)
+            ->select('role_id')
+            ->find()
+            ->getData();
 
-        if (count($roles) > 0) {
-            $activities = ScheduleQuery::create()
-                ->filterByRoleId($roles->getPrimaryKeys(), Criteria::IN)
-                ->select('activity_id')
-                ->find()
-                ->getData();
-        }
+        $activity_ids = ActivityAccessQuery::create()
+            ->filterByRoleId($role_ids, Criteria::IN)
+            ->_or()
+            ->filterByUser($user)
+            ->select('activity_id')
+            ->find()
+            ->getData();
 
-        return array_unique($activities);
+        return $activity_ids;
     }
 }
