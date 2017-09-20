@@ -24,24 +24,24 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildDutyQuery orderByUserId($order = Criteria::ASC) Order by the user_id column
  * @method     ChildDutyQuery orderByActivityId($order = Criteria::ASC) Order by the activity_id column
- * @method     ChildDutyQuery orderByQuery($order = Criteria::ASC) Order by the query column
  * @method     ChildDutyQuery orderByComment($order = Criteria::ASC) Order by the comment column
  * @method     ChildDutyQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
  * @method     ChildDutyQuery orderByPickedAt($order = Criteria::ASC) Order by the picked_at column
  * @method     ChildDutyQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
  * @method     ChildDutyQuery orderByValidationUrl($order = Criteria::ASC) Order by the validation_url column
+ * @method     ChildDutyQuery orderByIframeUrl($order = Criteria::ASC) Order by the iframe_url column
  * @method     ChildDutyQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     ChildDutyQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  *
  * @method     ChildDutyQuery groupById() Group by the id column
  * @method     ChildDutyQuery groupByUserId() Group by the user_id column
  * @method     ChildDutyQuery groupByActivityId() Group by the activity_id column
- * @method     ChildDutyQuery groupByQuery() Group by the query column
  * @method     ChildDutyQuery groupByComment() Group by the comment column
  * @method     ChildDutyQuery groupByRaisedAt() Group by the raised_at column
  * @method     ChildDutyQuery groupByPickedAt() Group by the picked_at column
  * @method     ChildDutyQuery groupByClosedAt() Group by the closed_at column
  * @method     ChildDutyQuery groupByValidationUrl() Group by the validation_url column
+ * @method     ChildDutyQuery groupByIframeUrl() Group by the iframe_url column
  * @method     ChildDutyQuery groupByDescription() Group by the description column
  * @method     ChildDutyQuery groupByCreatedAt() Group by the created_at column
  *
@@ -91,12 +91,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty findOneById(int $id) Return the first ChildDuty filtered by the id column
  * @method     ChildDuty findOneByUserId(int $user_id) Return the first ChildDuty filtered by the user_id column
  * @method     ChildDuty findOneByActivityId(int $activity_id) Return the first ChildDuty filtered by the activity_id column
- * @method     ChildDuty findOneByQuery(string $query) Return the first ChildDuty filtered by the query column
  * @method     ChildDuty findOneByComment(string $comment) Return the first ChildDuty filtered by the comment column
  * @method     ChildDuty findOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column
  * @method     ChildDuty findOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column
  * @method     ChildDuty findOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column
  * @method     ChildDuty findOneByValidationUrl(string $validation_url) Return the first ChildDuty filtered by the validation_url column
+ * @method     ChildDuty findOneByIframeUrl(string $iframe_url) Return the first ChildDuty filtered by the iframe_url column
  * @method     ChildDuty findOneByDescription(string $description) Return the first ChildDuty filtered by the description column
  * @method     ChildDuty findOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column *
 
@@ -106,12 +106,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty requireOneById(int $id) Return the first ChildDuty filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByUserId(int $user_id) Return the first ChildDuty filtered by the user_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByActivityId(int $activity_id) Return the first ChildDuty filtered by the activity_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildDuty requireOneByQuery(string $query) Return the first ChildDuty filtered by the query column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByComment(string $comment) Return the first ChildDuty filtered by the comment column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByValidationUrl(string $validation_url) Return the first ChildDuty filtered by the validation_url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildDuty requireOneByIframeUrl(string $iframe_url) Return the first ChildDuty filtered by the iframe_url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByDescription(string $description) Return the first ChildDuty filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
@@ -119,12 +119,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty[]|ObjectCollection findById(int $id) Return ChildDuty objects filtered by the id column
  * @method     ChildDuty[]|ObjectCollection findByUserId(int $user_id) Return ChildDuty objects filtered by the user_id column
  * @method     ChildDuty[]|ObjectCollection findByActivityId(int $activity_id) Return ChildDuty objects filtered by the activity_id column
- * @method     ChildDuty[]|ObjectCollection findByQuery(string $query) Return ChildDuty objects filtered by the query column
  * @method     ChildDuty[]|ObjectCollection findByComment(string $comment) Return ChildDuty objects filtered by the comment column
  * @method     ChildDuty[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildDuty objects filtered by the raised_at column
  * @method     ChildDuty[]|ObjectCollection findByPickedAt(string $picked_at) Return ChildDuty objects filtered by the picked_at column
  * @method     ChildDuty[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildDuty objects filtered by the closed_at column
  * @method     ChildDuty[]|ObjectCollection findByValidationUrl(string $validation_url) Return ChildDuty objects filtered by the validation_url column
+ * @method     ChildDuty[]|ObjectCollection findByIframeUrl(string $iframe_url) Return ChildDuty objects filtered by the iframe_url column
  * @method     ChildDuty[]|ObjectCollection findByDescription(string $description) Return ChildDuty objects filtered by the description column
  * @method     ChildDuty[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildDuty objects filtered by the created_at column
  * @method     ChildDuty[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -225,7 +225,7 @@ abstract class DutyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, activity_id, query, comment, raised_at, picked_at, closed_at, validation_url, description, created_at FROM duty WHERE id = :p0';
+        $sql = 'SELECT id, user_id, activity_id, comment, raised_at, picked_at, closed_at, validation_url, iframe_url, description, created_at FROM duty WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -443,31 +443,6 @@ abstract class DutyQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the query column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByQuery('fooValue');   // WHERE query = 'fooValue'
-     * $query->filterByQuery('%fooValue%', Criteria::LIKE); // WHERE query LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $query The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildDutyQuery The current query, for fluid interface
-     */
-    public function filterByQuery($query = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($query)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DutyTableMap::COL_QUERY, $query, $comparison);
-    }
-
-    /**
      * Filter the query on the comment column
      *
      * Example usage:
@@ -644,6 +619,31 @@ abstract class DutyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DutyTableMap::COL_VALIDATION_URL, $validationUrl, $comparison);
+    }
+
+    /**
+     * Filter the query on the iframe_url column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIframeUrl('fooValue');   // WHERE iframe_url = 'fooValue'
+     * $query->filterByIframeUrl('%fooValue%', Criteria::LIKE); // WHERE iframe_url LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $iframeUrl The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByIframeUrl($iframeUrl = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($iframeUrl)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DutyTableMap::COL_IFRAME_URL, $iframeUrl, $comparison);
     }
 
     /**

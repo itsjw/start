@@ -92,13 +92,6 @@ abstract class Duty implements ActiveRecordInterface
     protected $activity_id;
 
     /**
-     * The value for the query field.
-     *
-     * @var        string
-     */
-    protected $query;
-
-    /**
      * The value for the comment field.
      *
      * @var        string
@@ -132,6 +125,13 @@ abstract class Duty implements ActiveRecordInterface
      * @var        string
      */
     protected $validation_url;
+
+    /**
+     * The value for the iframe_url field.
+     *
+     * @var        string
+     */
+    protected $iframe_url;
 
     /**
      * The value for the description field.
@@ -433,16 +433,6 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
-     * Get the [query] column value.
-     *
-     * @return string
-     */
-    public function getQuery()
-    {
-        return $this->query;
-    }
-
-    /**
      * Get the [comment] column value.
      *
      * @return string
@@ -520,6 +510,16 @@ abstract class Duty implements ActiveRecordInterface
     public function getValidationUrl()
     {
         return $this->validation_url;
+    }
+
+    /**
+     * Get the [iframe_url] column value.
+     *
+     * @return string
+     */
+    public function getIframeUrl()
+    {
+        return $this->iframe_url;
     }
 
     /**
@@ -619,26 +619,6 @@ abstract class Duty implements ActiveRecordInterface
 
         return $this;
     } // setActivityId()
-
-    /**
-     * Set the value of [query] column.
-     *
-     * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setQuery($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->query !== $v) {
-            $this->query = $v;
-            $this->modifiedColumns[DutyTableMap::COL_QUERY] = true;
-        }
-
-        return $this;
-    } // setQuery()
 
     /**
      * Set the value of [comment] column.
@@ -741,6 +721,26 @@ abstract class Duty implements ActiveRecordInterface
     } // setValidationUrl()
 
     /**
+     * Set the value of [iframe_url] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     */
+    public function setIframeUrl($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->iframe_url !== $v) {
+            $this->iframe_url = $v;
+            $this->modifiedColumns[DutyTableMap::COL_IFRAME_URL] = true;
+        }
+
+        return $this;
+    } // setIframeUrl()
+
+    /**
      * Set the value of [description] column.
      *
      * @param string $v new value
@@ -825,23 +825,23 @@ abstract class Duty implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DutyTableMap::translateFieldName('ActivityId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->activity_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DutyTableMap::translateFieldName('Query', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->query = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DutyTableMap::translateFieldName('Comment', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DutyTableMap::translateFieldName('Comment', TableMap::TYPE_PHPNAME, $indexType)];
             $this->comment = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DutyTableMap::translateFieldName('RaisedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DutyTableMap::translateFieldName('RaisedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->raised_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DutyTableMap::translateFieldName('PickedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DutyTableMap::translateFieldName('PickedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->picked_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('ValidationUrl', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DutyTableMap::translateFieldName('ValidationUrl', TableMap::TYPE_PHPNAME, $indexType)];
             $this->validation_url = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('IframeUrl', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->iframe_url = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
@@ -1126,9 +1126,6 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_ACTIVITY_ID)) {
             $modifiedColumns[':p' . $index++]  = 'activity_id';
         }
-        if ($this->isColumnModified(DutyTableMap::COL_QUERY)) {
-            $modifiedColumns[':p' . $index++]  = 'query';
-        }
         if ($this->isColumnModified(DutyTableMap::COL_COMMENT)) {
             $modifiedColumns[':p' . $index++]  = 'comment';
         }
@@ -1143,6 +1140,9 @@ abstract class Duty implements ActiveRecordInterface
         }
         if ($this->isColumnModified(DutyTableMap::COL_VALIDATION_URL)) {
             $modifiedColumns[':p' . $index++]  = 'validation_url';
+        }
+        if ($this->isColumnModified(DutyTableMap::COL_IFRAME_URL)) {
+            $modifiedColumns[':p' . $index++]  = 'iframe_url';
         }
         if ($this->isColumnModified(DutyTableMap::COL_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'description';
@@ -1170,9 +1170,6 @@ abstract class Duty implements ActiveRecordInterface
                     case 'activity_id':
                         $stmt->bindValue($identifier, $this->activity_id, PDO::PARAM_INT);
                         break;
-                    case 'query':
-                        $stmt->bindValue($identifier, $this->query, PDO::PARAM_STR);
-                        break;
                     case 'comment':
                         $stmt->bindValue($identifier, $this->comment, PDO::PARAM_STR);
                         break;
@@ -1187,6 +1184,9 @@ abstract class Duty implements ActiveRecordInterface
                         break;
                     case 'validation_url':
                         $stmt->bindValue($identifier, $this->validation_url, PDO::PARAM_STR);
+                        break;
+                    case 'iframe_url':
+                        $stmt->bindValue($identifier, $this->iframe_url, PDO::PARAM_STR);
                         break;
                     case 'description':
                         $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
@@ -1259,22 +1259,22 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getActivityId();
                 break;
             case 3:
-                return $this->getQuery();
-                break;
-            case 4:
                 return $this->getComment();
                 break;
-            case 5:
+            case 4:
                 return $this->getRaisedAt();
                 break;
-            case 6:
+            case 5:
                 return $this->getPickedAt();
                 break;
-            case 7:
+            case 6:
                 return $this->getClosedAt();
                 break;
-            case 8:
+            case 7:
                 return $this->getValidationUrl();
+                break;
+            case 8:
+                return $this->getIframeUrl();
                 break;
             case 9:
                 return $this->getDescription();
@@ -1315,25 +1315,25 @@ abstract class Duty implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getUserId(),
             $keys[2] => $this->getActivityId(),
-            $keys[3] => $this->getQuery(),
-            $keys[4] => $this->getComment(),
-            $keys[5] => $this->getRaisedAt(),
-            $keys[6] => $this->getPickedAt(),
-            $keys[7] => $this->getClosedAt(),
-            $keys[8] => $this->getValidationUrl(),
+            $keys[3] => $this->getComment(),
+            $keys[4] => $this->getRaisedAt(),
+            $keys[5] => $this->getPickedAt(),
+            $keys[6] => $this->getClosedAt(),
+            $keys[7] => $this->getValidationUrl(),
+            $keys[8] => $this->getIframeUrl(),
             $keys[9] => $this->getDescription(),
             $keys[10] => $this->getCreatedAt(),
         );
+        if ($result[$keys[4]] instanceof \DateTime) {
+            $result[$keys[4]] = $result[$keys[4]]->format('c');
+        }
+
         if ($result[$keys[5]] instanceof \DateTime) {
             $result[$keys[5]] = $result[$keys[5]]->format('c');
         }
 
         if ($result[$keys[6]] instanceof \DateTime) {
             $result[$keys[6]] = $result[$keys[6]]->format('c');
-        }
-
-        if ($result[$keys[7]] instanceof \DateTime) {
-            $result[$keys[7]] = $result[$keys[7]]->format('c');
         }
 
         if ($result[$keys[10]] instanceof \DateTime) {
@@ -1435,22 +1435,22 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setActivityId($value);
                 break;
             case 3:
-                $this->setQuery($value);
-                break;
-            case 4:
                 $this->setComment($value);
                 break;
-            case 5:
+            case 4:
                 $this->setRaisedAt($value);
                 break;
-            case 6:
+            case 5:
                 $this->setPickedAt($value);
                 break;
-            case 7:
+            case 6:
                 $this->setClosedAt($value);
                 break;
-            case 8:
+            case 7:
                 $this->setValidationUrl($value);
+                break;
+            case 8:
+                $this->setIframeUrl($value);
                 break;
             case 9:
                 $this->setDescription($value);
@@ -1494,22 +1494,22 @@ abstract class Duty implements ActiveRecordInterface
             $this->setActivityId($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setQuery($arr[$keys[3]]);
+            $this->setComment($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setComment($arr[$keys[4]]);
+            $this->setRaisedAt($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setRaisedAt($arr[$keys[5]]);
+            $this->setPickedAt($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setPickedAt($arr[$keys[6]]);
+            $this->setClosedAt($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setClosedAt($arr[$keys[7]]);
+            $this->setValidationUrl($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setValidationUrl($arr[$keys[8]]);
+            $this->setIframeUrl($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
             $this->setDescription($arr[$keys[9]]);
@@ -1567,9 +1567,6 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_ACTIVITY_ID)) {
             $criteria->add(DutyTableMap::COL_ACTIVITY_ID, $this->activity_id);
         }
-        if ($this->isColumnModified(DutyTableMap::COL_QUERY)) {
-            $criteria->add(DutyTableMap::COL_QUERY, $this->query);
-        }
         if ($this->isColumnModified(DutyTableMap::COL_COMMENT)) {
             $criteria->add(DutyTableMap::COL_COMMENT, $this->comment);
         }
@@ -1584,6 +1581,9 @@ abstract class Duty implements ActiveRecordInterface
         }
         if ($this->isColumnModified(DutyTableMap::COL_VALIDATION_URL)) {
             $criteria->add(DutyTableMap::COL_VALIDATION_URL, $this->validation_url);
+        }
+        if ($this->isColumnModified(DutyTableMap::COL_IFRAME_URL)) {
+            $criteria->add(DutyTableMap::COL_IFRAME_URL, $this->iframe_url);
         }
         if ($this->isColumnModified(DutyTableMap::COL_DESCRIPTION)) {
             $criteria->add(DutyTableMap::COL_DESCRIPTION, $this->description);
@@ -1679,12 +1679,12 @@ abstract class Duty implements ActiveRecordInterface
     {
         $copyObj->setUserId($this->getUserId());
         $copyObj->setActivityId($this->getActivityId());
-        $copyObj->setQuery($this->getQuery());
         $copyObj->setComment($this->getComment());
         $copyObj->setRaisedAt($this->getRaisedAt());
         $copyObj->setPickedAt($this->getPickedAt());
         $copyObj->setClosedAt($this->getClosedAt());
         $copyObj->setValidationUrl($this->getValidationUrl());
+        $copyObj->setIframeUrl($this->getIframeUrl());
         $copyObj->setDescription($this->getDescription());
         $copyObj->setCreatedAt($this->getCreatedAt());
 
@@ -2116,12 +2116,12 @@ abstract class Duty implements ActiveRecordInterface
         $this->id = null;
         $this->user_id = null;
         $this->activity_id = null;
-        $this->query = null;
         $this->comment = null;
         $this->raised_at = null;
         $this->picked_at = null;
         $this->closed_at = null;
         $this->validation_url = null;
+        $this->iframe_url = null;
         $this->description = null;
         $this->created_at = null;
         $this->alreadyInSave = false;

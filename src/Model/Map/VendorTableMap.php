@@ -2,8 +2,8 @@
 
 namespace Perfumerlabs\Start\Model\Map;
 
-use Perfumerlabs\Start\Model\Duty;
-use Perfumerlabs\Start\Model\DutyQuery;
+use Perfumerlabs\Start\Model\Vendor;
+use Perfumerlabs\Start\Model\VendorQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'duty' table.
+ * This class defines the structure of the 'vendor' table.
  *
  *
  *
@@ -26,7 +26,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class DutyTableMap extends TableMap
+class VendorTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -34,7 +34,7 @@ class DutyTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = '.Map.DutyTableMap';
+    const CLASS_NAME = '.Map.VendorTableMap';
 
     /**
      * The default database name for this class
@@ -44,22 +44,22 @@ class DutyTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'duty';
+    const TABLE_NAME = 'vendor';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\Duty';
+    const OM_CLASS = '\\Perfumerlabs\\Start\\Model\\Vendor';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Duty';
+    const CLASS_DEFAULT = 'Vendor';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 11;
+    const NUM_COLUMNS = 3;
 
     /**
      * The number of lazy-loaded columns
@@ -69,62 +69,22 @@ class DutyTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 11;
+    const NUM_HYDRATE_COLUMNS = 3;
 
     /**
      * the column name for the id field
      */
-    const COL_ID = 'duty.id';
+    const COL_ID = 'vendor.id';
 
     /**
-     * the column name for the user_id field
+     * the column name for the name field
      */
-    const COL_USER_ID = 'duty.user_id';
+    const COL_NAME = 'vendor.name';
 
     /**
-     * the column name for the activity_id field
+     * the column name for the hostname field
      */
-    const COL_ACTIVITY_ID = 'duty.activity_id';
-
-    /**
-     * the column name for the comment field
-     */
-    const COL_COMMENT = 'duty.comment';
-
-    /**
-     * the column name for the raised_at field
-     */
-    const COL_RAISED_AT = 'duty.raised_at';
-
-    /**
-     * the column name for the picked_at field
-     */
-    const COL_PICKED_AT = 'duty.picked_at';
-
-    /**
-     * the column name for the closed_at field
-     */
-    const COL_CLOSED_AT = 'duty.closed_at';
-
-    /**
-     * the column name for the validation_url field
-     */
-    const COL_VALIDATION_URL = 'duty.validation_url';
-
-    /**
-     * the column name for the iframe_url field
-     */
-    const COL_IFRAME_URL = 'duty.iframe_url';
-
-    /**
-     * the column name for the description field
-     */
-    const COL_DESCRIPTION = 'duty.description';
-
-    /**
-     * the column name for the created_at field
-     */
-    const COL_CREATED_AT = 'duty.created_at';
+    const COL_HOSTNAME = 'vendor.hostname';
 
     /**
      * The default string format for model objects of the related table
@@ -138,11 +98,11 @@ class DutyTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'UserId', 'ActivityId', 'Comment', 'RaisedAt', 'PickedAt', 'ClosedAt', 'ValidationUrl', 'IframeUrl', 'Description', 'CreatedAt', ),
-        self::TYPE_CAMELNAME     => array('id', 'userId', 'activityId', 'comment', 'raisedAt', 'pickedAt', 'closedAt', 'validationUrl', 'iframeUrl', 'description', 'createdAt', ),
-        self::TYPE_COLNAME       => array(DutyTableMap::COL_ID, DutyTableMap::COL_USER_ID, DutyTableMap::COL_ACTIVITY_ID, DutyTableMap::COL_COMMENT, DutyTableMap::COL_RAISED_AT, DutyTableMap::COL_PICKED_AT, DutyTableMap::COL_CLOSED_AT, DutyTableMap::COL_VALIDATION_URL, DutyTableMap::COL_IFRAME_URL, DutyTableMap::COL_DESCRIPTION, DutyTableMap::COL_CREATED_AT, ),
-        self::TYPE_FIELDNAME     => array('id', 'user_id', 'activity_id', 'comment', 'raised_at', 'picked_at', 'closed_at', 'validation_url', 'iframe_url', 'description', 'created_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Hostname', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'hostname', ),
+        self::TYPE_COLNAME       => array(VendorTableMap::COL_ID, VendorTableMap::COL_NAME, VendorTableMap::COL_HOSTNAME, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'hostname', ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -152,11 +112,11 @@ class DutyTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'UserId' => 1, 'ActivityId' => 2, 'Comment' => 3, 'RaisedAt' => 4, 'PickedAt' => 5, 'ClosedAt' => 6, 'ValidationUrl' => 7, 'IframeUrl' => 8, 'Description' => 9, 'CreatedAt' => 10, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'userId' => 1, 'activityId' => 2, 'comment' => 3, 'raisedAt' => 4, 'pickedAt' => 5, 'closedAt' => 6, 'validationUrl' => 7, 'iframeUrl' => 8, 'description' => 9, 'createdAt' => 10, ),
-        self::TYPE_COLNAME       => array(DutyTableMap::COL_ID => 0, DutyTableMap::COL_USER_ID => 1, DutyTableMap::COL_ACTIVITY_ID => 2, DutyTableMap::COL_COMMENT => 3, DutyTableMap::COL_RAISED_AT => 4, DutyTableMap::COL_PICKED_AT => 5, DutyTableMap::COL_CLOSED_AT => 6, DutyTableMap::COL_VALIDATION_URL => 7, DutyTableMap::COL_IFRAME_URL => 8, DutyTableMap::COL_DESCRIPTION => 9, DutyTableMap::COL_CREATED_AT => 10, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'user_id' => 1, 'activity_id' => 2, 'comment' => 3, 'raised_at' => 4, 'picked_at' => 5, 'closed_at' => 6, 'validation_url' => 7, 'iframe_url' => 8, 'description' => 9, 'created_at' => 10, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Hostname' => 2, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'hostname' => 2, ),
+        self::TYPE_COLNAME       => array(VendorTableMap::COL_ID => 0, VendorTableMap::COL_NAME => 1, VendorTableMap::COL_HOSTNAME => 2, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'hostname' => 2, ),
+        self::TYPE_NUM           => array(0, 1, 2, )
     );
 
     /**
@@ -169,25 +129,17 @@ class DutyTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('duty');
-        $this->setPhpName('Duty');
+        $this->setName('vendor');
+        $this->setPhpName('Vendor');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Perfumerlabs\\Start\\Model\\Duty');
+        $this->setClassName('\\Perfumerlabs\\Start\\Model\\Vendor');
         $this->setPackage('');
         $this->setUseIdGenerator(true);
-        $this->setPrimaryKeyMethodInfo('duty_id_seq');
+        $this->setPrimaryKeyMethodInfo('vendor_id_seq');
         // columns
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('user_id', 'UserId', 'INTEGER', '_user', 'id', false, null, null);
-        $this->addForeignKey('activity_id', 'ActivityId', 'INTEGER', 'activity', 'id', false, null, null);
-        $this->addColumn('comment', 'Comment', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('raised_at', 'RaisedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('picked_at', 'PickedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('closed_at', 'ClosedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('validation_url', 'ValidationUrl', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('iframe_url', 'IframeUrl', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('description', 'Description', 'LONGVARCHAR', false, null, null);
-        $this->addColumn('created_at', 'CreatedAt', 'TIMESTAMP', false, null, null);
+        $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
+        $this->addColumn('hostname', 'Hostname', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -195,50 +147,14 @@ class DutyTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Activity', '\\Perfumerlabs\\Start\\Model\\Activity', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Activity', '\\Perfumerlabs\\Start\\Model\\Activity', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
-    0 => ':activity_id',
+    0 => ':vendor_id',
     1 => ':id',
   ),
-), null, null, null, false);
-        $this->addRelation('User', '\\App\\Model\\User', RelationMap::MANY_TO_ONE, array (
-  0 =>
-  array (
-    0 => ':user_id',
-    1 => ':id',
-  ),
-), null, null, null, false);
-        $this->addRelation('RelatedTag', '\\Perfumerlabs\\Start\\Model\\RelatedTag', RelationMap::ONE_TO_MANY, array (
-  0 =>
-  array (
-    0 => ':duty_id',
-    1 => ':id',
-  ),
-), 'CASCADE', null, 'RelatedTags', false);
+), null, null, 'Activities', false);
     } // buildRelations()
-
-    /**
-     *
-     * Gets the list of behaviors registered for this table
-     *
-     * @return array Associative array (name => parameters) of behaviors
-     */
-    public function getBehaviors()
-    {
-        return array(
-            'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', 'disable_created_at' => 'false', 'disable_updated_at' => 'true', ),
-        );
-    } // getBehaviors()
-    /**
-     * Method to invalidate the instance pool of all tables related to duty     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool()
-    {
-        // Invalidate objects in related instance pools,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-        RelatedTagTableMap::clearInstancePool();
-    }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -297,7 +213,7 @@ class DutyTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? DutyTableMap::CLASS_DEFAULT : DutyTableMap::OM_CLASS;
+        return $withPrefix ? VendorTableMap::CLASS_DEFAULT : VendorTableMap::OM_CLASS;
     }
 
     /**
@@ -311,22 +227,22 @@ class DutyTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array           (Duty object, last column rank)
+     * @return array           (Vendor object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = DutyTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = DutyTableMap::getInstanceFromPool($key))) {
+        $key = VendorTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = VendorTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + DutyTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + VendorTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = DutyTableMap::OM_CLASS;
-            /** @var Duty $obj */
+            $cls = VendorTableMap::OM_CLASS;
+            /** @var Vendor $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            DutyTableMap::addInstanceToPool($obj, $key);
+            VendorTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -349,18 +265,18 @@ class DutyTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = DutyTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = DutyTableMap::getInstanceFromPool($key))) {
+            $key = VendorTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = VendorTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Duty $obj */
+                /** @var Vendor $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                DutyTableMap::addInstanceToPool($obj, $key);
+                VendorTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -381,29 +297,13 @@ class DutyTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(DutyTableMap::COL_ID);
-            $criteria->addSelectColumn(DutyTableMap::COL_USER_ID);
-            $criteria->addSelectColumn(DutyTableMap::COL_ACTIVITY_ID);
-            $criteria->addSelectColumn(DutyTableMap::COL_COMMENT);
-            $criteria->addSelectColumn(DutyTableMap::COL_RAISED_AT);
-            $criteria->addSelectColumn(DutyTableMap::COL_PICKED_AT);
-            $criteria->addSelectColumn(DutyTableMap::COL_CLOSED_AT);
-            $criteria->addSelectColumn(DutyTableMap::COL_VALIDATION_URL);
-            $criteria->addSelectColumn(DutyTableMap::COL_IFRAME_URL);
-            $criteria->addSelectColumn(DutyTableMap::COL_DESCRIPTION);
-            $criteria->addSelectColumn(DutyTableMap::COL_CREATED_AT);
+            $criteria->addSelectColumn(VendorTableMap::COL_ID);
+            $criteria->addSelectColumn(VendorTableMap::COL_NAME);
+            $criteria->addSelectColumn(VendorTableMap::COL_HOSTNAME);
         } else {
             $criteria->addSelectColumn($alias . '.id');
-            $criteria->addSelectColumn($alias . '.user_id');
-            $criteria->addSelectColumn($alias . '.activity_id');
-            $criteria->addSelectColumn($alias . '.comment');
-            $criteria->addSelectColumn($alias . '.raised_at');
-            $criteria->addSelectColumn($alias . '.picked_at');
-            $criteria->addSelectColumn($alias . '.closed_at');
-            $criteria->addSelectColumn($alias . '.validation_url');
-            $criteria->addSelectColumn($alias . '.iframe_url');
-            $criteria->addSelectColumn($alias . '.description');
-            $criteria->addSelectColumn($alias . '.created_at');
+            $criteria->addSelectColumn($alias . '.name');
+            $criteria->addSelectColumn($alias . '.hostname');
         }
     }
 
@@ -416,7 +316,7 @@ class DutyTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(DutyTableMap::DATABASE_NAME)->getTable(DutyTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(VendorTableMap::DATABASE_NAME)->getTable(VendorTableMap::TABLE_NAME);
     }
 
     /**
@@ -424,16 +324,16 @@ class DutyTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-        $dbMap = Propel::getServiceContainer()->getDatabaseMap(DutyTableMap::DATABASE_NAME);
-        if (!$dbMap->hasTable(DutyTableMap::TABLE_NAME)) {
-            $dbMap->addTableObject(new DutyTableMap());
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(VendorTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(VendorTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new VendorTableMap());
         }
     }
 
     /**
-     * Performs a DELETE on the database, given a Duty or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Vendor or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or Duty object or primary key or array of primary keys
+     * @param mixed               $values Criteria or Vendor object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param  ConnectionInterface $con the connection to use
      * @return int             The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -444,27 +344,27 @@ class DutyTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DutyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VendorTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Perfumerlabs\Start\Model\Duty) { // it's a model object
+        } elseif ($values instanceof \Perfumerlabs\Start\Model\Vendor) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(DutyTableMap::DATABASE_NAME);
-            $criteria->add(DutyTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(VendorTableMap::DATABASE_NAME);
+            $criteria->add(VendorTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = DutyQuery::create()->mergeWith($criteria);
+        $query = VendorQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            DutyTableMap::clearInstancePool();
+            VendorTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                DutyTableMap::removeInstanceFromPool($singleval);
+                VendorTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -472,20 +372,20 @@ class DutyTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the duty table.
+     * Deletes all rows from the vendor table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return DutyQuery::create()->doDeleteAll($con);
+        return VendorQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Duty or Criteria object.
+     * Performs an INSERT on the database, given a Vendor or Criteria object.
      *
-     * @param mixed               $criteria Criteria or Duty object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or Vendor object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -494,22 +394,22 @@ class DutyTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DutyTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(VendorTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Duty object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Vendor object
         }
 
-        if ($criteria->containsKey(DutyTableMap::COL_ID) && $criteria->keyContainsValue(DutyTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.DutyTableMap::COL_ID.')');
+        if ($criteria->containsKey(VendorTableMap::COL_ID) && $criteria->keyContainsValue(VendorTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.VendorTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = DutyQuery::create()->mergeWith($criteria);
+        $query = VendorQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)
@@ -518,7 +418,7 @@ class DutyTableMap extends TableMap
         });
     }
 
-} // DutyTableMap
+} // VendorTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-DutyTableMap::buildTableMap();
+VendorTableMap::buildTableMap();

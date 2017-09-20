@@ -23,24 +23,22 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
- * @method     ChildActivityQuery orderByIframe($order = Criteria::ASC) Order by the iframe column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
  * @method     ChildActivityQuery orderByWritable($order = Criteria::ASC) Order by the writable column
  * @method     ChildActivityQuery orderByPostponable($order = Criteria::ASC) Order by the postponable column
  * @method     ChildActivityQuery orderByColor($order = Criteria::ASC) Order by the color column
- * @method     ChildActivityQuery orderByToolbar($order = Criteria::ASC) Order by the toolbar column
  * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
+ * @method     ChildActivityQuery orderByVendorId($order = Criteria::ASC) Order by the vendor_id column
  *
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByCode() Group by the code column
- * @method     ChildActivityQuery groupByIframe() Group by the iframe column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
  * @method     ChildActivityQuery groupByWritable() Group by the writable column
  * @method     ChildActivityQuery groupByPostponable() Group by the postponable column
  * @method     ChildActivityQuery groupByColor() Group by the color column
- * @method     ChildActivityQuery groupByToolbar() Group by the toolbar column
  * @method     ChildActivityQuery groupByPriority() Group by the priority column
+ * @method     ChildActivityQuery groupByVendorId() Group by the vendor_id column
  *
  * @method     ChildActivityQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildActivityQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -49,6 +47,16 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery leftJoinWith($relation) Adds a LEFT JOIN clause and with to the query
  * @method     ChildActivityQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildActivityQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
+ *
+ * @method     ChildActivityQuery leftJoinVendor($relationAlias = null) Adds a LEFT JOIN clause to the query using the Vendor relation
+ * @method     ChildActivityQuery rightJoinVendor($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Vendor relation
+ * @method     ChildActivityQuery innerJoinVendor($relationAlias = null) Adds a INNER JOIN clause to the query using the Vendor relation
+ *
+ * @method     ChildActivityQuery joinWithVendor($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Vendor relation
+ *
+ * @method     ChildActivityQuery leftJoinWithVendor() Adds a LEFT JOIN clause and with to the query using the Vendor relation
+ * @method     ChildActivityQuery rightJoinWithVendor() Adds a RIGHT JOIN clause and with to the query using the Vendor relation
+ * @method     ChildActivityQuery innerJoinWithVendor() Adds a INNER JOIN clause and with to the query using the Vendor relation
  *
  * @method     ChildActivityQuery leftJoinDuty($relationAlias = null) Adds a LEFT JOIN clause to the query using the Duty relation
  * @method     ChildActivityQuery rightJoinDuty($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Duty relation
@@ -80,7 +88,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery rightJoinWithActivityAccess() Adds a RIGHT JOIN clause and with to the query using the ActivityAccess relation
  * @method     ChildActivityQuery innerJoinWithActivityAccess() Adds a INNER JOIN clause and with to the query using the ActivityAccess relation
  *
- * @method     \Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\NavQuery|\Perfumerlabs\Start\Model\ActivityAccessQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ * @method     \Perfumerlabs\Start\Model\VendorQuery|\Perfumerlabs\Start\Model\DutyQuery|\Perfumerlabs\Start\Model\NavQuery|\Perfumerlabs\Start\Model\ActivityAccessQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
  *
  * @method     ChildActivity findOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query
  * @method     ChildActivity findOneOrCreate(ConnectionInterface $con = null) Return the first ChildActivity matching the query, or a new ChildActivity object populated from the query conditions when no match is found
@@ -88,13 +96,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByCode(string $code) Return the first ChildActivity filtered by the code column
- * @method     ChildActivity findOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column
  * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
  * @method     ChildActivity findOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column
  * @method     ChildActivity findOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column
  * @method     ChildActivity findOneByColor(string $color) Return the first ChildActivity filtered by the color column
- * @method     ChildActivity findOneByToolbar(string $toolbar) Return the first ChildActivity filtered by the toolbar column
- * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column *
+ * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column
+ * @method     ChildActivity findOneByVendorId(int $vendor_id) Return the first ChildActivity filtered by the vendor_id column *
 
  * @method     ChildActivity requirePk($key, ConnectionInterface $con = null) Return the ChildActivity by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOne(ConnectionInterface $con = null) Return the first ChildActivity matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -102,25 +109,23 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCode(string $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByIframe(string $iframe) Return the first ChildActivity filtered by the iframe column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByColor(string $color) Return the first ChildActivity filtered by the color column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByToolbar(string $toolbar) Return the first ChildActivity filtered by the toolbar column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByVendorId(int $vendor_id) Return the first ChildActivity filtered by the vendor_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildActivity[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildActivity objects based on current ModelCriteria
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
  * @method     ChildActivity[]|ObjectCollection findByCode(string $code) Return ChildActivity objects filtered by the code column
- * @method     ChildActivity[]|ObjectCollection findByIframe(string $iframe) Return ChildActivity objects filtered by the iframe column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
  * @method     ChildActivity[]|ObjectCollection findByWritable(boolean $writable) Return ChildActivity objects filtered by the writable column
  * @method     ChildActivity[]|ObjectCollection findByPostponable(boolean $postponable) Return ChildActivity objects filtered by the postponable column
  * @method     ChildActivity[]|ObjectCollection findByColor(string $color) Return ChildActivity objects filtered by the color column
- * @method     ChildActivity[]|ObjectCollection findByToolbar(string $toolbar) Return ChildActivity objects filtered by the toolbar column
  * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
+ * @method     ChildActivity[]|ObjectCollection findByVendorId(int $vendor_id) Return ChildActivity objects filtered by the vendor_id column
  * @method     ChildActivity[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -219,7 +224,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, code, iframe, readonly, writable, postponable, color, toolbar, priority FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, code, readonly, writable, postponable, color, priority, vendor_id FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -401,31 +406,6 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the iframe column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByIframe('fooValue');   // WHERE iframe = 'fooValue'
-     * $query->filterByIframe('%fooValue%', Criteria::LIKE); // WHERE iframe LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $iframe The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function filterByIframe($iframe = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($iframe)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_IFRAME, $iframe, $comparison);
-    }
-
-    /**
      * Filter the query on the readonly column
      *
      * Example usage:
@@ -532,31 +512,6 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the toolbar column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByToolbar('fooValue');   // WHERE toolbar = 'fooValue'
-     * $query->filterByToolbar('%fooValue%', Criteria::LIKE); // WHERE toolbar LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $toolbar The value to use as filter.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildActivityQuery The current query, for fluid interface
-     */
-    public function filterByToolbar($toolbar = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($toolbar)) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(ActivityTableMap::COL_TOOLBAR, $toolbar, $comparison);
-    }
-
-    /**
      * Filter the query on the priority column
      *
      * Example usage:
@@ -595,6 +550,126 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_PRIORITY, $priority, $comparison);
+    }
+
+    /**
+     * Filter the query on the vendor_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVendorId(1234); // WHERE vendor_id = 1234
+     * $query->filterByVendorId(array(12, 34)); // WHERE vendor_id IN (12, 34)
+     * $query->filterByVendorId(array('min' => 12)); // WHERE vendor_id > 12
+     * </code>
+     *
+     * @see       filterByVendor()
+     *
+     * @param     mixed $vendorId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByVendorId($vendorId = null, $comparison = null)
+    {
+        if (is_array($vendorId)) {
+            $useMinMax = false;
+            if (isset($vendorId['min'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_VENDOR_ID, $vendorId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($vendorId['max'])) {
+                $this->addUsingAlias(ActivityTableMap::COL_VENDOR_ID, $vendorId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_VENDOR_ID, $vendorId, $comparison);
+    }
+
+    /**
+     * Filter the query by a related \Perfumerlabs\Start\Model\Vendor object
+     *
+     * @param \Perfumerlabs\Start\Model\Vendor|ObjectCollection $vendor The related object(s) to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByVendor($vendor, $comparison = null)
+    {
+        if ($vendor instanceof \Perfumerlabs\Start\Model\Vendor) {
+            return $this
+                ->addUsingAlias(ActivityTableMap::COL_VENDOR_ID, $vendor->getId(), $comparison);
+        } elseif ($vendor instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            return $this
+                ->addUsingAlias(ActivityTableMap::COL_VENDOR_ID, $vendor->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByVendor() only accepts arguments of type \Perfumerlabs\Start\Model\Vendor or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Vendor relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function joinVendor($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Vendor');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Vendor');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Vendor relation Vendor object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Perfumerlabs\Start\Model\VendorQuery A secondary query class using the current class as primary query
+     */
+    public function useVendorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinVendor($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Vendor', '\Perfumerlabs\Start\Model\VendorQuery');
     }
 
     /**

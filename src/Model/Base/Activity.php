@@ -12,6 +12,8 @@ use Perfumerlabs\Start\Model\Duty as ChildDuty;
 use Perfumerlabs\Start\Model\DutyQuery as ChildDutyQuery;
 use Perfumerlabs\Start\Model\Nav as ChildNav;
 use Perfumerlabs\Start\Model\NavQuery as ChildNavQuery;
+use Perfumerlabs\Start\Model\Vendor as ChildVendor;
+use Perfumerlabs\Start\Model\VendorQuery as ChildVendorQuery;
 use Perfumerlabs\Start\Model\Map\ActivityAccessTableMap;
 use Perfumerlabs\Start\Model\Map\ActivityTableMap;
 use Perfumerlabs\Start\Model\Map\DutyTableMap;
@@ -92,13 +94,6 @@ abstract class Activity implements ActiveRecordInterface
     protected $code;
 
     /**
-     * The value for the iframe field.
-     *
-     * @var        string
-     */
-    protected $iframe;
-
-    /**
      * The value for the readonly field.
      *
      * Note: this column has a database default value of: false
@@ -130,18 +125,23 @@ abstract class Activity implements ActiveRecordInterface
     protected $color;
 
     /**
-     * The value for the toolbar field.
-     *
-     * @var        string
-     */
-    protected $toolbar;
-
-    /**
      * The value for the priority field.
      *
      * @var        int
      */
     protected $priority;
+
+    /**
+     * The value for the vendor_id field.
+     *
+     * @var        int
+     */
+    protected $vendor_id;
+
+    /**
+     * @var        ChildVendor
+     */
+    protected $aVendor;
 
     /**
      * @var        ObjectCollection|ChildDuty[] Collection to store aggregation of ChildDuty objects.
@@ -458,16 +458,6 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [iframe] column value.
-     *
-     * @return string
-     */
-    public function getIframe()
-    {
-        return $this->iframe;
-    }
-
-    /**
      * Get the [readonly] column value.
      *
      * @return boolean
@@ -538,16 +528,6 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [toolbar] column value.
-     *
-     * @return string
-     */
-    public function getToolbar()
-    {
-        return $this->toolbar;
-    }
-
-    /**
      * Get the [priority] column value.
      *
      * @return int
@@ -555,6 +535,16 @@ abstract class Activity implements ActiveRecordInterface
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    /**
+     * Get the [vendor_id] column value.
+     *
+     * @return int
+     */
+    public function getVendorId()
+    {
+        return $this->vendor_id;
     }
 
     /**
@@ -616,26 +606,6 @@ abstract class Activity implements ActiveRecordInterface
 
         return $this;
     } // setCode()
-
-    /**
-     * Set the value of [iframe] column.
-     *
-     * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
-     */
-    public function setIframe($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->iframe !== $v) {
-            $this->iframe = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_IFRAME] = true;
-        }
-
-        return $this;
-    } // setIframe()
 
     /**
      * Sets the value of the [readonly] column.
@@ -742,26 +712,6 @@ abstract class Activity implements ActiveRecordInterface
     } // setColor()
 
     /**
-     * Set the value of [toolbar] column.
-     *
-     * @param string $v new value
-     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
-     */
-    public function setToolbar($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->toolbar !== $v) {
-            $this->toolbar = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_TOOLBAR] = true;
-        }
-
-        return $this;
-    } // setToolbar()
-
-    /**
      * Set the value of [priority] column.
      *
      * @param int $v new value
@@ -780,6 +730,30 @@ abstract class Activity implements ActiveRecordInterface
 
         return $this;
     } // setPriority()
+
+    /**
+     * Set the value of [vendor_id] column.
+     *
+     * @param int $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setVendorId($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->vendor_id !== $v) {
+            $this->vendor_id = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_VENDOR_ID] = true;
+        }
+
+        if ($this->aVendor !== null && $this->aVendor->getId() !== $v) {
+            $this->aVendor = null;
+        }
+
+        return $this;
+    } // setVendorId()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -838,26 +812,23 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
             $this->code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Iframe', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->iframe = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readonly = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->writable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->postponable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('Toolbar', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->toolbar = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
             $this->priority = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('VendorId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->vendor_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -866,7 +837,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 10; // 10 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 9; // 9 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -888,6 +859,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
+        if ($this->aVendor !== null && $this->vendor_id !== $this->aVendor->getId()) {
+            $this->aVendor = null;
+        }
     } // ensureConsistency
 
     /**
@@ -927,6 +901,7 @@ abstract class Activity implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
+            $this->aVendor = null;
             $this->collDuties = null;
 
             $this->collNavs = null;
@@ -1036,6 +1011,18 @@ abstract class Activity implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
+            // We call the save method on the following object(s) if they
+            // were passed to this object by their corresponding set
+            // method.  This object relates to these object(s) by a
+            // foreign key reference.
+
+            if ($this->aVendor !== null) {
+                if ($this->aVendor->isModified() || $this->aVendor->isNew()) {
+                    $affectedRows += $this->aVendor->save($con);
+                }
+                $this->setVendor($this->aVendor);
+            }
+
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -1144,9 +1131,6 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $modifiedColumns[':p' . $index++]  = 'code';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_IFRAME)) {
-            $modifiedColumns[':p' . $index++]  = 'iframe';
-        }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $modifiedColumns[':p' . $index++]  = 'readonly';
         }
@@ -1159,11 +1143,11 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $modifiedColumns[':p' . $index++]  = 'color';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_TOOLBAR)) {
-            $modifiedColumns[':p' . $index++]  = 'toolbar';
-        }
         if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
             $modifiedColumns[':p' . $index++]  = 'priority';
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_VENDOR_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'vendor_id';
         }
 
         $sql = sprintf(
@@ -1185,9 +1169,6 @@ abstract class Activity implements ActiveRecordInterface
                     case 'code':
                         $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
                         break;
-                    case 'iframe':
-                        $stmt->bindValue($identifier, $this->iframe, PDO::PARAM_STR);
-                        break;
                     case 'readonly':
                         $stmt->bindValue($identifier, $this->readonly, PDO::PARAM_BOOL);
                         break;
@@ -1200,11 +1181,11 @@ abstract class Activity implements ActiveRecordInterface
                     case 'color':
                         $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
                         break;
-                    case 'toolbar':
-                        $stmt->bindValue($identifier, $this->toolbar, PDO::PARAM_STR);
-                        break;
                     case 'priority':
                         $stmt->bindValue($identifier, $this->priority, PDO::PARAM_INT);
+                        break;
+                    case 'vendor_id':
+                        $stmt->bindValue($identifier, $this->vendor_id, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1271,25 +1252,22 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getCode();
                 break;
             case 3:
-                return $this->getIframe();
-                break;
-            case 4:
                 return $this->getReadonly();
                 break;
-            case 5:
+            case 4:
                 return $this->getWritable();
                 break;
-            case 6:
+            case 5:
                 return $this->getPostponable();
                 break;
-            case 7:
+            case 6:
                 return $this->getColor();
                 break;
-            case 8:
-                return $this->getToolbar();
-                break;
-            case 9:
+            case 7:
                 return $this->getPriority();
+                break;
+            case 8:
+                return $this->getVendorId();
                 break;
             default:
                 return null;
@@ -1324,13 +1302,12 @@ abstract class Activity implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getCode(),
-            $keys[3] => $this->getIframe(),
-            $keys[4] => $this->getReadonly(),
-            $keys[5] => $this->getWritable(),
-            $keys[6] => $this->getPostponable(),
-            $keys[7] => $this->getColor(),
-            $keys[8] => $this->getToolbar(),
-            $keys[9] => $this->getPriority(),
+            $keys[3] => $this->getReadonly(),
+            $keys[4] => $this->getWritable(),
+            $keys[5] => $this->getPostponable(),
+            $keys[6] => $this->getColor(),
+            $keys[7] => $this->getPriority(),
+            $keys[8] => $this->getVendorId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1338,6 +1315,21 @@ abstract class Activity implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
+            if (null !== $this->aVendor) {
+
+                switch ($keyType) {
+                    case TableMap::TYPE_CAMELNAME:
+                        $key = 'vendor';
+                        break;
+                    case TableMap::TYPE_FIELDNAME:
+                        $key = 'vendor';
+                        break;
+                    default:
+                        $key = 'Vendor';
+                }
+
+                $result[$key] = $this->aVendor->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
             if (null !== $this->collDuties) {
 
                 switch ($keyType) {
@@ -1427,25 +1419,22 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setCode($value);
                 break;
             case 3:
-                $this->setIframe($value);
-                break;
-            case 4:
                 $this->setReadonly($value);
                 break;
-            case 5:
+            case 4:
                 $this->setWritable($value);
                 break;
-            case 6:
+            case 5:
                 $this->setPostponable($value);
                 break;
-            case 7:
+            case 6:
                 $this->setColor($value);
                 break;
-            case 8:
-                $this->setToolbar($value);
-                break;
-            case 9:
+            case 7:
                 $this->setPriority($value);
+                break;
+            case 8:
+                $this->setVendorId($value);
                 break;
         } // switch()
 
@@ -1483,25 +1472,22 @@ abstract class Activity implements ActiveRecordInterface
             $this->setCode($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setIframe($arr[$keys[3]]);
+            $this->setReadonly($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setReadonly($arr[$keys[4]]);
+            $this->setWritable($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setWritable($arr[$keys[5]]);
+            $this->setPostponable($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setPostponable($arr[$keys[6]]);
+            $this->setColor($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setColor($arr[$keys[7]]);
+            $this->setPriority($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setToolbar($arr[$keys[8]]);
-        }
-        if (array_key_exists($keys[9], $arr)) {
-            $this->setPriority($arr[$keys[9]]);
+            $this->setVendorId($arr[$keys[8]]);
         }
     }
 
@@ -1553,9 +1539,6 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $criteria->add(ActivityTableMap::COL_CODE, $this->code);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_IFRAME)) {
-            $criteria->add(ActivityTableMap::COL_IFRAME, $this->iframe);
-        }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $criteria->add(ActivityTableMap::COL_READONLY, $this->readonly);
         }
@@ -1568,11 +1551,11 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $criteria->add(ActivityTableMap::COL_COLOR, $this->color);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_TOOLBAR)) {
-            $criteria->add(ActivityTableMap::COL_TOOLBAR, $this->toolbar);
-        }
         if ($this->isColumnModified(ActivityTableMap::COL_PRIORITY)) {
             $criteria->add(ActivityTableMap::COL_PRIORITY, $this->priority);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_VENDOR_ID)) {
+            $criteria->add(ActivityTableMap::COL_VENDOR_ID, $this->vendor_id);
         }
 
         return $criteria;
@@ -1662,13 +1645,12 @@ abstract class Activity implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setCode($this->getCode());
-        $copyObj->setIframe($this->getIframe());
         $copyObj->setReadonly($this->getReadonly());
         $copyObj->setWritable($this->getWritable());
         $copyObj->setPostponable($this->getPostponable());
         $copyObj->setColor($this->getColor());
-        $copyObj->setToolbar($this->getToolbar());
         $copyObj->setPriority($this->getPriority());
+        $copyObj->setVendorId($this->getVendorId());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1721,6 +1703,57 @@ abstract class Activity implements ActiveRecordInterface
         $this->copyInto($copyObj, $deepCopy);
 
         return $copyObj;
+    }
+
+    /**
+     * Declares an association between this object and a ChildVendor object.
+     *
+     * @param  ChildVendor $v
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     * @throws PropelException
+     */
+    public function setVendor(ChildVendor $v = null)
+    {
+        if ($v === null) {
+            $this->setVendorId(NULL);
+        } else {
+            $this->setVendorId($v->getId());
+        }
+
+        $this->aVendor = $v;
+
+        // Add binding for other direction of this n:n relationship.
+        // If this object has already been added to the ChildVendor object, it will not be re-added.
+        if ($v !== null) {
+            $v->addActivity($this);
+        }
+
+
+        return $this;
+    }
+
+
+    /**
+     * Get the associated ChildVendor object
+     *
+     * @param  ConnectionInterface $con Optional Connection object.
+     * @return ChildVendor The associated ChildVendor object.
+     * @throws PropelException
+     */
+    public function getVendor(ConnectionInterface $con = null)
+    {
+        if ($this->aVendor === null && ($this->vendor_id !== null)) {
+            $this->aVendor = ChildVendorQuery::create()->findPk($this->vendor_id, $con);
+            /* The following can be used additionally to
+                guarantee the related object contains a reference
+                to this object.  This level of coupling may, however, be
+                undesirable since it could result in an only partially populated collection
+                in the referenced object.
+                $this->aVendor->addActivities($this);
+             */
+        }
+
+        return $this->aVendor;
     }
 
 
@@ -2502,16 +2535,18 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function clear()
     {
+        if (null !== $this->aVendor) {
+            $this->aVendor->removeActivity($this);
+        }
         $this->id = null;
         $this->name = null;
         $this->code = null;
-        $this->iframe = null;
         $this->readonly = null;
         $this->writable = null;
         $this->postponable = null;
         $this->color = null;
-        $this->toolbar = null;
         $this->priority = null;
+        $this->vendor_id = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -2551,6 +2586,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->collDuties = null;
         $this->collNavs = null;
         $this->collActivityAccesses = null;
+        $this->aVendor = null;
     }
 
     /**

@@ -4,12 +4,12 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="user_id" type="integer"/>
         <column name="activity_id" type="integer"/>
-        <column name="query" type="longvarchar"/>
         <column name="comment" type="longvarchar"/>
         <column name="raised_at" type="timestamp"/>
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
-        <column name="validation_url" type="varchar" size="255"/>
+        <column name="validation_url" type="longvarchar"/>
+        <column name="iframe_url" type="longvarchar"/>
         <column name="description" type="longvarchar"/>
         <behavior name="timestampable">
             <parameter name="disable_updated_at" value="true"/>
@@ -26,13 +26,21 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255"/>
         <column name="code" type="varchar" size="255"/>
-        <column name="iframe" type="varchar" size="255"/>
         <column name="readonly" type="boolean" required="true" defaultValue="false"/>
         <column name="writable" type="boolean" required="true" defaultValue="false"/>
         <column name="postponable" type="boolean" required="true" defaultValue="false"/>
         <column name="color" type="varchar" size="255"/>
-        <column name="toolbar" type="varchar" size="255"/>
         <column name="priority" type="integer"/>
+        <column name="vendor_id" type="integer"/>
+        <foreign-key foreignTable="vendor" phpName="Vendor">
+            <reference local="vendor_id" foreign="id"/>
+        </foreign-key>
+    </table>
+
+    <table name="vendor" phpName="Vendor" namespace="\Perfumerlabs\Start\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
+        <column name="name" type="varchar" size="255"/>
+        <column name="hostname" type="varchar" size="255"/>
     </table>
 
     <table name="nav" phpName="Nav" namespace="\Perfumerlabs\Start\Model">

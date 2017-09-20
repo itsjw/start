@@ -59,7 +59,7 @@ class ActivityTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 10;
+    const NUM_COLUMNS = 9;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ActivityTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 10;
+    const NUM_HYDRATE_COLUMNS = 9;
 
     /**
      * the column name for the id field
@@ -85,11 +85,6 @@ class ActivityTableMap extends TableMap
      * the column name for the code field
      */
     const COL_CODE = 'activity.code';
-
-    /**
-     * the column name for the iframe field
-     */
-    const COL_IFRAME = 'activity.iframe';
 
     /**
      * the column name for the readonly field
@@ -112,14 +107,14 @@ class ActivityTableMap extends TableMap
     const COL_COLOR = 'activity.color';
 
     /**
-     * the column name for the toolbar field
-     */
-    const COL_TOOLBAR = 'activity.toolbar';
-
-    /**
      * the column name for the priority field
      */
     const COL_PRIORITY = 'activity.priority';
+
+    /**
+     * the column name for the vendor_id field
+     */
+    const COL_VENDOR_ID = 'activity.vendor_id';
 
     /**
      * The default string format for model objects of the related table
@@ -133,11 +128,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Code', 'Iframe', 'Readonly', 'Writable', 'Postponable', 'Color', 'Toolbar', 'Priority', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'code', 'iframe', 'readonly', 'writable', 'postponable', 'color', 'toolbar', 'priority', ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_CODE, ActivityTableMap::COL_IFRAME, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_WRITABLE, ActivityTableMap::COL_POSTPONABLE, ActivityTableMap::COL_COLOR, ActivityTableMap::COL_TOOLBAR, ActivityTableMap::COL_PRIORITY, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'code', 'iframe', 'readonly', 'writable', 'postponable', 'color', 'toolbar', 'priority', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Code', 'Readonly', 'Writable', 'Postponable', 'Color', 'Priority', 'VendorId', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'code', 'readonly', 'writable', 'postponable', 'color', 'priority', 'vendorId', ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_CODE, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_WRITABLE, ActivityTableMap::COL_POSTPONABLE, ActivityTableMap::COL_COLOR, ActivityTableMap::COL_PRIORITY, ActivityTableMap::COL_VENDOR_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'code', 'readonly', 'writable', 'postponable', 'color', 'priority', 'vendor_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -147,11 +142,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Code' => 2, 'Iframe' => 3, 'Readonly' => 4, 'Writable' => 5, 'Postponable' => 6, 'Color' => 7, 'Toolbar' => 8, 'Priority' => 9, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'iframe' => 3, 'readonly' => 4, 'writable' => 5, 'postponable' => 6, 'color' => 7, 'toolbar' => 8, 'priority' => 9, ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_CODE => 2, ActivityTableMap::COL_IFRAME => 3, ActivityTableMap::COL_READONLY => 4, ActivityTableMap::COL_WRITABLE => 5, ActivityTableMap::COL_POSTPONABLE => 6, ActivityTableMap::COL_COLOR => 7, ActivityTableMap::COL_TOOLBAR => 8, ActivityTableMap::COL_PRIORITY => 9, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'iframe' => 3, 'readonly' => 4, 'writable' => 5, 'postponable' => 6, 'color' => 7, 'toolbar' => 8, 'priority' => 9, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Code' => 2, 'Readonly' => 3, 'Writable' => 4, 'Postponable' => 5, 'Color' => 6, 'Priority' => 7, 'VendorId' => 8, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'readonly' => 3, 'writable' => 4, 'postponable' => 5, 'color' => 6, 'priority' => 7, 'vendorId' => 8, ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_CODE => 2, ActivityTableMap::COL_READONLY => 3, ActivityTableMap::COL_WRITABLE => 4, ActivityTableMap::COL_POSTPONABLE => 5, ActivityTableMap::COL_COLOR => 6, ActivityTableMap::COL_PRIORITY => 7, ActivityTableMap::COL_VENDOR_ID => 8, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'readonly' => 3, 'writable' => 4, 'postponable' => 5, 'color' => 6, 'priority' => 7, 'vendor_id' => 8, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -175,13 +170,12 @@ class ActivityTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
         $this->addColumn('code', 'Code', 'VARCHAR', false, 255, null);
-        $this->addColumn('iframe', 'Iframe', 'VARCHAR', false, 255, null);
         $this->addColumn('readonly', 'Readonly', 'BOOLEAN', true, null, false);
         $this->addColumn('writable', 'Writable', 'BOOLEAN', true, null, false);
         $this->addColumn('postponable', 'Postponable', 'BOOLEAN', true, null, false);
         $this->addColumn('color', 'Color', 'VARCHAR', false, 255, null);
-        $this->addColumn('toolbar', 'Toolbar', 'VARCHAR', false, 255, null);
         $this->addColumn('priority', 'Priority', 'INTEGER', false, null, null);
+        $this->addForeignKey('vendor_id', 'VendorId', 'INTEGER', 'vendor', 'id', false, null, null);
     } // initialize()
 
     /**
@@ -189,6 +183,13 @@ class ActivityTableMap extends TableMap
      */
     public function buildRelations()
     {
+        $this->addRelation('Vendor', '\\Perfumerlabs\\Start\\Model\\Vendor', RelationMap::MANY_TO_ONE, array (
+  0 =>
+  array (
+    0 => ':vendor_id',
+    1 => ':id',
+  ),
+), null, null, null, false);
         $this->addRelation('Duty', '\\Perfumerlabs\\Start\\Model\\Duty', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
@@ -365,24 +366,22 @@ class ActivityTableMap extends TableMap
             $criteria->addSelectColumn(ActivityTableMap::COL_ID);
             $criteria->addSelectColumn(ActivityTableMap::COL_NAME);
             $criteria->addSelectColumn(ActivityTableMap::COL_CODE);
-            $criteria->addSelectColumn(ActivityTableMap::COL_IFRAME);
             $criteria->addSelectColumn(ActivityTableMap::COL_READONLY);
             $criteria->addSelectColumn(ActivityTableMap::COL_WRITABLE);
             $criteria->addSelectColumn(ActivityTableMap::COL_POSTPONABLE);
             $criteria->addSelectColumn(ActivityTableMap::COL_COLOR);
-            $criteria->addSelectColumn(ActivityTableMap::COL_TOOLBAR);
             $criteria->addSelectColumn(ActivityTableMap::COL_PRIORITY);
+            $criteria->addSelectColumn(ActivityTableMap::COL_VENDOR_ID);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.code');
-            $criteria->addSelectColumn($alias . '.iframe');
             $criteria->addSelectColumn($alias . '.readonly');
             $criteria->addSelectColumn($alias . '.writable');
             $criteria->addSelectColumn($alias . '.postponable');
             $criteria->addSelectColumn($alias . '.color');
-            $criteria->addSelectColumn($alias . '.toolbar');
             $criteria->addSelectColumn($alias . '.priority');
+            $criteria->addSelectColumn($alias . '.vendor_id');
         }
     }
 
