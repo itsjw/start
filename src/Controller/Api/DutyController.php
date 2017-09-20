@@ -46,13 +46,14 @@ class DutyController extends LayoutController
         $content = [
             'id' => $duty->getId(),
             'description' => $duty->getDescription(),
+            'iframe_url' => $duty->getIframeUrl(),
+            'validation_url' => $duty->getValidationUrl(),
             'raised_at' => $duty->getRaisedAt() ? $duty->getRaisedAt('Y-m-d H:i:s') : null,
             'closed_at' => $duty->getCreatedAt() ? $duty->getCreatedAt('Y-m-d H:i:s') : null,
             'picked_at' => $duty->getPickedAt() ? $duty->getPickedAt('Y-m-d H:i:s') : null,
             'activity' => [
                 'id' => $activity->getId(),
                 'name' => $activity->getName(),
-                'iframe' => $activity->getIframe(),
                 'priority' => $activity->getPriority(),
                 'color' => $activity->getColor(),
                 'postponing' => $activity->getPostponable(),

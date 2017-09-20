@@ -14,6 +14,8 @@ class DutyFormatter
      */
     public function format(Duty $duty, User $user)
     {
+        $hostname = $duty->getActivity()->getVendor()->getHostname();
+
         $array = [
             'id' => $duty->getId(),
             'name' => $duty->getActivity()->getName(),
@@ -22,14 +24,21 @@ class DutyFormatter
             'writable' => $duty->getActivity()->isWritable(),
             'postponable' => $duty->getActivity()->isPostponable(),
             'comment' => $duty->getComment(),
-            'validation_url' => $duty->getValidationUrl(),
+            'validation_url' => null,
+            'iframe' => null,
             'description' => $duty->getDescription()
         ];
 
-        $iframe = $duty->getActivity()->getIframe() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getCode();
+        if ($duty->getValidationUrl()) {
+            $array['validation_url'] = $hostname . $duty->getValidationUrl();
+        }
 
-        if ($duty->getQuery()) {
-            $iframe .= '&' . $duty->getQuery();
+        $iframe = $hostname . $duty->getIframeUrl() . '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getCode();
+
+        if (strpos($iframe, '?') > -1) {
+            $iframe .= '&_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getCode();
+        } else {
+            $iframe .= '?_id=' . $duty->getId() . '&_activity=' . $duty->getActivity()->getCode();
         }
 
         $array['iframe'] = $iframe;

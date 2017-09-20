@@ -23,25 +23,31 @@ class ActivityController extends LayoutController
             $this->setStatusAndExit(false);
         }
 
+        $vendor = $activity->getVendor();
+
         $this->setContent([
             'id' => $activity->getId(),
             'name' => $activity->getName(),
-            'iframe' => $activity->getIframe(),
             'priority' => $activity->getPriority(),
             'color' => $activity->getColor(),
             'postponing' => $activity->getPostponable(),
             'closing' => $activity->getReadonly(),
             'commenting' => $activity->getWritable(),
+            'vendor' => [
+                'id' => $vendor->getId(),
+                'name' => $vendor->getName(),
+                'hostname' => $vendor->getHostname(),
+            ]
         ]);
     }
 
     public function post()
     {
-        $fields = $this->f(['name', 'iframe', 'priority', 'color', 'postponing', 'closing', 'commenting']);
+        $fields = $this->f(['name', 'vendor_id', 'priority', 'color', 'postponing', 'closing', 'commenting']);
 
         $activity = new Activity();
         $activity->setName((string) $fields['name']);
-        $activity->setIframe((string) $fields['iframe']);
+        $activity->setVendorId((int) $fields['vendor_id']);
         $activity->setPriority((int) $fields['priority']);
         $activity->setColor((string) $fields['color']);
         $activity->setPostponable((bool) $fields['postponing']);
@@ -51,15 +57,21 @@ class ActivityController extends LayoutController
 
         $this->getExternalResponse()->setStatusCode(201);
 
+        $vendor = $activity->getVendor();
+
         $this->setContent([
             'id' => $activity->getId(),
             'name' => $activity->getName(),
-            'iframe' => $activity->getIframe(),
             'priority' => $activity->getPriority(),
             'color' => $activity->getColor(),
             'postponing' => $activity->getPostponable(),
             'closing' => $activity->getReadonly(),
             'commenting' => $activity->getWritable(),
+            'vendor' => [
+                'id' => $vendor->getId(),
+                'name' => $vendor->getName(),
+                'hostname' => $vendor->getHostname(),
+            ]
         ]);
     }
 
@@ -79,16 +91,18 @@ class ActivityController extends LayoutController
             $this->setStatusAndExit(false);
         }
 
-        $fields = $this->f(['name', 'iframe', 'priority', 'color', 'postponing', 'closing', 'commenting']);
+        $fields = $this->f(['name', 'vendor_id', 'priority', 'color', 'postponing', 'closing', 'commenting']);
 
         $activity->setName((string) $fields['name']);
-        $activity->setIframe((string) $fields['iframe']);
+        $activity->setVendorId((int) $fields['vendor_id']);
         $activity->setPriority((int) $fields['priority']);
         $activity->setColor((string) $fields['color']);
         $activity->setPostponable((bool) $fields['postponing']);
         $activity->setReadonly((bool) $fields['closing']);
         $activity->setWritable((bool) $fields['commenting']);
         $activity->save();
+
+        $vendor = $activity->getVendor();
 
         $this->setContent([
             'id' => $activity->getId(),
@@ -99,6 +113,11 @@ class ActivityController extends LayoutController
             'postponing' => $activity->getPostponable(),
             'closing' => $activity->getReadonly(),
             'commenting' => $activity->getWritable(),
+            'vendor' => [
+                'id' => $vendor->getId(),
+                'name' => $vendor->getName(),
+                'hostname' => $vendor->getHostname(),
+            ]
         ]);
     }
 

@@ -50,6 +50,8 @@ class DutiesController extends LayoutController
 
             $content[] = [
                 'id' => $duty->getId(),
+                'iframe_url' => $duty->getIframeUrl(),
+                'validation_url' => $duty->getValidationUrl(),
                 'description' => $duty->getDescription(),
                 'raised_at' => $duty->getRaisedAt() ? $duty->getRaisedAt('Y-m-d H:i:s') : null,
                 'closed_at' => $duty->getClosedAt() ? $duty->getClosedAt('Y-m-d H:i:s') : null,
@@ -57,7 +59,6 @@ class DutiesController extends LayoutController
                 'activity' => [
                     'id' => $activity->getId(),
                     'name' => $activity->getName(),
-                    'iframe' => $activity->getIframe(),
                     'priority' => $activity->getPriority(),
                     'color' => $activity->getColor(),
                     'postponing' => $activity->getPostponable(),
