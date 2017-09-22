@@ -124,13 +124,19 @@ var dashboard = new Vue({
         },
         prependDuty: function (data) {
             var duty = new Duty(data);
-            this.duties.unshift(duty);
+
+            if (this.getDutyIds().indexOf(data.id) === -1) {
+                this.duties.unshift(duty);
+            }
 
             return duty;
         },
         appendDuty: function (data) {
             var duty = new Duty(data);
-            this.duties.push(duty);
+
+            if (this.getDutyIds().indexOf(data.id) === -1) {
+                this.duties.push(duty);
+            }
 
             return duty;
         },
