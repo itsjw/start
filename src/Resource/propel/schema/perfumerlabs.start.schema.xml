@@ -28,9 +28,9 @@
         <column name="name" type="varchar" size="255"/>
         <column name="code" type="varchar" size="255"/>
         <column name="key" type="varchar" size="255"/>
-        <column name="readonly" type="boolean" required="true" defaultValue="false"/>
-        <column name="writable" type="boolean" required="true" defaultValue="false"/>
-        <column name="postponable" type="boolean" required="true" defaultValue="false"/>
+        <column name="closing" type="boolean" required="true" defaultValue="false"/>
+        <column name="commenting" type="boolean" required="true" defaultValue="false"/>
+        <column name="postponing" type="boolean" required="true" defaultValue="false"/>
         <column name="color" type="varchar" size="255"/>
         <column name="priority" type="integer"/>
         <column name="vendor_id" type="integer"/>

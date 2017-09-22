@@ -61,9 +61,9 @@ class DutiesController extends LayoutController
                     'name' => $activity->getName(),
                     'priority' => $activity->getPriority(),
                     'color' => $activity->getColor(),
-                    'postponing' => $activity->getPostponable(),
-                    'closing' => $activity->getReadonly(),
-                    'commenting' => $activity->getWritable(),
+                    'postponing' => $activity->getPostponing(),
+                    'closing' => $activity->getClosing(),
+                    'commenting' => $activity->getCommenting(),
                 ],
                 'user' => $user_content
             ];

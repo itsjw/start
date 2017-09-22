@@ -153,14 +153,14 @@ var dashboard = new Vue({
             }
         },
         commentDuty: function (duty) {
-            duty.commenting = true;
+            duty.commenting_state = true;
         },
         postponeDuty: function (duty) {
-            duty.postponing = true;
+            duty.postponing_state = true;
         },
         resetDuty: function (duty) {
-            duty.commenting = false;
-            duty.postponing = false;
+            duty.commenting_state = false;
+            duty.postponing_state = false;
             duty.tmp_comment = duty.comment;
         },
         closeDutyById: function (duty_id) {
@@ -298,16 +298,16 @@ var Duty = (function () {
         this.tmp_comment = null;
         this.iframe = null;
         this.validation_url = null;
-        this.readonly = null;
-        this.writable = null;
-        this.postponable = null;
+        this.closing = null;
+        this.commenting = null;
+        this.postponing = null;
         this.postpone_date = null;
         this.postpone_time = '09:00';
         this.open = false;
         this.shown = false;
         this.iframe_open = false;
-        this.commenting = false;
-        this.postponing = false;
+        this.commenting_state = false;
+        this.postponing_state = false;
         if (object.id) {
             this.id = object.id;
         }
@@ -333,14 +333,14 @@ var Duty = (function () {
         if (object.validation_url) {
             this.validation_url = object.validation_url;
         }
-        if (object.readonly) {
-            this.readonly = object.readonly;
+        if (object.closing) {
+            this.closing = object.closing;
         }
-        if (object.writable) {
-            this.writable = object.writable;
+        if (object.commenting) {
+            this.commenting = object.commenting;
         }
-        if (object.postponable) {
-            this.postponable = object.postponable;
+        if (object.postponing) {
+            this.postponing = object.postponing;
         }
     }
     return Duty;

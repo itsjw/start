@@ -24,9 +24,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
  * @method     ChildActivityQuery orderByKey($order = Criteria::ASC) Order by the key column
- * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
- * @method     ChildActivityQuery orderByWritable($order = Criteria::ASC) Order by the writable column
- * @method     ChildActivityQuery orderByPostponable($order = Criteria::ASC) Order by the postponable column
+ * @method     ChildActivityQuery orderByClosing($order = Criteria::ASC) Order by the closing column
+ * @method     ChildActivityQuery orderByCommenting($order = Criteria::ASC) Order by the commenting column
+ * @method     ChildActivityQuery orderByPostponing($order = Criteria::ASC) Order by the postponing column
  * @method     ChildActivityQuery orderByColor($order = Criteria::ASC) Order by the color column
  * @method     ChildActivityQuery orderByPriority($order = Criteria::ASC) Order by the priority column
  * @method     ChildActivityQuery orderByVendorId($order = Criteria::ASC) Order by the vendor_id column
@@ -35,9 +35,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByCode() Group by the code column
  * @method     ChildActivityQuery groupByKey() Group by the key column
- * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
- * @method     ChildActivityQuery groupByWritable() Group by the writable column
- * @method     ChildActivityQuery groupByPostponable() Group by the postponable column
+ * @method     ChildActivityQuery groupByClosing() Group by the closing column
+ * @method     ChildActivityQuery groupByCommenting() Group by the commenting column
+ * @method     ChildActivityQuery groupByPostponing() Group by the postponing column
  * @method     ChildActivityQuery groupByColor() Group by the color column
  * @method     ChildActivityQuery groupByPriority() Group by the priority column
  * @method     ChildActivityQuery groupByVendorId() Group by the vendor_id column
@@ -99,9 +99,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByCode(string $code) Return the first ChildActivity filtered by the code column
  * @method     ChildActivity findOneByKey(string $key) Return the first ChildActivity filtered by the key column
- * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
- * @method     ChildActivity findOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column
- * @method     ChildActivity findOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column
+ * @method     ChildActivity findOneByClosing(boolean $closing) Return the first ChildActivity filtered by the closing column
+ * @method     ChildActivity findOneByCommenting(boolean $commenting) Return the first ChildActivity filtered by the commenting column
+ * @method     ChildActivity findOneByPostponing(boolean $postponing) Return the first ChildActivity filtered by the postponing column
  * @method     ChildActivity findOneByColor(string $color) Return the first ChildActivity filtered by the color column
  * @method     ChildActivity findOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column
  * @method     ChildActivity findOneByVendorId(int $vendor_id) Return the first ChildActivity filtered by the vendor_id column *
@@ -113,9 +113,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCode(string $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByKey(string $key) Return the first ChildActivity filtered by the key column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByClosing(boolean $closing) Return the first ChildActivity filtered by the closing column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByCommenting(boolean $commenting) Return the first ChildActivity filtered by the commenting column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByPostponing(boolean $postponing) Return the first ChildActivity filtered by the postponing column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByColor(string $color) Return the first ChildActivity filtered by the color column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPriority(int $priority) Return the first ChildActivity filtered by the priority column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByVendorId(int $vendor_id) Return the first ChildActivity filtered by the vendor_id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -125,9 +125,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
  * @method     ChildActivity[]|ObjectCollection findByCode(string $code) Return ChildActivity objects filtered by the code column
  * @method     ChildActivity[]|ObjectCollection findByKey(string $key) Return ChildActivity objects filtered by the key column
- * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
- * @method     ChildActivity[]|ObjectCollection findByWritable(boolean $writable) Return ChildActivity objects filtered by the writable column
- * @method     ChildActivity[]|ObjectCollection findByPostponable(boolean $postponable) Return ChildActivity objects filtered by the postponable column
+ * @method     ChildActivity[]|ObjectCollection findByClosing(boolean $closing) Return ChildActivity objects filtered by the closing column
+ * @method     ChildActivity[]|ObjectCollection findByCommenting(boolean $commenting) Return ChildActivity objects filtered by the commenting column
+ * @method     ChildActivity[]|ObjectCollection findByPostponing(boolean $postponing) Return ChildActivity objects filtered by the postponing column
  * @method     ChildActivity[]|ObjectCollection findByColor(string $color) Return ChildActivity objects filtered by the color column
  * @method     ChildActivity[]|ObjectCollection findByPriority(int $priority) Return ChildActivity objects filtered by the priority column
  * @method     ChildActivity[]|ObjectCollection findByVendorId(int $vendor_id) Return ChildActivity objects filtered by the vendor_id column
@@ -229,7 +229,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, code, key, readonly, writable, postponable, color, priority, vendor_id FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, code, key, closing, commenting, postponing, color, priority, vendor_id FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -436,15 +436,15 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the readonly column
+     * Filter the query on the closing column
      *
      * Example usage:
      * <code>
-     * $query->filterByReadonly(true); // WHERE readonly = true
-     * $query->filterByReadonly('yes'); // WHERE readonly = true
+     * $query->filterByClosing(true); // WHERE closing = true
+     * $query->filterByClosing('yes'); // WHERE closing = true
      * </code>
      *
-     * @param     boolean|string $readonly The value to use as filter.
+     * @param     boolean|string $closing The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -453,25 +453,25 @@ abstract class ActivityQuery extends ModelCriteria
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByReadonly($readonly = null, $comparison = null)
+    public function filterByClosing($closing = null, $comparison = null)
     {
-        if (is_string($readonly)) {
-            $readonly = in_array(strtolower($readonly), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        if (is_string($closing)) {
+            $closing = in_array(strtolower($closing), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_READONLY, $readonly, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_CLOSING, $closing, $comparison);
     }
 
     /**
-     * Filter the query on the writable column
+     * Filter the query on the commenting column
      *
      * Example usage:
      * <code>
-     * $query->filterByWritable(true); // WHERE writable = true
-     * $query->filterByWritable('yes'); // WHERE writable = true
+     * $query->filterByCommenting(true); // WHERE commenting = true
+     * $query->filterByCommenting('yes'); // WHERE commenting = true
      * </code>
      *
-     * @param     boolean|string $writable The value to use as filter.
+     * @param     boolean|string $commenting The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -480,25 +480,25 @@ abstract class ActivityQuery extends ModelCriteria
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByWritable($writable = null, $comparison = null)
+    public function filterByCommenting($commenting = null, $comparison = null)
     {
-        if (is_string($writable)) {
-            $writable = in_array(strtolower($writable), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        if (is_string($commenting)) {
+            $commenting = in_array(strtolower($commenting), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_WRITABLE, $writable, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_COMMENTING, $commenting, $comparison);
     }
 
     /**
-     * Filter the query on the postponable column
+     * Filter the query on the postponing column
      *
      * Example usage:
      * <code>
-     * $query->filterByPostponable(true); // WHERE postponable = true
-     * $query->filterByPostponable('yes'); // WHERE postponable = true
+     * $query->filterByPostponing(true); // WHERE postponing = true
+     * $query->filterByPostponing('yes'); // WHERE postponing = true
      * </code>
      *
-     * @param     boolean|string $postponable The value to use as filter.
+     * @param     boolean|string $postponing The value to use as filter.
      *              Non-boolean arguments are converted using the following rules:
      *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -507,13 +507,13 @@ abstract class ActivityQuery extends ModelCriteria
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByPostponable($postponable = null, $comparison = null)
+    public function filterByPostponing($postponing = null, $comparison = null)
     {
-        if (is_string($postponable)) {
-            $postponable = in_array(strtolower($postponable), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        if (is_string($postponing)) {
+            $postponing = in_array(strtolower($postponing), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_POSTPONABLE, $postponable, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_POSTPONING, $postponing, $comparison);
     }
 
     /**

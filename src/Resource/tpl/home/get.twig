@@ -65,21 +65,21 @@
             <div class="workspace" v-for="duty in duties" :key="duty.id" v-if="duty.open" :class="{hidden: !duty.shown}">
                 <div class="to_stickers" @click="toStickers()">К списку задач</div>
 
-                <div class="buttons-area" v-if="duty.writable || duty.readonly || duty.postponable">
-                    <button v-if="duty.writable && !duty.commenting && !duty.postponing " @click="commentDuty(duty)">Комментарий</button>
-                    <button v-if="duty.commenting" @click="saveComment(duty)" class="primary">Сохранить</button>
-                    <button v-if="duty.readonly && !duty.commenting && !duty.postponing" @click="closeDuty(duty)">Закрыть</button>
-                    <button v-if="duty.postponable && !duty.commenting && !duty.postponing" @click="postponeDuty(duty)">Отложить</button>
-                    <button v-if="duty.commenting || duty.postponing" @click="resetDuty(duty)">Назад</button>
+                <div class="buttons-area" v-if="duty.commenting || duty.closing || duty.postponing">
+                    <button v-if="duty.commenting && !duty.commenting_state && !duty.postponing_state " @click="commentDuty(duty)">Комментарий</button>
+                    <button v-if="duty.commenting_state" @click="saveComment(duty)" class="primary">Сохранить</button>
+                    <button v-if="duty.closing && !duty.commenting_state && !duty.postponing_state" @click="closeDuty(duty)">Закрыть</button>
+                    <button v-if="duty.postponing && !duty.commenting_state && !duty.postponing_state" @click="postponeDuty(duty)">Отложить</button>
+                    <button v-if="duty.commenting_state || duty.postponing_state" @click="resetDuty(duty)">Назад</button>
                 </div>
 
-                <div class="comment-text-area" v-if="duty.comment && !duty.commenting && !duty.postponing">{{ '{{ duty.comment }}' }}</div>
+                <div class="comment-text-area" v-if="duty.comment && !duty.commenting_state && !duty.postponing_state">{{ '{{ duty.comment }}' }}</div>
 
-                <div class="comment-area" v-if="duty.writable && duty.commenting">
+                <div class="comment-area" v-if="duty.commenting && duty.commenting_state">
                     <textarea rows="5" placeholder="Комментарий" v-model="duty.tmp_comment">{{ '{{ duty.comment }}' }}</textarea>
                 </div>
 
-                <div class="postpone-area" v-if="duty.postponable && duty.postponing">
+                <div class="postpone-area" v-if="duty.postponing && duty.postponing_state">
                     <ul>
                         <li><span @click="savePostpone(duty, '+15 min')">На 15 минут</span></li>
                         <li><span @click="savePostpone(duty, '+30 min')">На 30 минут</span></li>

@@ -30,9 +30,9 @@ class ActivityController extends LayoutController
             'name' => $activity->getName(),
             'priority' => $activity->getPriority(),
             'color' => $activity->getColor(),
-            'postponing' => $activity->getPostponable(),
-            'closing' => $activity->getReadonly(),
-            'commenting' => $activity->getWritable(),
+            'postponing' => $activity->getPostponing(),
+            'closing' => $activity->getClosing(),
+            'commenting' => $activity->getCommenting(),
             'vendor_id' => $activity->getVendorId(),
             'vendor' => [
                 'id' => $vendor->getId(),
@@ -51,9 +51,9 @@ class ActivityController extends LayoutController
         $activity->setVendorId((int) $fields['vendor_id']);
         $activity->setPriority((int) $fields['priority']);
         $activity->setColor((string) $fields['color']);
-        $activity->setPostponable((bool) $fields['postponing']);
-        $activity->setReadonly((bool) $fields['closing']);
-        $activity->setWritable((bool) $fields['commenting']);
+        $activity->setPostponing((bool) $fields['postponing']);
+        $activity->setClosing((bool) $fields['closing']);
+        $activity->setCommenting((bool) $fields['commenting']);
         $activity->save();
 
         $this->getExternalResponse()->setStatusCode(201);
@@ -65,9 +65,9 @@ class ActivityController extends LayoutController
             'name' => $activity->getName(),
             'priority' => $activity->getPriority(),
             'color' => $activity->getColor(),
-            'postponing' => $activity->getPostponable(),
-            'closing' => $activity->getReadonly(),
-            'commenting' => $activity->getWritable(),
+            'postponing' => $activity->getPostponing(),
+            'closing' => $activity->getClosing(),
+            'commenting' => $activity->getCommenting(),
             'vendor_id' => $activity->getVendorId(),
             'vendor' => [
                 'id' => $vendor->getId(),
@@ -99,9 +99,9 @@ class ActivityController extends LayoutController
         $activity->setVendorId((int) $fields['vendor_id']);
         $activity->setPriority((int) $fields['priority']);
         $activity->setColor((string) $fields['color']);
-        $activity->setPostponable((bool) $fields['postponing']);
-        $activity->setReadonly((bool) $fields['closing']);
-        $activity->setWritable((bool) $fields['commenting']);
+        $activity->setPostponing((bool) $fields['postponing']);
+        $activity->setClosing((bool) $fields['closing']);
+        $activity->setCommenting((bool) $fields['commenting']);
         $activity->save();
 
         $vendor = $activity->getVendor();
@@ -111,9 +111,9 @@ class ActivityController extends LayoutController
             'name' => $activity->getName(),
             'priority' => $activity->getPriority(),
             'color' => $activity->getColor(),
-            'postponing' => $activity->getPostponable(),
-            'closing' => $activity->getReadonly(),
-            'commenting' => $activity->getWritable(),
+            'postponing' => $activity->getPostponing(),
+            'closing' => $activity->getClosing(),
+            'commenting' => $activity->getCommenting(),
             'vendor_id' => $activity->getVendorId(),
             'vendor' => [
                 'id' => $vendor->getId(),

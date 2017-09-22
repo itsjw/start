@@ -101,28 +101,28 @@ abstract class Activity implements ActiveRecordInterface
     protected $key;
 
     /**
-     * The value for the readonly field.
+     * The value for the closing field.
      *
      * Note: this column has a database default value of: false
      * @var        boolean
      */
-    protected $readonly;
+    protected $closing;
 
     /**
-     * The value for the writable field.
+     * The value for the commenting field.
      *
      * Note: this column has a database default value of: false
      * @var        boolean
      */
-    protected $writable;
+    protected $commenting;
 
     /**
-     * The value for the postponable field.
+     * The value for the postponing field.
      *
      * Note: this column has a database default value of: false
      * @var        boolean
      */
-    protected $postponable;
+    protected $postponing;
 
     /**
      * The value for the color field.
@@ -202,9 +202,9 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->readonly = false;
-        $this->writable = false;
-        $this->postponable = false;
+        $this->closing = false;
+        $this->commenting = false;
+        $this->postponing = false;
     }
 
     /**
@@ -475,63 +475,63 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [readonly] column value.
+     * Get the [closing] column value.
      *
      * @return boolean
      */
-    public function getReadonly()
+    public function getClosing()
     {
-        return $this->readonly;
+        return $this->closing;
     }
 
     /**
-     * Get the [readonly] column value.
+     * Get the [closing] column value.
      *
      * @return boolean
      */
-    public function isReadonly()
+    public function isClosing()
     {
-        return $this->getReadonly();
+        return $this->getClosing();
     }
 
     /**
-     * Get the [writable] column value.
+     * Get the [commenting] column value.
      *
      * @return boolean
      */
-    public function getWritable()
+    public function getCommenting()
     {
-        return $this->writable;
+        return $this->commenting;
     }
 
     /**
-     * Get the [writable] column value.
+     * Get the [commenting] column value.
      *
      * @return boolean
      */
-    public function isWritable()
+    public function isCommenting()
     {
-        return $this->getWritable();
+        return $this->getCommenting();
     }
 
     /**
-     * Get the [postponable] column value.
+     * Get the [postponing] column value.
      *
      * @return boolean
      */
-    public function getPostponable()
+    public function getPostponing()
     {
-        return $this->postponable;
+        return $this->postponing;
     }
 
     /**
-     * Get the [postponable] column value.
+     * Get the [postponing] column value.
      *
      * @return boolean
      */
-    public function isPostponable()
+    public function isPostponing()
     {
-        return $this->getPostponable();
+        return $this->getPostponing();
     }
 
     /**
@@ -645,7 +645,7 @@ abstract class Activity implements ActiveRecordInterface
     } // setKey()
 
     /**
-     * Sets the value of the [readonly] column.
+     * Sets the value of the [closing] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -654,7 +654,7 @@ abstract class Activity implements ActiveRecordInterface
      * @param  boolean|integer|string $v The new value
      * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
-    public function setReadonly($v)
+    public function setClosing($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -664,16 +664,16 @@ abstract class Activity implements ActiveRecordInterface
             }
         }
 
-        if ($this->readonly !== $v) {
-            $this->readonly = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_READONLY] = true;
+        if ($this->closing !== $v) {
+            $this->closing = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_CLOSING] = true;
         }
 
         return $this;
-    } // setReadonly()
+    } // setClosing()
 
     /**
-     * Sets the value of the [writable] column.
+     * Sets the value of the [commenting] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -682,7 +682,7 @@ abstract class Activity implements ActiveRecordInterface
      * @param  boolean|integer|string $v The new value
      * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
-    public function setWritable($v)
+    public function setCommenting($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -692,16 +692,16 @@ abstract class Activity implements ActiveRecordInterface
             }
         }
 
-        if ($this->writable !== $v) {
-            $this->writable = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_WRITABLE] = true;
+        if ($this->commenting !== $v) {
+            $this->commenting = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_COMMENTING] = true;
         }
 
         return $this;
-    } // setWritable()
+    } // setCommenting()
 
     /**
-     * Sets the value of the [postponable] column.
+     * Sets the value of the [postponing] column.
      * Non-boolean arguments are converted using the following rules:
      *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
      *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
@@ -710,7 +710,7 @@ abstract class Activity implements ActiveRecordInterface
      * @param  boolean|integer|string $v The new value
      * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
-    public function setPostponable($v)
+    public function setPostponing($v)
     {
         if ($v !== null) {
             if (is_string($v)) {
@@ -720,13 +720,13 @@ abstract class Activity implements ActiveRecordInterface
             }
         }
 
-        if ($this->postponable !== $v) {
-            $this->postponable = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_POSTPONABLE] = true;
+        if ($this->postponing !== $v) {
+            $this->postponing = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_POSTPONING] = true;
         }
 
         return $this;
-    } // setPostponable()
+    } // setPostponing()
 
     /**
      * Set the value of [color] column.
@@ -802,15 +802,15 @@ abstract class Activity implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->readonly !== false) {
+            if ($this->closing !== false) {
                 return false;
             }
 
-            if ($this->writable !== false) {
+            if ($this->commenting !== false) {
                 return false;
             }
 
-            if ($this->postponable !== false) {
+            if ($this->postponing !== false) {
                 return false;
             }
 
@@ -852,14 +852,14 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Key', TableMap::TYPE_PHPNAME, $indexType)];
             $this->key = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->readonly = (null !== $col) ? (boolean) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Closing', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->closing = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->writable = (null !== $col) ? (boolean) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Commenting', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->commenting = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->postponable = (null !== $col) ? (boolean) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Postponing', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->postponing = (null !== $col) ? (boolean) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
@@ -1174,14 +1174,14 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_KEY)) {
             $modifiedColumns[':p' . $index++]  = 'key';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
-            $modifiedColumns[':p' . $index++]  = 'readonly';
+        if ($this->isColumnModified(ActivityTableMap::COL_CLOSING)) {
+            $modifiedColumns[':p' . $index++]  = 'closing';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_WRITABLE)) {
-            $modifiedColumns[':p' . $index++]  = 'writable';
+        if ($this->isColumnModified(ActivityTableMap::COL_COMMENTING)) {
+            $modifiedColumns[':p' . $index++]  = 'commenting';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_POSTPONABLE)) {
-            $modifiedColumns[':p' . $index++]  = 'postponable';
+        if ($this->isColumnModified(ActivityTableMap::COL_POSTPONING)) {
+            $modifiedColumns[':p' . $index++]  = 'postponing';
         }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $modifiedColumns[':p' . $index++]  = 'color';
@@ -1215,14 +1215,14 @@ abstract class Activity implements ActiveRecordInterface
                     case 'key':
                         $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
-                    case 'readonly':
-                        $stmt->bindValue($identifier, $this->readonly, PDO::PARAM_BOOL);
+                    case 'closing':
+                        $stmt->bindValue($identifier, $this->closing, PDO::PARAM_BOOL);
                         break;
-                    case 'writable':
-                        $stmt->bindValue($identifier, $this->writable, PDO::PARAM_BOOL);
+                    case 'commenting':
+                        $stmt->bindValue($identifier, $this->commenting, PDO::PARAM_BOOL);
                         break;
-                    case 'postponable':
-                        $stmt->bindValue($identifier, $this->postponable, PDO::PARAM_BOOL);
+                    case 'postponing':
+                        $stmt->bindValue($identifier, $this->postponing, PDO::PARAM_BOOL);
                         break;
                     case 'color':
                         $stmt->bindValue($identifier, $this->color, PDO::PARAM_STR);
@@ -1301,13 +1301,13 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getKey();
                 break;
             case 4:
-                return $this->getReadonly();
+                return $this->getClosing();
                 break;
             case 5:
-                return $this->getWritable();
+                return $this->getCommenting();
                 break;
             case 6:
-                return $this->getPostponable();
+                return $this->getPostponing();
                 break;
             case 7:
                 return $this->getColor();
@@ -1352,9 +1352,9 @@ abstract class Activity implements ActiveRecordInterface
             $keys[1] => $this->getName(),
             $keys[2] => $this->getCode(),
             $keys[3] => $this->getKey(),
-            $keys[4] => $this->getReadonly(),
-            $keys[5] => $this->getWritable(),
-            $keys[6] => $this->getPostponable(),
+            $keys[4] => $this->getClosing(),
+            $keys[5] => $this->getCommenting(),
+            $keys[6] => $this->getPostponing(),
             $keys[7] => $this->getColor(),
             $keys[8] => $this->getPriority(),
             $keys[9] => $this->getVendorId(),
@@ -1472,13 +1472,13 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setKey($value);
                 break;
             case 4:
-                $this->setReadonly($value);
+                $this->setClosing($value);
                 break;
             case 5:
-                $this->setWritable($value);
+                $this->setCommenting($value);
                 break;
             case 6:
-                $this->setPostponable($value);
+                $this->setPostponing($value);
                 break;
             case 7:
                 $this->setColor($value);
@@ -1528,13 +1528,13 @@ abstract class Activity implements ActiveRecordInterface
             $this->setKey($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setReadonly($arr[$keys[4]]);
+            $this->setClosing($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setWritable($arr[$keys[5]]);
+            $this->setCommenting($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setPostponable($arr[$keys[6]]);
+            $this->setPostponing($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
             $this->setColor($arr[$keys[7]]);
@@ -1598,14 +1598,14 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_KEY)) {
             $criteria->add(ActivityTableMap::COL_KEY, $this->key);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
-            $criteria->add(ActivityTableMap::COL_READONLY, $this->readonly);
+        if ($this->isColumnModified(ActivityTableMap::COL_CLOSING)) {
+            $criteria->add(ActivityTableMap::COL_CLOSING, $this->closing);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_WRITABLE)) {
-            $criteria->add(ActivityTableMap::COL_WRITABLE, $this->writable);
+        if ($this->isColumnModified(ActivityTableMap::COL_COMMENTING)) {
+            $criteria->add(ActivityTableMap::COL_COMMENTING, $this->commenting);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_POSTPONABLE)) {
-            $criteria->add(ActivityTableMap::COL_POSTPONABLE, $this->postponable);
+        if ($this->isColumnModified(ActivityTableMap::COL_POSTPONING)) {
+            $criteria->add(ActivityTableMap::COL_POSTPONING, $this->postponing);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_COLOR)) {
             $criteria->add(ActivityTableMap::COL_COLOR, $this->color);
@@ -1705,9 +1705,9 @@ abstract class Activity implements ActiveRecordInterface
         $copyObj->setName($this->getName());
         $copyObj->setCode($this->getCode());
         $copyObj->setKey($this->getKey());
-        $copyObj->setReadonly($this->getReadonly());
-        $copyObj->setWritable($this->getWritable());
-        $copyObj->setPostponable($this->getPostponable());
+        $copyObj->setClosing($this->getClosing());
+        $copyObj->setCommenting($this->getCommenting());
+        $copyObj->setPostponing($this->getPostponing());
         $copyObj->setColor($this->getColor());
         $copyObj->setPriority($this->getPriority());
         $copyObj->setVendorId($this->getVendorId());
@@ -2602,9 +2602,9 @@ abstract class Activity implements ActiveRecordInterface
         $this->name = null;
         $this->code = null;
         $this->key = null;
-        $this->readonly = null;
-        $this->writable = null;
-        $this->postponable = null;
+        $this->closing = null;
+        $this->commenting = null;
+        $this->postponing = null;
         $this->color = null;
         $this->priority = null;
         $this->vendor_id = null;
