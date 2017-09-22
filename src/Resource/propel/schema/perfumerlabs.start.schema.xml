@@ -11,6 +11,7 @@
         <column name="validation_url" type="longvarchar"/>
         <column name="iframe_url" type="longvarchar"/>
         <column name="description" type="longvarchar"/>
+        <column name="code" type="varchar" size="255"/>
         <behavior name="timestampable">
             <parameter name="disable_updated_at" value="true"/>
         </behavior>
@@ -26,6 +27,7 @@
         <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true"/>
         <column name="name" type="varchar" size="255"/>
         <column name="code" type="varchar" size="255"/>
+        <column name="key" type="varchar" size="255"/>
         <column name="readonly" type="boolean" required="true" defaultValue="false"/>
         <column name="writable" type="boolean" required="true" defaultValue="false"/>
         <column name="postponable" type="boolean" required="true" defaultValue="false"/>

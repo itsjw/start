@@ -23,6 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
+ * @method     ChildActivityQuery orderByKey($order = Criteria::ASC) Order by the key column
  * @method     ChildActivityQuery orderByReadonly($order = Criteria::ASC) Order by the readonly column
  * @method     ChildActivityQuery orderByWritable($order = Criteria::ASC) Order by the writable column
  * @method     ChildActivityQuery orderByPostponable($order = Criteria::ASC) Order by the postponable column
@@ -33,6 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByCode() Group by the code column
+ * @method     ChildActivityQuery groupByKey() Group by the key column
  * @method     ChildActivityQuery groupByReadonly() Group by the readonly column
  * @method     ChildActivityQuery groupByWritable() Group by the writable column
  * @method     ChildActivityQuery groupByPostponable() Group by the postponable column
@@ -96,6 +98,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByCode(string $code) Return the first ChildActivity filtered by the code column
+ * @method     ChildActivity findOneByKey(string $key) Return the first ChildActivity filtered by the key column
  * @method     ChildActivity findOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column
  * @method     ChildActivity findOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column
  * @method     ChildActivity findOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column
@@ -109,6 +112,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCode(string $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByKey(string $key) Return the first ChildActivity filtered by the key column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByReadonly(boolean $readonly) Return the first ChildActivity filtered by the readonly column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByWritable(boolean $writable) Return the first ChildActivity filtered by the writable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPostponable(boolean $postponable) Return the first ChildActivity filtered by the postponable column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -120,6 +124,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
  * @method     ChildActivity[]|ObjectCollection findByCode(string $code) Return ChildActivity objects filtered by the code column
+ * @method     ChildActivity[]|ObjectCollection findByKey(string $key) Return ChildActivity objects filtered by the key column
  * @method     ChildActivity[]|ObjectCollection findByReadonly(boolean $readonly) Return ChildActivity objects filtered by the readonly column
  * @method     ChildActivity[]|ObjectCollection findByWritable(boolean $writable) Return ChildActivity objects filtered by the writable column
  * @method     ChildActivity[]|ObjectCollection findByPostponable(boolean $postponable) Return ChildActivity objects filtered by the postponable column
@@ -224,7 +229,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, code, readonly, writable, postponable, color, priority, vendor_id FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, code, key, readonly, writable, postponable, color, priority, vendor_id FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -403,6 +408,31 @@ abstract class ActivityQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(ActivityTableMap::COL_CODE, $code, $comparison);
+    }
+
+    /**
+     * Filter the query on the key column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByKey('fooValue');   // WHERE key = 'fooValue'
+     * $query->filterByKey('%fooValue%', Criteria::LIKE); // WHERE key LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $key The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildActivityQuery The current query, for fluid interface
+     */
+    public function filterByKey($key = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($key)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(ActivityTableMap::COL_KEY, $key, $comparison);
     }
 
     /**

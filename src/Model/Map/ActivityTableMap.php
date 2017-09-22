@@ -59,7 +59,7 @@ class ActivityTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 9;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class ActivityTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 9;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the id field
@@ -85,6 +85,11 @@ class ActivityTableMap extends TableMap
      * the column name for the code field
      */
     const COL_CODE = 'activity.code';
+
+    /**
+     * the column name for the key field
+     */
+    const COL_KEY = 'activity.key';
 
     /**
      * the column name for the readonly field
@@ -128,11 +133,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Code', 'Readonly', 'Writable', 'Postponable', 'Color', 'Priority', 'VendorId', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'code', 'readonly', 'writable', 'postponable', 'color', 'priority', 'vendorId', ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_CODE, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_WRITABLE, ActivityTableMap::COL_POSTPONABLE, ActivityTableMap::COL_COLOR, ActivityTableMap::COL_PRIORITY, ActivityTableMap::COL_VENDOR_ID, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'code', 'readonly', 'writable', 'postponable', 'color', 'priority', 'vendor_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Code', 'Key', 'Readonly', 'Writable', 'Postponable', 'Color', 'Priority', 'VendorId', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'code', 'key', 'readonly', 'writable', 'postponable', 'color', 'priority', 'vendorId', ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID, ActivityTableMap::COL_NAME, ActivityTableMap::COL_CODE, ActivityTableMap::COL_KEY, ActivityTableMap::COL_READONLY, ActivityTableMap::COL_WRITABLE, ActivityTableMap::COL_POSTPONABLE, ActivityTableMap::COL_COLOR, ActivityTableMap::COL_PRIORITY, ActivityTableMap::COL_VENDOR_ID, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'code', 'key', 'readonly', 'writable', 'postponable', 'color', 'priority', 'vendor_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -142,11 +147,11 @@ class ActivityTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Code' => 2, 'Readonly' => 3, 'Writable' => 4, 'Postponable' => 5, 'Color' => 6, 'Priority' => 7, 'VendorId' => 8, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'readonly' => 3, 'writable' => 4, 'postponable' => 5, 'color' => 6, 'priority' => 7, 'vendorId' => 8, ),
-        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_CODE => 2, ActivityTableMap::COL_READONLY => 3, ActivityTableMap::COL_WRITABLE => 4, ActivityTableMap::COL_POSTPONABLE => 5, ActivityTableMap::COL_COLOR => 6, ActivityTableMap::COL_PRIORITY => 7, ActivityTableMap::COL_VENDOR_ID => 8, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'readonly' => 3, 'writable' => 4, 'postponable' => 5, 'color' => 6, 'priority' => 7, 'vendor_id' => 8, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Code' => 2, 'Key' => 3, 'Readonly' => 4, 'Writable' => 5, 'Postponable' => 6, 'Color' => 7, 'Priority' => 8, 'VendorId' => 9, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'key' => 3, 'readonly' => 4, 'writable' => 5, 'postponable' => 6, 'color' => 7, 'priority' => 8, 'vendorId' => 9, ),
+        self::TYPE_COLNAME       => array(ActivityTableMap::COL_ID => 0, ActivityTableMap::COL_NAME => 1, ActivityTableMap::COL_CODE => 2, ActivityTableMap::COL_KEY => 3, ActivityTableMap::COL_READONLY => 4, ActivityTableMap::COL_WRITABLE => 5, ActivityTableMap::COL_POSTPONABLE => 6, ActivityTableMap::COL_COLOR => 7, ActivityTableMap::COL_PRIORITY => 8, ActivityTableMap::COL_VENDOR_ID => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'code' => 2, 'key' => 3, 'readonly' => 4, 'writable' => 5, 'postponable' => 6, 'color' => 7, 'priority' => 8, 'vendor_id' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -170,6 +175,7 @@ class ActivityTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
         $this->addColumn('code', 'Code', 'VARCHAR', false, 255, null);
+        $this->addColumn('key', 'Key', 'VARCHAR', false, 255, null);
         $this->addColumn('readonly', 'Readonly', 'BOOLEAN', true, null, false);
         $this->addColumn('writable', 'Writable', 'BOOLEAN', true, null, false);
         $this->addColumn('postponable', 'Postponable', 'BOOLEAN', true, null, false);
@@ -366,6 +372,7 @@ class ActivityTableMap extends TableMap
             $criteria->addSelectColumn(ActivityTableMap::COL_ID);
             $criteria->addSelectColumn(ActivityTableMap::COL_NAME);
             $criteria->addSelectColumn(ActivityTableMap::COL_CODE);
+            $criteria->addSelectColumn(ActivityTableMap::COL_KEY);
             $criteria->addSelectColumn(ActivityTableMap::COL_READONLY);
             $criteria->addSelectColumn(ActivityTableMap::COL_WRITABLE);
             $criteria->addSelectColumn(ActivityTableMap::COL_POSTPONABLE);
@@ -376,6 +383,7 @@ class ActivityTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.code');
+            $criteria->addSelectColumn($alias . '.key');
             $criteria->addSelectColumn($alias . '.readonly');
             $criteria->addSelectColumn($alias . '.writable');
             $criteria->addSelectColumn($alias . '.postponable');

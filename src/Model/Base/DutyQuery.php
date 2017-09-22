@@ -31,6 +31,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery orderByValidationUrl($order = Criteria::ASC) Order by the validation_url column
  * @method     ChildDutyQuery orderByIframeUrl($order = Criteria::ASC) Order by the iframe_url column
  * @method     ChildDutyQuery orderByDescription($order = Criteria::ASC) Order by the description column
+ * @method     ChildDutyQuery orderByCode($order = Criteria::ASC) Order by the code column
  * @method     ChildDutyQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  *
  * @method     ChildDutyQuery groupById() Group by the id column
@@ -43,6 +44,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery groupByValidationUrl() Group by the validation_url column
  * @method     ChildDutyQuery groupByIframeUrl() Group by the iframe_url column
  * @method     ChildDutyQuery groupByDescription() Group by the description column
+ * @method     ChildDutyQuery groupByCode() Group by the code column
  * @method     ChildDutyQuery groupByCreatedAt() Group by the created_at column
  *
  * @method     ChildDutyQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -98,6 +100,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty findOneByValidationUrl(string $validation_url) Return the first ChildDuty filtered by the validation_url column
  * @method     ChildDuty findOneByIframeUrl(string $iframe_url) Return the first ChildDuty filtered by the iframe_url column
  * @method     ChildDuty findOneByDescription(string $description) Return the first ChildDuty filtered by the description column
+ * @method     ChildDuty findOneByCode(string $code) Return the first ChildDuty filtered by the code column
  * @method     ChildDuty findOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column *
 
  * @method     ChildDuty requirePk($key, ConnectionInterface $con = null) Return the ChildDuty by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -113,6 +116,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty requireOneByValidationUrl(string $validation_url) Return the first ChildDuty filtered by the validation_url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByIframeUrl(string $iframe_url) Return the first ChildDuty filtered by the iframe_url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByDescription(string $description) Return the first ChildDuty filtered by the description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildDuty requireOneByCode(string $code) Return the first ChildDuty filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildDuty[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildDuty objects based on current ModelCriteria
@@ -126,6 +130,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty[]|ObjectCollection findByValidationUrl(string $validation_url) Return ChildDuty objects filtered by the validation_url column
  * @method     ChildDuty[]|ObjectCollection findByIframeUrl(string $iframe_url) Return ChildDuty objects filtered by the iframe_url column
  * @method     ChildDuty[]|ObjectCollection findByDescription(string $description) Return ChildDuty objects filtered by the description column
+ * @method     ChildDuty[]|ObjectCollection findByCode(string $code) Return ChildDuty objects filtered by the code column
  * @method     ChildDuty[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildDuty objects filtered by the created_at column
  * @method     ChildDuty[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
@@ -225,7 +230,7 @@ abstract class DutyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, activity_id, comment, raised_at, picked_at, closed_at, validation_url, iframe_url, description, created_at FROM duty WHERE id = :p0';
+        $sql = 'SELECT id, user_id, activity_id, comment, raised_at, picked_at, closed_at, validation_url, iframe_url, description, code, created_at FROM duty WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -669,6 +674,31 @@ abstract class DutyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DutyTableMap::COL_DESCRIPTION, $description, $comparison);
+    }
+
+    /**
+     * Filter the query on the code column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCode('fooValue');   // WHERE code = 'fooValue'
+     * $query->filterByCode('%fooValue%', Criteria::LIKE); // WHERE code LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $code The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByCode($code = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($code)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DutyTableMap::COL_CODE, $code, $comparison);
     }
 
     /**

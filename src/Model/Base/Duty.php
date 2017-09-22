@@ -141,6 +141,13 @@ abstract class Duty implements ActiveRecordInterface
     protected $description;
 
     /**
+     * The value for the code field.
+     *
+     * @var        string
+     */
+    protected $code;
+
+    /**
      * The value for the created_at field.
      *
      * @var        DateTime
@@ -533,6 +540,16 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
+     * Get the [code] column value.
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -761,6 +778,26 @@ abstract class Duty implements ActiveRecordInterface
     } // setDescription()
 
     /**
+     * Set the value of [code] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     */
+    public function setCode($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->code !== $v) {
+            $this->code = $v;
+            $this->modifiedColumns[DutyTableMap::COL_CODE] = true;
+        }
+
+        return $this;
+    } // setCode()
+
+    /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
@@ -846,7 +883,10 @@ abstract class Duty implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->code = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
@@ -856,7 +896,7 @@ abstract class Duty implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 11; // 11 = DutyTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 12; // 12 = DutyTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Duty'), 0, $e);
@@ -1147,6 +1187,9 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'description';
         }
+        if ($this->isColumnModified(DutyTableMap::COL_CODE)) {
+            $modifiedColumns[':p' . $index++]  = 'code';
+        }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
         }
@@ -1190,6 +1233,9 @@ abstract class Duty implements ActiveRecordInterface
                         break;
                     case 'description':
                         $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+                        break;
+                    case 'code':
+                        $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
@@ -1280,6 +1326,9 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getDescription();
                 break;
             case 10:
+                return $this->getCode();
+                break;
+            case 11:
                 return $this->getCreatedAt();
                 break;
             default:
@@ -1322,7 +1371,8 @@ abstract class Duty implements ActiveRecordInterface
             $keys[7] => $this->getValidationUrl(),
             $keys[8] => $this->getIframeUrl(),
             $keys[9] => $this->getDescription(),
-            $keys[10] => $this->getCreatedAt(),
+            $keys[10] => $this->getCode(),
+            $keys[11] => $this->getCreatedAt(),
         );
         if ($result[$keys[4]] instanceof \DateTime) {
             $result[$keys[4]] = $result[$keys[4]]->format('c');
@@ -1336,8 +1386,8 @@ abstract class Duty implements ActiveRecordInterface
             $result[$keys[6]] = $result[$keys[6]]->format('c');
         }
 
-        if ($result[$keys[10]] instanceof \DateTime) {
-            $result[$keys[10]] = $result[$keys[10]]->format('c');
+        if ($result[$keys[11]] instanceof \DateTime) {
+            $result[$keys[11]] = $result[$keys[11]]->format('c');
         }
 
         $virtualColumns = $this->virtualColumns;
@@ -1456,6 +1506,9 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setDescription($value);
                 break;
             case 10:
+                $this->setCode($value);
+                break;
+            case 11:
                 $this->setCreatedAt($value);
                 break;
         } // switch()
@@ -1515,7 +1568,10 @@ abstract class Duty implements ActiveRecordInterface
             $this->setDescription($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
+            $this->setCode($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setCreatedAt($arr[$keys[11]]);
         }
     }
 
@@ -1587,6 +1643,9 @@ abstract class Duty implements ActiveRecordInterface
         }
         if ($this->isColumnModified(DutyTableMap::COL_DESCRIPTION)) {
             $criteria->add(DutyTableMap::COL_DESCRIPTION, $this->description);
+        }
+        if ($this->isColumnModified(DutyTableMap::COL_CODE)) {
+            $criteria->add(DutyTableMap::COL_CODE, $this->code);
         }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $criteria->add(DutyTableMap::COL_CREATED_AT, $this->created_at);
@@ -1686,6 +1745,7 @@ abstract class Duty implements ActiveRecordInterface
         $copyObj->setValidationUrl($this->getValidationUrl());
         $copyObj->setIframeUrl($this->getIframeUrl());
         $copyObj->setDescription($this->getDescription());
+        $copyObj->setCode($this->getCode());
         $copyObj->setCreatedAt($this->getCreatedAt());
 
         if ($deepCopy) {
@@ -2123,6 +2183,7 @@ abstract class Duty implements ActiveRecordInterface
         $this->validation_url = null;
         $this->iframe_url = null;
         $this->description = null;
+        $this->code = null;
         $this->created_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();

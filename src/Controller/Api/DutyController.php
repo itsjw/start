@@ -10,7 +10,15 @@ class DutyController extends LayoutController
 {
     public function post()
     {
-        $fields = $this->f(['description', 'iframe_url', 'validation_url', 'activity_id', 'user_id', 'raised_at', 'nav_id']);
+        $fields = $this->f(['description', 'iframe_url', 'validation_url', 'activity_id', 'user_id', 'raised_at', 'nav_id', 'code']);
+
+        if ($fields['code']) {
+            $similar_duty = DutyQuery::create()->findOneByCode($fields['code']);
+
+            if ($similar_duty) {
+                return;
+            }
+        }
 
         $duty = new Duty();
 

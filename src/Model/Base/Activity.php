@@ -94,6 +94,13 @@ abstract class Activity implements ActiveRecordInterface
     protected $code;
 
     /**
+     * The value for the key field.
+     *
+     * @var        string
+     */
+    protected $key;
+
+    /**
      * The value for the readonly field.
      *
      * Note: this column has a database default value of: false
@@ -458,6 +465,16 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
+     * Get the [key] column value.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
      * Get the [readonly] column value.
      *
      * @return boolean
@@ -606,6 +623,26 @@ abstract class Activity implements ActiveRecordInterface
 
         return $this;
     } // setCode()
+
+    /**
+     * Set the value of [key] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
+     */
+    public function setKey($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->key !== $v) {
+            $this->key = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_KEY] = true;
+        }
+
+        return $this;
+    } // setKey()
 
     /**
      * Sets the value of the [readonly] column.
@@ -812,22 +849,25 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
             $this->code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Key', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->key = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Readonly', TableMap::TYPE_PHPNAME, $indexType)];
             $this->readonly = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Writable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->writable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Postponable', TableMap::TYPE_PHPNAME, $indexType)];
             $this->postponable = (null !== $col) ? (boolean) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Color', TableMap::TYPE_PHPNAME, $indexType)];
             $this->color = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('Priority', TableMap::TYPE_PHPNAME, $indexType)];
             $this->priority = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : ActivityTableMap::translateFieldName('VendorId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : ActivityTableMap::translateFieldName('VendorId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->vendor_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -837,7 +877,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 9; // 9 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = ActivityTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Activity'), 0, $e);
@@ -1131,6 +1171,9 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $modifiedColumns[':p' . $index++]  = 'code';
         }
+        if ($this->isColumnModified(ActivityTableMap::COL_KEY)) {
+            $modifiedColumns[':p' . $index++]  = 'key';
+        }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $modifiedColumns[':p' . $index++]  = 'readonly';
         }
@@ -1168,6 +1211,9 @@ abstract class Activity implements ActiveRecordInterface
                         break;
                     case 'code':
                         $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
+                        break;
+                    case 'key':
+                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
                         break;
                     case 'readonly':
                         $stmt->bindValue($identifier, $this->readonly, PDO::PARAM_BOOL);
@@ -1252,21 +1298,24 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getCode();
                 break;
             case 3:
-                return $this->getReadonly();
+                return $this->getKey();
                 break;
             case 4:
-                return $this->getWritable();
+                return $this->getReadonly();
                 break;
             case 5:
-                return $this->getPostponable();
+                return $this->getWritable();
                 break;
             case 6:
-                return $this->getColor();
+                return $this->getPostponable();
                 break;
             case 7:
-                return $this->getPriority();
+                return $this->getColor();
                 break;
             case 8:
+                return $this->getPriority();
+                break;
+            case 9:
                 return $this->getVendorId();
                 break;
             default:
@@ -1302,12 +1351,13 @@ abstract class Activity implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getCode(),
-            $keys[3] => $this->getReadonly(),
-            $keys[4] => $this->getWritable(),
-            $keys[5] => $this->getPostponable(),
-            $keys[6] => $this->getColor(),
-            $keys[7] => $this->getPriority(),
-            $keys[8] => $this->getVendorId(),
+            $keys[3] => $this->getKey(),
+            $keys[4] => $this->getReadonly(),
+            $keys[5] => $this->getWritable(),
+            $keys[6] => $this->getPostponable(),
+            $keys[7] => $this->getColor(),
+            $keys[8] => $this->getPriority(),
+            $keys[9] => $this->getVendorId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1419,21 +1469,24 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setCode($value);
                 break;
             case 3:
-                $this->setReadonly($value);
+                $this->setKey($value);
                 break;
             case 4:
-                $this->setWritable($value);
+                $this->setReadonly($value);
                 break;
             case 5:
-                $this->setPostponable($value);
+                $this->setWritable($value);
                 break;
             case 6:
-                $this->setColor($value);
+                $this->setPostponable($value);
                 break;
             case 7:
-                $this->setPriority($value);
+                $this->setColor($value);
                 break;
             case 8:
+                $this->setPriority($value);
+                break;
+            case 9:
                 $this->setVendorId($value);
                 break;
         } // switch()
@@ -1472,22 +1525,25 @@ abstract class Activity implements ActiveRecordInterface
             $this->setCode($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setReadonly($arr[$keys[3]]);
+            $this->setKey($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
-            $this->setWritable($arr[$keys[4]]);
+            $this->setReadonly($arr[$keys[4]]);
         }
         if (array_key_exists($keys[5], $arr)) {
-            $this->setPostponable($arr[$keys[5]]);
+            $this->setWritable($arr[$keys[5]]);
         }
         if (array_key_exists($keys[6], $arr)) {
-            $this->setColor($arr[$keys[6]]);
+            $this->setPostponable($arr[$keys[6]]);
         }
         if (array_key_exists($keys[7], $arr)) {
-            $this->setPriority($arr[$keys[7]]);
+            $this->setColor($arr[$keys[7]]);
         }
         if (array_key_exists($keys[8], $arr)) {
-            $this->setVendorId($arr[$keys[8]]);
+            $this->setPriority($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setVendorId($arr[$keys[9]]);
         }
     }
 
@@ -1538,6 +1594,9 @@ abstract class Activity implements ActiveRecordInterface
         }
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $criteria->add(ActivityTableMap::COL_CODE, $this->code);
+        }
+        if ($this->isColumnModified(ActivityTableMap::COL_KEY)) {
+            $criteria->add(ActivityTableMap::COL_KEY, $this->key);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_READONLY)) {
             $criteria->add(ActivityTableMap::COL_READONLY, $this->readonly);
@@ -1645,6 +1704,7 @@ abstract class Activity implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setCode($this->getCode());
+        $copyObj->setKey($this->getKey());
         $copyObj->setReadonly($this->getReadonly());
         $copyObj->setWritable($this->getWritable());
         $copyObj->setPostponable($this->getPostponable());
@@ -2541,6 +2601,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->id = null;
         $this->name = null;
         $this->code = null;
+        $this->key = null;
         $this->readonly = null;
         $this->writable = null;
         $this->postponable = null;
