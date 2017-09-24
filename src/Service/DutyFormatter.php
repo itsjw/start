@@ -42,10 +42,6 @@ class DutyFormatter
             $iframe .= '?_id=' . $duty->getId() . '&_activity=' . $activity->getCode();
         }
 
-        if ($activity->getKey()) {
-            $iframe .= '&_key=' . (string) $activity->getKey();
-        }
-
         $array['iframe'] = $iframe;
 
         return $array;

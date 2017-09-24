@@ -31,8 +31,10 @@ class DutyController extends LayoutController
         if ($fields['nav_id']) {
             $nav = NavQuery::create()->findPk((int) $fields['nav_id']);
 
-            $duty->setActivityId($nav->getActivityId());
-            $duty->setIframeUrl($nav->getUrl());
+            $activity = $nav->getActivity();
+
+            $duty->setActivityId($activity->getId());
+            $duty->setIframeUrl($activity->getIframeUrl());
             $duty->setUserId((int) $this->getAuth()->getData());
             $duty->setRaisedAt(new \DateTime());
             $duty->setPickedAt(new \DateTime());

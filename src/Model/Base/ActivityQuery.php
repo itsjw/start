@@ -23,7 +23,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildActivityQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildActivityQuery orderByCode($order = Criteria::ASC) Order by the code column
- * @method     ChildActivityQuery orderByKey($order = Criteria::ASC) Order by the key column
+ * @method     ChildActivityQuery orderByIframeUrl($order = Criteria::ASC) Order by the iframe_url column
  * @method     ChildActivityQuery orderByClosing($order = Criteria::ASC) Order by the closing column
  * @method     ChildActivityQuery orderByCommenting($order = Criteria::ASC) Order by the commenting column
  * @method     ChildActivityQuery orderByPostponing($order = Criteria::ASC) Order by the postponing column
@@ -34,7 +34,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivityQuery groupById() Group by the id column
  * @method     ChildActivityQuery groupByName() Group by the name column
  * @method     ChildActivityQuery groupByCode() Group by the code column
- * @method     ChildActivityQuery groupByKey() Group by the key column
+ * @method     ChildActivityQuery groupByIframeUrl() Group by the iframe_url column
  * @method     ChildActivityQuery groupByClosing() Group by the closing column
  * @method     ChildActivityQuery groupByCommenting() Group by the commenting column
  * @method     ChildActivityQuery groupByPostponing() Group by the postponing column
@@ -98,7 +98,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity findOneById(int $id) Return the first ChildActivity filtered by the id column
  * @method     ChildActivity findOneByName(string $name) Return the first ChildActivity filtered by the name column
  * @method     ChildActivity findOneByCode(string $code) Return the first ChildActivity filtered by the code column
- * @method     ChildActivity findOneByKey(string $key) Return the first ChildActivity filtered by the key column
+ * @method     ChildActivity findOneByIframeUrl(string $iframe_url) Return the first ChildActivity filtered by the iframe_url column
  * @method     ChildActivity findOneByClosing(boolean $closing) Return the first ChildActivity filtered by the closing column
  * @method     ChildActivity findOneByCommenting(boolean $commenting) Return the first ChildActivity filtered by the commenting column
  * @method     ChildActivity findOneByPostponing(boolean $postponing) Return the first ChildActivity filtered by the postponing column
@@ -112,7 +112,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity requireOneById(int $id) Return the first ChildActivity filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByName(string $name) Return the first ChildActivity filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCode(string $code) Return the first ChildActivity filtered by the code column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildActivity requireOneByKey(string $key) Return the first ChildActivity filtered by the key column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildActivity requireOneByIframeUrl(string $iframe_url) Return the first ChildActivity filtered by the iframe_url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByClosing(boolean $closing) Return the first ChildActivity filtered by the closing column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByCommenting(boolean $commenting) Return the first ChildActivity filtered by the commenting column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildActivity requireOneByPostponing(boolean $postponing) Return the first ChildActivity filtered by the postponing column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -124,7 +124,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildActivity[]|ObjectCollection findById(int $id) Return ChildActivity objects filtered by the id column
  * @method     ChildActivity[]|ObjectCollection findByName(string $name) Return ChildActivity objects filtered by the name column
  * @method     ChildActivity[]|ObjectCollection findByCode(string $code) Return ChildActivity objects filtered by the code column
- * @method     ChildActivity[]|ObjectCollection findByKey(string $key) Return ChildActivity objects filtered by the key column
+ * @method     ChildActivity[]|ObjectCollection findByIframeUrl(string $iframe_url) Return ChildActivity objects filtered by the iframe_url column
  * @method     ChildActivity[]|ObjectCollection findByClosing(boolean $closing) Return ChildActivity objects filtered by the closing column
  * @method     ChildActivity[]|ObjectCollection findByCommenting(boolean $commenting) Return ChildActivity objects filtered by the commenting column
  * @method     ChildActivity[]|ObjectCollection findByPostponing(boolean $postponing) Return ChildActivity objects filtered by the postponing column
@@ -229,7 +229,7 @@ abstract class ActivityQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, code, key, closing, commenting, postponing, color, priority, vendor_id FROM activity WHERE id = :p0';
+        $sql = 'SELECT id, name, code, iframe_url, closing, commenting, postponing, color, priority, vendor_id FROM activity WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -411,28 +411,28 @@ abstract class ActivityQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the key column
+     * Filter the query on the iframe_url column
      *
      * Example usage:
      * <code>
-     * $query->filterByKey('fooValue');   // WHERE key = 'fooValue'
-     * $query->filterByKey('%fooValue%', Criteria::LIKE); // WHERE key LIKE '%fooValue%'
+     * $query->filterByIframeUrl('fooValue');   // WHERE iframe_url = 'fooValue'
+     * $query->filterByIframeUrl('%fooValue%', Criteria::LIKE); // WHERE iframe_url LIKE '%fooValue%'
      * </code>
      *
-     * @param     string $key The value to use as filter.
+     * @param     string $iframeUrl The value to use as filter.
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this|ChildActivityQuery The current query, for fluid interface
      */
-    public function filterByKey($key = null, $comparison = null)
+    public function filterByIframeUrl($iframeUrl = null, $comparison = null)
     {
         if (null === $comparison) {
-            if (is_array($key)) {
+            if (is_array($iframeUrl)) {
                 $comparison = Criteria::IN;
             }
         }
 
-        return $this->addUsingAlias(ActivityTableMap::COL_KEY, $key, $comparison);
+        return $this->addUsingAlias(ActivityTableMap::COL_IFRAME_URL, $iframeUrl, $comparison);
     }
 
     /**

@@ -94,11 +94,11 @@ abstract class Activity implements ActiveRecordInterface
     protected $code;
 
     /**
-     * The value for the key field.
+     * The value for the iframe_url field.
      *
      * @var        string
      */
-    protected $key;
+    protected $iframe_url;
 
     /**
      * The value for the closing field.
@@ -465,13 +465,13 @@ abstract class Activity implements ActiveRecordInterface
     }
 
     /**
-     * Get the [key] column value.
+     * Get the [iframe_url] column value.
      *
      * @return string
      */
-    public function getKey()
+    public function getIframeUrl()
     {
-        return $this->key;
+        return $this->iframe_url;
     }
 
     /**
@@ -625,24 +625,24 @@ abstract class Activity implements ActiveRecordInterface
     } // setCode()
 
     /**
-     * Set the value of [key] column.
+     * Set the value of [iframe_url] column.
      *
      * @param string $v new value
      * @return $this|\Perfumerlabs\Start\Model\Activity The current object (for fluent API support)
      */
-    public function setKey($v)
+    public function setIframeUrl($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->key !== $v) {
-            $this->key = $v;
-            $this->modifiedColumns[ActivityTableMap::COL_KEY] = true;
+        if ($this->iframe_url !== $v) {
+            $this->iframe_url = $v;
+            $this->modifiedColumns[ActivityTableMap::COL_IFRAME_URL] = true;
         }
 
         return $this;
-    } // setKey()
+    } // setIframeUrl()
 
     /**
      * Sets the value of the [closing] column.
@@ -849,8 +849,8 @@ abstract class Activity implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : ActivityTableMap::translateFieldName('Code', TableMap::TYPE_PHPNAME, $indexType)];
             $this->code = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('Key', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->key = (null !== $col) ? (string) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : ActivityTableMap::translateFieldName('IframeUrl', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->iframe_url = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : ActivityTableMap::translateFieldName('Closing', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closing = (null !== $col) ? (boolean) $col : null;
@@ -1171,8 +1171,8 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $modifiedColumns[':p' . $index++]  = 'code';
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_KEY)) {
-            $modifiedColumns[':p' . $index++]  = 'key';
+        if ($this->isColumnModified(ActivityTableMap::COL_IFRAME_URL)) {
+            $modifiedColumns[':p' . $index++]  = 'iframe_url';
         }
         if ($this->isColumnModified(ActivityTableMap::COL_CLOSING)) {
             $modifiedColumns[':p' . $index++]  = 'closing';
@@ -1212,8 +1212,8 @@ abstract class Activity implements ActiveRecordInterface
                     case 'code':
                         $stmt->bindValue($identifier, $this->code, PDO::PARAM_STR);
                         break;
-                    case 'key':
-                        $stmt->bindValue($identifier, $this->key, PDO::PARAM_STR);
+                    case 'iframe_url':
+                        $stmt->bindValue($identifier, $this->iframe_url, PDO::PARAM_STR);
                         break;
                     case 'closing':
                         $stmt->bindValue($identifier, $this->closing, PDO::PARAM_BOOL);
@@ -1298,7 +1298,7 @@ abstract class Activity implements ActiveRecordInterface
                 return $this->getCode();
                 break;
             case 3:
-                return $this->getKey();
+                return $this->getIframeUrl();
                 break;
             case 4:
                 return $this->getClosing();
@@ -1351,7 +1351,7 @@ abstract class Activity implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getCode(),
-            $keys[3] => $this->getKey(),
+            $keys[3] => $this->getIframeUrl(),
             $keys[4] => $this->getClosing(),
             $keys[5] => $this->getCommenting(),
             $keys[6] => $this->getPostponing(),
@@ -1469,7 +1469,7 @@ abstract class Activity implements ActiveRecordInterface
                 $this->setCode($value);
                 break;
             case 3:
-                $this->setKey($value);
+                $this->setIframeUrl($value);
                 break;
             case 4:
                 $this->setClosing($value);
@@ -1525,7 +1525,7 @@ abstract class Activity implements ActiveRecordInterface
             $this->setCode($arr[$keys[2]]);
         }
         if (array_key_exists($keys[3], $arr)) {
-            $this->setKey($arr[$keys[3]]);
+            $this->setIframeUrl($arr[$keys[3]]);
         }
         if (array_key_exists($keys[4], $arr)) {
             $this->setClosing($arr[$keys[4]]);
@@ -1595,8 +1595,8 @@ abstract class Activity implements ActiveRecordInterface
         if ($this->isColumnModified(ActivityTableMap::COL_CODE)) {
             $criteria->add(ActivityTableMap::COL_CODE, $this->code);
         }
-        if ($this->isColumnModified(ActivityTableMap::COL_KEY)) {
-            $criteria->add(ActivityTableMap::COL_KEY, $this->key);
+        if ($this->isColumnModified(ActivityTableMap::COL_IFRAME_URL)) {
+            $criteria->add(ActivityTableMap::COL_IFRAME_URL, $this->iframe_url);
         }
         if ($this->isColumnModified(ActivityTableMap::COL_CLOSING)) {
             $criteria->add(ActivityTableMap::COL_CLOSING, $this->closing);
@@ -1704,7 +1704,7 @@ abstract class Activity implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setCode($this->getCode());
-        $copyObj->setKey($this->getKey());
+        $copyObj->setIframeUrl($this->getIframeUrl());
         $copyObj->setClosing($this->getClosing());
         $copyObj->setCommenting($this->getCommenting());
         $copyObj->setPostponing($this->getPostponing());
@@ -2601,7 +2601,7 @@ abstract class Activity implements ActiveRecordInterface
         $this->id = null;
         $this->name = null;
         $this->code = null;
-        $this->key = null;
+        $this->iframe_url = null;
         $this->closing = null;
         $this->commenting = null;
         $this->postponing = null;

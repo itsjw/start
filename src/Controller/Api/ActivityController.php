@@ -44,7 +44,7 @@ class ActivityController extends LayoutController
 
     public function post()
     {
-        $fields = $this->f(['name', 'vendor_id', 'priority', 'color', 'postponing', 'closing', 'commenting']);
+        $fields = $this->f(['name', 'vendor_id', 'priority', 'color', 'postponing', 'closing', 'commenting', 'iframe_url']);
 
         $activity = new Activity();
         $activity->setName((string) $fields['name']);
@@ -54,6 +54,7 @@ class ActivityController extends LayoutController
         $activity->setPostponing((bool) $fields['postponing']);
         $activity->setClosing((bool) $fields['closing']);
         $activity->setCommenting((bool) $fields['commenting']);
+        $activity->setIframeUrl($fields['iframe_url']);
         $activity->save();
 
         $this->getExternalResponse()->setStatusCode(201);
@@ -93,7 +94,7 @@ class ActivityController extends LayoutController
             $this->setStatusAndExit(false);
         }
 
-        $fields = $this->f(['name', 'vendor_id', 'priority', 'color', 'postponing', 'closing', 'commenting']);
+        $fields = $this->f(['name', 'vendor_id', 'priority', 'color', 'postponing', 'closing', 'commenting', 'iframe_url']);
 
         $activity->setName((string) $fields['name']);
         $activity->setVendorId((int) $fields['vendor_id']);
@@ -102,6 +103,7 @@ class ActivityController extends LayoutController
         $activity->setPostponing((bool) $fields['postponing']);
         $activity->setClosing((bool) $fields['closing']);
         $activity->setCommenting((bool) $fields['commenting']);
+        $activity->setIframeUrl($fields['iframe_url']);
         $activity->save();
 
         $vendor = $activity->getVendor();
@@ -121,23 +123,6 @@ class ActivityController extends LayoutController
                 'hostname' => $vendor->getHostname(),
             ]
         ]);
-    }
-
-    public function patch()
-    {
-        $id = (int) $this->i();
-
-        if (!$id) {
-            $this->getExternalResponse()->setStatusCode(404);
-            $this->setStatusAndExit(false);
-        }
-
-        $activity = ActivityQuery::create()->findPk($id);
-
-        if (!$activity) {
-            $this->getExternalResponse()->setStatusCode(404);
-            $this->setStatusAndExit(false);
-        }
     }
 
     public function delete()

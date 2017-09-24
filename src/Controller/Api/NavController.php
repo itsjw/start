@@ -87,23 +87,6 @@ class NavController extends LayoutController
         ]);
     }
 
-    public function patch()
-    {
-        $id = (int) $this->i();
-
-        if (!$id) {
-            $this->getExternalResponse()->setStatusCode(404);
-            $this->setStatusAndExit(false);
-        }
-
-        $nav = NavQuery::create()->findPk($id);
-
-        if (!$nav) {
-            $this->getExternalResponse()->setStatusCode(404);
-            $this->setStatusAndExit(false);
-        }
-    }
-
     public function delete()
     {
         $id = (int) $this->i();
