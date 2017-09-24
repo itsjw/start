@@ -2,15 +2,21 @@
 
 namespace Perfumerlabs\Start\Controller\Api;
 
+use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumerlabs\Start\Model\Duty;
 use Perfumerlabs\Start\Model\DutyQuery;
 use Perfumerlabs\Start\Model\NavQuery;
+use Perfumerlabs\Start\Model\VendorQuery;
 
 class DutyController extends LayoutController
 {
     public function post()
     {
-        $fields = $this->f(['description', 'iframe_url', 'validation_url', 'activity_id', 'user_id', 'raised_at', 'nav_id', 'code']);
+        $api_key = (string) $this->f('api_key');
+
+        $vendor = VendorQuery::create()->findOneByApiKey($api_key);
+
+        $fields = $this->f(['description', 'iframe_url', 'validation_url', 'activity_code', 'user_id', 'raised_at', 'nav_id', 'code']);
 
         if ($fields['code']) {
             $similar_duty = DutyQuery::create()->findOneByCode($fields['code']);
@@ -31,10 +37,15 @@ class DutyController extends LayoutController
             $duty->setRaisedAt(new \DateTime());
             $duty->setPickedAt(new \DateTime());
         } else {
+            $activity = ActivityQuery::create()
+                ->filterByVendor($vendor)
+                ->filterByCode($fields['activity_code'])
+                ->findOne();
+
             $duty->setDescription($fields['description']);
             $duty->setIframeUrl((string) $fields['iframe_url']);
             $duty->setValidationUrl($fields['validation_url']);
-            $duty->setActivityId((int) $fields['activity_id']);
+            $duty->setActivity($activity);
             $duty->setUserId($fields['user_id']);
             $duty->setRaisedAt((string) $fields['raised_at']);
         }

@@ -23,10 +23,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVendorQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildVendorQuery orderByName($order = Criteria::ASC) Order by the name column
  * @method     ChildVendorQuery orderByHostname($order = Criteria::ASC) Order by the hostname column
+ * @method     ChildVendorQuery orderByApiKey($order = Criteria::ASC) Order by the api_key column
  *
  * @method     ChildVendorQuery groupById() Group by the id column
  * @method     ChildVendorQuery groupByName() Group by the name column
  * @method     ChildVendorQuery groupByHostname() Group by the hostname column
+ * @method     ChildVendorQuery groupByApiKey() Group by the api_key column
  *
  * @method     ChildVendorQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildVendorQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -53,7 +55,8 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildVendor findOneById(int $id) Return the first ChildVendor filtered by the id column
  * @method     ChildVendor findOneByName(string $name) Return the first ChildVendor filtered by the name column
- * @method     ChildVendor findOneByHostname(string $hostname) Return the first ChildVendor filtered by the hostname column *
+ * @method     ChildVendor findOneByHostname(string $hostname) Return the first ChildVendor filtered by the hostname column
+ * @method     ChildVendor findOneByApiKey(string $api_key) Return the first ChildVendor filtered by the api_key column *
 
  * @method     ChildVendor requirePk($key, ConnectionInterface $con = null) Return the ChildVendor by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVendor requireOne(ConnectionInterface $con = null) Return the first ChildVendor matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -61,11 +64,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildVendor requireOneById(int $id) Return the first ChildVendor filtered by the id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVendor requireOneByName(string $name) Return the first ChildVendor filtered by the name column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildVendor requireOneByHostname(string $hostname) Return the first ChildVendor filtered by the hostname column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildVendor requireOneByApiKey(string $api_key) Return the first ChildVendor filtered by the api_key column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildVendor[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildVendor objects based on current ModelCriteria
  * @method     ChildVendor[]|ObjectCollection findById(int $id) Return ChildVendor objects filtered by the id column
  * @method     ChildVendor[]|ObjectCollection findByName(string $name) Return ChildVendor objects filtered by the name column
  * @method     ChildVendor[]|ObjectCollection findByHostname(string $hostname) Return ChildVendor objects filtered by the hostname column
+ * @method     ChildVendor[]|ObjectCollection findByApiKey(string $api_key) Return ChildVendor objects filtered by the api_key column
  * @method     ChildVendor[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -164,7 +169,7 @@ abstract class VendorQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, name, hostname FROM vendor WHERE id = :p0';
+        $sql = 'SELECT id, name, hostname, api_key FROM vendor WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -343,6 +348,31 @@ abstract class VendorQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(VendorTableMap::COL_HOSTNAME, $hostname, $comparison);
+    }
+
+    /**
+     * Filter the query on the api_key column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByApiKey('fooValue');   // WHERE api_key = 'fooValue'
+     * $query->filterByApiKey('%fooValue%', Criteria::LIKE); // WHERE api_key LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $apiKey The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildVendorQuery The current query, for fluid interface
+     */
+    public function filterByApiKey($apiKey = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($apiKey)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(VendorTableMap::COL_API_KEY, $apiKey, $comparison);
     }
 
     /**

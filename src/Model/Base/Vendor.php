@@ -86,6 +86,13 @@ abstract class Vendor implements ActiveRecordInterface
     protected $hostname;
 
     /**
+     * The value for the api_key field.
+     *
+     * @var        string
+     */
+    protected $api_key;
+
+    /**
      * @var        ObjectCollection|ChildActivity[] Collection to store aggregation of ChildActivity objects.
      */
     protected $collActivities;
@@ -361,6 +368,16 @@ abstract class Vendor implements ActiveRecordInterface
     }
 
     /**
+     * Get the [api_key] column value.
+     *
+     * @return string
+     */
+    public function getApiKey()
+    {
+        return $this->api_key;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param int $v new value
@@ -421,6 +438,26 @@ abstract class Vendor implements ActiveRecordInterface
     } // setHostname()
 
     /**
+     * Set the value of [api_key] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Vendor The current object (for fluent API support)
+     */
+    public function setApiKey($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->api_key !== $v) {
+            $this->api_key = $v;
+            $this->modifiedColumns[VendorTableMap::COL_API_KEY] = true;
+        }
+
+        return $this;
+    } // setApiKey()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -464,6 +501,9 @@ abstract class Vendor implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : VendorTableMap::translateFieldName('Hostname', TableMap::TYPE_PHPNAME, $indexType)];
             $this->hostname = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : VendorTableMap::translateFieldName('ApiKey', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->api_key = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -472,7 +512,7 @@ abstract class Vendor implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = VendorTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = VendorTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException(sprintf('Error populating %s object', '\\Perfumerlabs\\Start\\Model\\Vendor'), 0, $e);
@@ -711,6 +751,9 @@ abstract class Vendor implements ActiveRecordInterface
         if ($this->isColumnModified(VendorTableMap::COL_HOSTNAME)) {
             $modifiedColumns[':p' . $index++]  = 'hostname';
         }
+        if ($this->isColumnModified(VendorTableMap::COL_API_KEY)) {
+            $modifiedColumns[':p' . $index++]  = 'api_key';
+        }
 
         $sql = sprintf(
             'INSERT INTO vendor (%s) VALUES (%s)',
@@ -730,6 +773,9 @@ abstract class Vendor implements ActiveRecordInterface
                         break;
                     case 'hostname':
                         $stmt->bindValue($identifier, $this->hostname, PDO::PARAM_STR);
+                        break;
+                    case 'api_key':
+                        $stmt->bindValue($identifier, $this->api_key, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -795,6 +841,9 @@ abstract class Vendor implements ActiveRecordInterface
             case 2:
                 return $this->getHostname();
                 break;
+            case 3:
+                return $this->getApiKey();
+                break;
             default:
                 return null;
                 break;
@@ -828,6 +877,7 @@ abstract class Vendor implements ActiveRecordInterface
             $keys[0] => $this->getId(),
             $keys[1] => $this->getName(),
             $keys[2] => $this->getHostname(),
+            $keys[3] => $this->getApiKey(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -893,6 +943,9 @@ abstract class Vendor implements ActiveRecordInterface
             case 2:
                 $this->setHostname($value);
                 break;
+            case 3:
+                $this->setApiKey($value);
+                break;
         } // switch()
 
         return $this;
@@ -927,6 +980,9 @@ abstract class Vendor implements ActiveRecordInterface
         }
         if (array_key_exists($keys[2], $arr)) {
             $this->setHostname($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setApiKey($arr[$keys[3]]);
         }
     }
 
@@ -977,6 +1033,9 @@ abstract class Vendor implements ActiveRecordInterface
         }
         if ($this->isColumnModified(VendorTableMap::COL_HOSTNAME)) {
             $criteria->add(VendorTableMap::COL_HOSTNAME, $this->hostname);
+        }
+        if ($this->isColumnModified(VendorTableMap::COL_API_KEY)) {
+            $criteria->add(VendorTableMap::COL_API_KEY, $this->api_key);
         }
 
         return $criteria;
@@ -1066,6 +1125,7 @@ abstract class Vendor implements ActiveRecordInterface
     {
         $copyObj->setName($this->getName());
         $copyObj->setHostname($this->getHostname());
+        $copyObj->setApiKey($this->getApiKey());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1359,6 +1419,7 @@ abstract class Vendor implements ActiveRecordInterface
         $this->id = null;
         $this->name = null;
         $this->hostname = null;
+        $this->api_key = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

@@ -59,7 +59,7 @@ class VendorTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -69,7 +69,7 @@ class VendorTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the id field
@@ -87,6 +87,11 @@ class VendorTableMap extends TableMap
     const COL_HOSTNAME = 'vendor.hostname';
 
     /**
+     * the column name for the api_key field
+     */
+    const COL_API_KEY = 'vendor.api_key';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -98,11 +103,11 @@ class VendorTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Name', 'Hostname', ),
-        self::TYPE_CAMELNAME     => array('id', 'name', 'hostname', ),
-        self::TYPE_COLNAME       => array(VendorTableMap::COL_ID, VendorTableMap::COL_NAME, VendorTableMap::COL_HOSTNAME, ),
-        self::TYPE_FIELDNAME     => array('id', 'name', 'hostname', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'Name', 'Hostname', 'ApiKey', ),
+        self::TYPE_CAMELNAME     => array('id', 'name', 'hostname', 'apiKey', ),
+        self::TYPE_COLNAME       => array(VendorTableMap::COL_ID, VendorTableMap::COL_NAME, VendorTableMap::COL_HOSTNAME, VendorTableMap::COL_API_KEY, ),
+        self::TYPE_FIELDNAME     => array('id', 'name', 'hostname', 'api_key', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,11 +117,11 @@ class VendorTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Hostname' => 2, ),
-        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'hostname' => 2, ),
-        self::TYPE_COLNAME       => array(VendorTableMap::COL_ID => 0, VendorTableMap::COL_NAME => 1, VendorTableMap::COL_HOSTNAME => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'hostname' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Name' => 1, 'Hostname' => 2, 'ApiKey' => 3, ),
+        self::TYPE_CAMELNAME     => array('id' => 0, 'name' => 1, 'hostname' => 2, 'apiKey' => 3, ),
+        self::TYPE_COLNAME       => array(VendorTableMap::COL_ID => 0, VendorTableMap::COL_NAME => 1, VendorTableMap::COL_HOSTNAME => 2, VendorTableMap::COL_API_KEY => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'name' => 1, 'hostname' => 2, 'api_key' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -140,6 +145,7 @@ class VendorTableMap extends TableMap
         $this->addPrimaryKey('id', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('name', 'Name', 'VARCHAR', false, 255, null);
         $this->addColumn('hostname', 'Hostname', 'VARCHAR', false, 255, null);
+        $this->addColumn('api_key', 'ApiKey', 'VARCHAR', false, 255, null);
     } // initialize()
 
     /**
@@ -300,10 +306,12 @@ class VendorTableMap extends TableMap
             $criteria->addSelectColumn(VendorTableMap::COL_ID);
             $criteria->addSelectColumn(VendorTableMap::COL_NAME);
             $criteria->addSelectColumn(VendorTableMap::COL_HOSTNAME);
+            $criteria->addSelectColumn(VendorTableMap::COL_API_KEY);
         } else {
             $criteria->addSelectColumn($alias . '.id');
             $criteria->addSelectColumn($alias . '.name');
             $criteria->addSelectColumn($alias . '.hostname');
+            $criteria->addSelectColumn($alias . '.api_key');
         }
     }
 
