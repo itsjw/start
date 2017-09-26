@@ -70,6 +70,7 @@
                     <button v-if="duty.commenting_state" @click="saveComment(duty)" class="primary">Сохранить</button>
                     <button v-if="duty.closing && !duty.commenting_state && !duty.postponing_state" @click="closeDuty(duty)">Закрыть</button>
                     <button v-if="duty.postponing && !duty.commenting_state && !duty.postponing_state" @click="postponeDuty(duty)">Отложить</button>
+                    <button v-if="!duty.commenting_state && !duty.postponing_state" @click="reloadDuty(duty)">Обновить</button>
                     <button v-if="duty.commenting_state || duty.postponing_state" @click="resetDuty(duty)">Назад</button>
                 </div>
 

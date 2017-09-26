@@ -270,6 +270,18 @@ var dashboard = new Vue({
                 console.log(response);
             });
         },
+        reloadDuty: function (duty) {
+            if (!confirm('Все несохраненные данные будут утеряны')) {
+                return;
+            }
+
+            var iframe = [duty.iframe][0];
+            duty.iframe = null;
+
+            this.$nextTick(function () {
+                duty.iframe = iframe;
+            });
+        },
         focusSearch: function () {
             this.searching = true;
         },
