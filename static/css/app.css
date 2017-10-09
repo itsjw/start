@@ -1,0 +1,53 @@
+* {box-sizing: border-box}
+[v-cloak] { display: none; }
+#navbar {border-bottom: 1px solid #eeeeee; margin-bottom: 10px; padding: 5px}
+#navbar > .navbar-left { float: left }
+#navbar > .navbar-right { float: right }
+#navbar a, #navbar span {color: #07c; text-decoration: none; cursor: pointer}
+#navbar a:visited {color: #07c}
+#dashboard { margin: 0 auto }
+#no-duties { text-align: center }
+#no-duties > div { font-size: 30px; margin-top: 20%; color: #cccccc }
+.buttons-area > button { margin-right: 10px }
+.sticker { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
+.sticker.active { background: cornsilk }
+.postpone-area, .comment-area, .comment-text-area, .duty-area { margin-top: 10px }
+.comment-area textarea { width: 100% }
+.postpone-area ul { padding-left: 0; margin: 0 }
+.postpone-area li { list-style: none; margin-bottom: 5px }
+.postpone-area li > span { color: #07c; cursor: pointer }
+.postpone-area li > input { margin-right: 3px }
+button { border-radius: 5px;  border: 1px solid #ccc; background: white;  padding: 5px;  cursor: pointer; }
+button.primary { border-color: #07c; background: #07c; color: white }
+button:hover { border-color: #07c; background: #07c; color: white }
+button:focus { outline: 0; }
+input[type=text], input[type=date], input[type=time], textarea { border-radius: 5px; padding: 5px; border: 1px solid #ccc }
+input[type=date], input[type=time] { border-radius: 5px; padding: 2px; border: 1px solid #ccc }
+
+.hidden { display: none }
+#workspaces iframe { border: 0 }
+
+@media screen and (max-width: 799px) {
+    #dashboard { width: 100% }
+    #stickers-column, #workspaces { width: 100% }
+    .visible { display: block }
+    .invisible { display: none }
+}
+
+@media screen and (min-width: 800px) {
+    #dashboard { width: 100% }
+    #stickers-column { width: 30%; float: left }
+    #workspaces { width: 69%; float: right }
+    #workspaces .back-button { display: none }
+    .visible { display: block }
+    .invisible { display: block }
+}
+
+@media screen and (min-width: 1200px) {
+    #dashboard { width: 1200px }
+    #stickers-column { width: 30%; float: left }
+    #workspaces { width: 69%; float: right }
+    #workspaces .back-button { display: none }
+    .visible { display: block }
+    .invisible { display: block }
+}

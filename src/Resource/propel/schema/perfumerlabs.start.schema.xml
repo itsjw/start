@@ -58,4 +58,5 @@
             <reference local="tag_id" foreign="id"/>
         </foreign-key>
     </table>
+
 </database>
