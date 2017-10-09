@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <base href="/">
@@ -15,7 +15,7 @@
         #navbar a, #navbar span {color: #07c; text-decoration: none; cursor: pointer}
         #navbar a:visited {color: #07c}
         #dashboard { margin: 0 auto }
-        #no-duties { text-align: center; display: none }
+        #no-duties { text-align: center }
         #no-duties > div { font-size: 30px; margin-top: 20%; color: #cccccc }
         .buttons-area > button { margin-right: 10px }
         .sticker { border: 1px solid #cccccc; border-radius: 5px; margin-bottom: 10px; padding: 10px; cursor: pointer }
@@ -79,14 +79,26 @@
 <div id="dashboard">
     <div id="stickers-column" class="visible">
         <div style="margin-bottom: 10px">
-            <input id="search" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
+            <input id="search" v-on:focus="focusSearch()" v-on:blur="blurSearch()" v-on:keyup="search()" v-model="query" name="search" placeholder="Поиск задач" style="width: 100%; border-radius: 5px; padding: 5px; border: 1px solid #ccc">
         </div>
 
-        <div id="stickers"></div>
+        <div id="stickers" v-if="!searching">
+            <div class="sticker" v-for="sticker in stickers" v-bind:style="{borderLeft: '20px solid ' + sticker.color}">
+                <div style="color: #cccccc; font-size: smaller">{{ '{{ sticker.name }}' }}</div>
+                <div style="margin-top: 5px">{{ '{{ sticker.title }}' }}</div>
+                <div v-if="sticker.tags && sticker.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ sticker.tags.join(\', \') }}' }}</div>
+            </div>
+        </div>
 
-        <div id="searching" style="display: none"></div>
+        <div id="searching" v-if="results.length > 0 && searching">
+            <div class="sticker" v-for="sticker in results" v-bind:style="{borderLeft: '20px solid ' + sticker.color}">
+                <div style="color: #cccccc; font-size: smaller">{{ '{{ sticker.name }}' }}</div>
+                <div style="margin-top: 5px">{{ '{{ sticker.title }}' }}</div>
+                <div v-if="sticker.tags && sticker.tags.length > 0" style="margin-top: 5px; font-size: smaller">{{ '{{ sticker.tags.join(\', \') }}' }}</div>
+            </div>
+        </div>
 
-        <div id="search-help" style="display: none; color: #ccc">Начните вводить текст</div>
+        <div id="search-help" v-if="results.length == 0 && searching" style="color: #ccc">Начните вводить текст</div>
     </div>
 
     <div id="workspaces" class="invisible">
@@ -94,13 +106,16 @@
 
     <div style="clear: both"></div>
 
-    <div id="no-duties">
+    <div id="no-duties" v-if="stickers.length == 0 && !searching">
         <div>У вас пока нет задач</div>
     </div>
 </div>
 
 <script src="{{ param('perfumerlabs.start/static') }}/js/start.js"></script>
 <script src="{{ param('perfumerlabs.start/static') }}/vendor/buzz/dist/buzz.min.js"></script>
+<script src="https://unpkg.com/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+<script src="{{ param('perfumerlabs.start/static') }}/js/app.js"></script>
 
 <script>
     var DATA = {

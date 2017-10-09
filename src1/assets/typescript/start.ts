@@ -14,7 +14,7 @@ class Start {
         this.search_input = document.getElementById('search');
         this.searching = document.getElementById('searching');
 
-        this.loadDuties();
+        //this.loadDuties();
 
         document.addEventListener('Start.closeDuty', function(event) {
             if (typeof Android !== 'undefined') {
@@ -24,39 +24,39 @@ class Start {
             }
         });
 
-        this.search_input.addEventListener('focus', function(event) {
-            document.getElementById('stickers').style.display = 'none';
-            document.getElementById('no-duties').style.display = 'none';
-            start.searching.style.display = 'block';
-
-            if (!start.searching.innerHTML) {
-                document.getElementById('search-help').style.display = 'block';
-            }
-        });
-
-        this.search_input.addEventListener('blur', function(event) {
-            var query = start.search_input.value;
-
-            if (!query) {
-                document.getElementById('stickers').style.display = 'block';
-                document.getElementById('search-help').style.display = 'none';
-                start.searching.style.display = 'none';
-
-                if (start.duties.length == 0) {
-                    document.getElementById("no-duties").style.display = 'block';
-                }
-            }
-        });
-
-        this.search_input.addEventListener('keyup', function(event) {
-            var query = start.search_input.value;
-            start.searchDuties(query);
-        });
-
-        this.search_input.addEventListener('paste', function(event) {
-            var query = start.search_input.value;
-            start.searchDuties(query);
-        });
+        // this.search_input.addEventListener('focus', function(event) {
+        //     document.getElementById('stickers').style.display = 'none';
+        //     document.getElementById('no-duties').style.display = 'none';
+        //     start.searching.style.display = 'block';
+        //
+        //     if (!start.searching.innerHTML) {
+        //         document.getElementById('search-help').style.display = 'block';
+        //     }
+        // });
+        //
+        // this.search_input.addEventListener('blur', function(event) {
+        //     var query = start.search_input.value;
+        //
+        //     if (!query) {
+        //         document.getElementById('stickers').style.display = 'block';
+        //         document.getElementById('search-help').style.display = 'none';
+        //         start.searching.style.display = 'none';
+        //
+        //         if (start.duties.length == 0) {
+        //             document.getElementById("no-duties").style.display = 'block';
+        //         }
+        //     }
+        // });
+        //
+        // this.search_input.addEventListener('keyup', function(event) {
+        //     var query = start.search_input.value;
+        //     start.searchDuties(query);
+        // });
+        //
+        // this.search_input.addEventListener('paste', function(event) {
+        //     var query = start.search_input.value;
+        //     start.searchDuties(query);
+        // });
 
         var toolbars = document.getElementsByClassName('create-duty');
 
