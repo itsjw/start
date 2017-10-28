@@ -132,6 +132,13 @@ abstract class Duty implements ActiveRecordInterface
     protected $closed_at;
 
     /**
+     * The value for the validation_url field.
+     *
+     * @var        string
+     */
+    protected $validation_url;
+
+    /**
      * The value for the tags field.
      *
      * @var        array
@@ -151,13 +158,6 @@ abstract class Duty implements ActiveRecordInterface
      * @var        DateTime
      */
     protected $created_at;
-
-    /**
-     * The value for the updated_at field.
-     *
-     * @var        DateTime
-     */
-    protected $updated_at;
 
     /**
      * @var        ChildActivity
@@ -530,6 +530,16 @@ abstract class Duty implements ActiveRecordInterface
     }
 
     /**
+     * Get the [validation_url] column value.
+     *
+     * @return string
+     */
+    public function getValidationUrl()
+    {
+        return $this->validation_url;
+    }
+
+    /**
      * Get the [tags] column value.
      *
      * @return array
@@ -575,26 +585,6 @@ abstract class Duty implements ActiveRecordInterface
             return $this->created_at;
         } else {
             return $this->created_at instanceof \DateTimeInterface ? $this->created_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [updated_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw DateTime object will be returned.
-     *
-     * @return string|DateTime Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getUpdatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->updated_at;
-        } else {
-            return $this->updated_at instanceof \DateTimeInterface ? $this->updated_at->format($format) : null;
         }
     }
 
@@ -783,6 +773,26 @@ abstract class Duty implements ActiveRecordInterface
     } // setClosedAt()
 
     /**
+     * Set the value of [validation_url] column.
+     *
+     * @param string $v new value
+     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
+     */
+    public function setValidationUrl($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->validation_url !== $v) {
+            $this->validation_url = $v;
+            $this->modifiedColumns[DutyTableMap::COL_VALIDATION_URL] = true;
+        }
+
+        return $this;
+    } // setValidationUrl()
+
+    /**
      * Set the value of [tags] column.
      *
      * @param array $v new value
@@ -854,26 +864,6 @@ abstract class Duty implements ActiveRecordInterface
     } // setCreatedAt()
 
     /**
-     * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-     *
-     * @param  mixed $v string, integer (timestamp), or \DateTimeInterface value.
-     *               Empty strings are treated as NULL.
-     * @return $this|\Perfumerlabs\Start\Model\Duty The current object (for fluent API support)
-     */
-    public function setUpdatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-        if ($this->updated_at !== null || $dt !== null) {
-            if ($this->updated_at === null || $dt === null || $dt->format("Y-m-d H:i:s.u") !== $this->updated_at->format("Y-m-d H:i:s.u")) {
-                $this->updated_at = $dt === null ? null : clone $dt;
-                $this->modifiedColumns[DutyTableMap::COL_UPDATED_AT] = true;
-            }
-        } // if either are not null
-
-        return $this;
-    } // setUpdatedAt()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -936,15 +926,15 @@ abstract class Duty implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DutyTableMap::translateFieldName('ClosedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->closed_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DutyTableMap::translateFieldName('ValidationUrl', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->validation_url = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('Tags', TableMap::TYPE_PHPNAME, $indexType)];
             $this->tags = $col;
             $this->tags_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DutyTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, 'DateTime') : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -1091,15 +1081,8 @@ abstract class Duty implements ActiveRecordInterface
                 if (!$this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
                     $this->setCreatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
                 }
-                if (!$this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             } else {
                 $ret = $ret && $this->preUpdate($con);
-                // timestampable behavior
-                if ($this->isModified() && !$this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-                    $this->setUpdatedAt(\Propel\Runtime\Util\PropelDateTime::createHighPrecision());
-                }
             }
             if ($ret) {
                 $affectedRows = $this->doSave($con);
@@ -1237,14 +1220,14 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_CLOSED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'closed_at';
         }
+        if ($this->isColumnModified(DutyTableMap::COL_VALIDATION_URL)) {
+            $modifiedColumns[':p' . $index++]  = 'validation_url';
+        }
         if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
             $modifiedColumns[':p' . $index++]  = 'tags';
         }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'created_at';
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'updated_at';
         }
 
         $sql = sprintf(
@@ -1284,14 +1267,14 @@ abstract class Duty implements ActiveRecordInterface
                     case 'closed_at':
                         $stmt->bindValue($identifier, $this->closed_at ? $this->closed_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
+                    case 'validation_url':
+                        $stmt->bindValue($identifier, $this->validation_url, PDO::PARAM_STR);
+                        break;
                     case 'tags':
                         $stmt->bindValue($identifier, $this->tags, PDO::PARAM_STR);
                         break;
                     case 'created_at':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
-                        break;
-                    case 'updated_at':
-                        $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s.u") : null, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1376,13 +1359,13 @@ abstract class Duty implements ActiveRecordInterface
                 return $this->getClosedAt();
                 break;
             case 9:
-                return $this->getTags();
+                return $this->getValidationUrl();
                 break;
             case 10:
-                return $this->getCreatedAt();
+                return $this->getTags();
                 break;
             case 11:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             default:
                 return null;
@@ -1423,9 +1406,9 @@ abstract class Duty implements ActiveRecordInterface
             $keys[6] => $this->getRaisedAt(),
             $keys[7] => $this->getPickedAt(),
             $keys[8] => $this->getClosedAt(),
-            $keys[9] => $this->getTags(),
-            $keys[10] => $this->getCreatedAt(),
-            $keys[11] => $this->getUpdatedAt(),
+            $keys[9] => $this->getValidationUrl(),
+            $keys[10] => $this->getTags(),
+            $keys[11] => $this->getCreatedAt(),
         );
         if ($result[$keys[6]] instanceof \DateTime) {
             $result[$keys[6]] = $result[$keys[6]]->format('c');
@@ -1437,10 +1420,6 @@ abstract class Duty implements ActiveRecordInterface
 
         if ($result[$keys[8]] instanceof \DateTime) {
             $result[$keys[8]] = $result[$keys[8]]->format('c');
-        }
-
-        if ($result[$keys[10]] instanceof \DateTime) {
-            $result[$keys[10]] = $result[$keys[10]]->format('c');
         }
 
         if ($result[$keys[11]] instanceof \DateTime) {
@@ -1545,17 +1524,17 @@ abstract class Duty implements ActiveRecordInterface
                 $this->setClosedAt($value);
                 break;
             case 9:
+                $this->setValidationUrl($value);
+                break;
+            case 10:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
                 $this->setTags($value);
                 break;
-            case 10:
-                $this->setCreatedAt($value);
-                break;
             case 11:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
         } // switch()
 
@@ -1611,13 +1590,13 @@ abstract class Duty implements ActiveRecordInterface
             $this->setClosedAt($arr[$keys[8]]);
         }
         if (array_key_exists($keys[9], $arr)) {
-            $this->setTags($arr[$keys[9]]);
+            $this->setValidationUrl($arr[$keys[9]]);
         }
         if (array_key_exists($keys[10], $arr)) {
-            $this->setCreatedAt($arr[$keys[10]]);
+            $this->setTags($arr[$keys[10]]);
         }
         if (array_key_exists($keys[11], $arr)) {
-            $this->setUpdatedAt($arr[$keys[11]]);
+            $this->setCreatedAt($arr[$keys[11]]);
         }
     }
 
@@ -1687,14 +1666,14 @@ abstract class Duty implements ActiveRecordInterface
         if ($this->isColumnModified(DutyTableMap::COL_CLOSED_AT)) {
             $criteria->add(DutyTableMap::COL_CLOSED_AT, $this->closed_at);
         }
+        if ($this->isColumnModified(DutyTableMap::COL_VALIDATION_URL)) {
+            $criteria->add(DutyTableMap::COL_VALIDATION_URL, $this->validation_url);
+        }
         if ($this->isColumnModified(DutyTableMap::COL_TAGS)) {
             $criteria->add(DutyTableMap::COL_TAGS, $this->tags);
         }
         if ($this->isColumnModified(DutyTableMap::COL_CREATED_AT)) {
             $criteria->add(DutyTableMap::COL_CREATED_AT, $this->created_at);
-        }
-        if ($this->isColumnModified(DutyTableMap::COL_UPDATED_AT)) {
-            $criteria->add(DutyTableMap::COL_UPDATED_AT, $this->updated_at);
         }
 
         return $criteria;
@@ -1790,9 +1769,9 @@ abstract class Duty implements ActiveRecordInterface
         $copyObj->setRaisedAt($this->getRaisedAt());
         $copyObj->setPickedAt($this->getPickedAt());
         $copyObj->setClosedAt($this->getClosedAt());
+        $copyObj->setValidationUrl($this->getValidationUrl());
         $copyObj->setTags($this->getTags());
         $copyObj->setCreatedAt($this->getCreatedAt());
-        $copyObj->setUpdatedAt($this->getUpdatedAt());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -2174,10 +2153,10 @@ abstract class Duty implements ActiveRecordInterface
         $this->raised_at = null;
         $this->picked_at = null;
         $this->closed_at = null;
+        $this->validation_url = null;
         $this->tags = null;
         $this->tags_unserialized = null;
         $this->created_at = null;
-        $this->updated_at = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -2215,20 +2194,6 @@ abstract class Duty implements ActiveRecordInterface
     public function __toString()
     {
         return (string) $this->exportTo(DutyTableMap::DEFAULT_STRING_FORMAT);
-    }
-
-    // timestampable behavior
-
-    /**
-     * Mark the current object so that the update date doesn't get updated during next save
-     *
-     * @return     $this|ChildDuty The current object (for fluent API support)
-     */
-    public function keepUpdateDateUnchanged()
-    {
-        $this->modifiedColumns[DutyTableMap::COL_UPDATED_AT] = true;
-
-        return $this;
     }
 
     /**

@@ -10,8 +10,11 @@
         <column name="raised_at" type="timestamp"/>
         <column name="picked_at" type="timestamp"/>
         <column name="closed_at" type="timestamp"/>
+        <column name="validation_url" type="varchar" size="255"/>
         <column name="tags" type="array"/>
-        <behavior name="timestampable" />
+        <behavior name="timestampable">
+            <parameter name="disable_updated_at" value="true"/>
+        </behavior>
         <foreign-key foreignTable="activity" phpName="Activity">
             <reference local="activity_id" foreign="id"/>
         </foreign-key>

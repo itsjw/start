@@ -29,9 +29,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery orderByRaisedAt($order = Criteria::ASC) Order by the raised_at column
  * @method     ChildDutyQuery orderByPickedAt($order = Criteria::ASC) Order by the picked_at column
  * @method     ChildDutyQuery orderByClosedAt($order = Criteria::ASC) Order by the closed_at column
+ * @method     ChildDutyQuery orderByValidationUrl($order = Criteria::ASC) Order by the validation_url column
  * @method     ChildDutyQuery orderByTags($order = Criteria::ASC) Order by the tags column
  * @method     ChildDutyQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
- * @method     ChildDutyQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     ChildDutyQuery groupById() Group by the id column
  * @method     ChildDutyQuery groupByUserId() Group by the user_id column
@@ -42,9 +42,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDutyQuery groupByRaisedAt() Group by the raised_at column
  * @method     ChildDutyQuery groupByPickedAt() Group by the picked_at column
  * @method     ChildDutyQuery groupByClosedAt() Group by the closed_at column
+ * @method     ChildDutyQuery groupByValidationUrl() Group by the validation_url column
  * @method     ChildDutyQuery groupByTags() Group by the tags column
  * @method     ChildDutyQuery groupByCreatedAt() Group by the created_at column
- * @method     ChildDutyQuery groupByUpdatedAt() Group by the updated_at column
  *
  * @method     ChildDutyQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildDutyQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -88,9 +88,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty findOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column
  * @method     ChildDuty findOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column
  * @method     ChildDuty findOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column
+ * @method     ChildDuty findOneByValidationUrl(string $validation_url) Return the first ChildDuty filtered by the validation_url column
  * @method     ChildDuty findOneByTags(array $tags) Return the first ChildDuty filtered by the tags column
- * @method     ChildDuty findOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column
- * @method     ChildDuty findOneByUpdatedAt(string $updated_at) Return the first ChildDuty filtered by the updated_at column *
+ * @method     ChildDuty findOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column *
 
  * @method     ChildDuty requirePk($key, ConnectionInterface $con = null) Return the ChildDuty by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOne(ConnectionInterface $con = null) Return the first ChildDuty matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -104,9 +104,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty requireOneByRaisedAt(string $raised_at) Return the first ChildDuty filtered by the raised_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByPickedAt(string $picked_at) Return the first ChildDuty filtered by the picked_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByClosedAt(string $closed_at) Return the first ChildDuty filtered by the closed_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildDuty requireOneByValidationUrl(string $validation_url) Return the first ChildDuty filtered by the validation_url column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByTags(array $tags) Return the first ChildDuty filtered by the tags column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildDuty requireOneByCreatedAt(string $created_at) Return the first ChildDuty filtered by the created_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildDuty requireOneByUpdatedAt(string $updated_at) Return the first ChildDuty filtered by the updated_at column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildDuty[]|ObjectCollection find(ConnectionInterface $con = null) Return ChildDuty objects based on current ModelCriteria
  * @method     ChildDuty[]|ObjectCollection findById(int $id) Return ChildDuty objects filtered by the id column
@@ -118,9 +118,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDuty[]|ObjectCollection findByRaisedAt(string $raised_at) Return ChildDuty objects filtered by the raised_at column
  * @method     ChildDuty[]|ObjectCollection findByPickedAt(string $picked_at) Return ChildDuty objects filtered by the picked_at column
  * @method     ChildDuty[]|ObjectCollection findByClosedAt(string $closed_at) Return ChildDuty objects filtered by the closed_at column
+ * @method     ChildDuty[]|ObjectCollection findByValidationUrl(string $validation_url) Return ChildDuty objects filtered by the validation_url column
  * @method     ChildDuty[]|ObjectCollection findByTags(array $tags) Return ChildDuty objects filtered by the tags column
  * @method     ChildDuty[]|ObjectCollection findByCreatedAt(string $created_at) Return ChildDuty objects filtered by the created_at column
- * @method     ChildDuty[]|ObjectCollection findByUpdatedAt(string $updated_at) Return ChildDuty objects filtered by the updated_at column
  * @method     ChildDuty[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  *
  */
@@ -219,7 +219,7 @@ abstract class DutyQuery extends ModelCriteria
      */
     protected function findPkSimple($key, ConnectionInterface $con)
     {
-        $sql = 'SELECT id, user_id, activity_id, title, query, comment, raised_at, picked_at, closed_at, tags, created_at, updated_at FROM duty WHERE id = :p0';
+        $sql = 'SELECT id, user_id, activity_id, title, query, comment, raised_at, picked_at, closed_at, validation_url, tags, created_at FROM duty WHERE id = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -639,6 +639,31 @@ abstract class DutyQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the validation_url column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByValidationUrl('fooValue');   // WHERE validation_url = 'fooValue'
+     * $query->filterByValidationUrl('%fooValue%', Criteria::LIKE); // WHERE validation_url LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $validationUrl The value to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return $this|ChildDutyQuery The current query, for fluid interface
+     */
+    public function filterByValidationUrl($validationUrl = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($validationUrl)) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DutyTableMap::COL_VALIDATION_URL, $validationUrl, $comparison);
+    }
+
+    /**
      * Filter the query on the tags column
      *
      * @param     array $tags The values to use as filter.
@@ -760,49 +785,6 @@ abstract class DutyQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DutyTableMap::COL_CREATED_AT, $createdAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the updated_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
-     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
-     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $updatedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return $this|ChildDutyQuery The current query, for fluid interface
-     */
-    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
-    {
-        if (is_array($updatedAt)) {
-            $useMinMax = false;
-            if (isset($updatedAt['min'])) {
-                $this->addUsingAlias(DutyTableMap::COL_UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($updatedAt['max'])) {
-                $this->addUsingAlias(DutyTableMap::COL_UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DutyTableMap::COL_UPDATED_AT, $updatedAt, $comparison);
     }
 
     /**
@@ -1033,38 +1015,6 @@ abstract class DutyQuery extends ModelCriteria
     }
 
     // timestampable behavior
-
-    /**
-     * Filter by the latest updated
-     *
-     * @param      int $nbDays Maximum age of the latest update in days
-     *
-     * @return     $this|ChildDutyQuery The current query, for fluid interface
-     */
-    public function recentlyUpdated($nbDays = 7)
-    {
-        return $this->addUsingAlias(DutyTableMap::COL_UPDATED_AT, time() - $nbDays * 24 * 60 * 60, Criteria::GREATER_EQUAL);
-    }
-
-    /**
-     * Order by update date desc
-     *
-     * @return     $this|ChildDutyQuery The current query, for fluid interface
-     */
-    public function lastUpdatedFirst()
-    {
-        return $this->addDescendingOrderByColumn(DutyTableMap::COL_UPDATED_AT);
-    }
-
-    /**
-     * Order by update date asc
-     *
-     * @return     $this|ChildDutyQuery The current query, for fluid interface
-     */
-    public function firstUpdatedFirst()
-    {
-        return $this->addAscendingOrderByColumn(DutyTableMap::COL_UPDATED_AT);
-    }
 
     /**
      * Order by create date desc

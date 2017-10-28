@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "ES5",
-    "outDir": "../../static/js",
-    "sourceRoot": "typescript"
-  }
-}
