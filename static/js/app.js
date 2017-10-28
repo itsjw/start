@@ -6,7 +6,8 @@ var dashboard = new Vue({
         searching: false,
         query: '',
         online: false,
-        stickers_shown: true
+        stickers_shown: true,
+        last_alert: 0
     },
     methods: {
         toggleOnline: function () {
@@ -45,24 +46,59 @@ var dashboard = new Vue({
                 return;
             }
 
-            this.$http.get('/extra').then(function(response) {
+            $this = this;
+
+            $this.$http.get('/extra').then(function(response) {
                 if (response.body.content) {
                     for (i = 0; i < response.body.content.length; i++) {
-                        this.prependDuty(response.body.content[i]);
-                    }
+                        var process = (function (duty) {
+                            return function () {
+                                if (duty.validation_url) {
+                                    $this.$http.head(duty.validation_url).then(function(response) {
+                                        if (response.status === 204) {
+                                            $this.$http.post('/duty/remove/' + duty.id);
+                                        } else {
+                                            $this.prependDuty(duty);
 
-                    document.getElementById('stickers-column').scrollTop = 0;
+                                            var timestamp = Math.floor(Date.now());
 
-                    var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
-                    sound.play();
+                                            if (timestamp - $this.last_alert > 5000) {
+                                                $this.last_alert = timestamp;
+                                                $this.newDutyAlert(duty);
+                                            }
+                                        }
+                                    }, function(response) {
+                                        console.log(response);
+                                    });
+                                } else {
+                                    $this.prependDuty(duty);
 
-                    if (this.duties.length === 1) {
-                        this.openDuty($this.duties[0]);
+                                    var timestamp = Math.floor(Date.now());
+
+                                    if (timestamp - $this.last_alert > 5000) {
+                                        $this.last_alert = timestamp;
+                                        $this.newDutyAlert(duty);
+                                    }
+                                }
+                            }
+                        })(response.body.content[i]);
+
+                        process();
                     }
                 }
             }, function(response) {
                 console.log(response);
             });
+        },
+        newDutyAlert: function (duty) {
+            document.getElementById('stickers-column').scrollTop = 0;
+
+            var sound = new buzz.sound(DATA.static + "/sound/extra.mp3");
+            sound.play();
+
+            if ($this.duties.length === 1) {
+                this.openDuty(duty);
+            }
         },
         prependDuty: function (data) {
             var duty = new Duty(data);
@@ -243,6 +279,7 @@ var Duty = (function () {
         this.comment = null;
         this.tmp_comment = null;
         this.iframe = null;
+        this.validation_url = null;
         this.readonly = null;
         this.writable = null;
         this.postponable = null;
@@ -274,6 +311,9 @@ var Duty = (function () {
         }
         if (object.iframe) {
             this.iframe = object.iframe;
+        }
+        if (object.validation_url) {
+            this.validation_url = object.validation_url;
         }
         if (object.readonly) {
             this.readonly = object.readonly;

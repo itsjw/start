@@ -22,7 +22,7 @@ return [
 
     'propel' => [
         'project' => 'start',
-        'dsn' => 'pgsql:host=db;port=5432;dbname=start',
+        'dsn' => 'pgsql:host=localhost;port=5432;dbname=start',
         'db_user' => 'postgres',
         'db_password' => '',
         'config_dir' => __DIR__ . '/../../propel/' . ENV,

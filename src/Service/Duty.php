@@ -17,6 +17,14 @@ class Duty
 
     /**
      * @param \Perfumerlabs\Start\Model\Duty $duty
+     */
+    public function remove(\Perfumerlabs\Start\Model\Duty $duty)
+    {
+        $duty->delete();
+    }
+
+    /**
+     * @param \Perfumerlabs\Start\Model\Duty $duty
      * @param \DateTime $date
      * @return bool
      */

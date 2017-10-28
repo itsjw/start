@@ -13,4 +13,11 @@ class TestController extends TemplateController
     {
         $this->getView()->addVar('_id', $this->f('_id'));
     }
+
+    public function head()
+    {
+        $this->getExternalResponse()->setStatusCode((int) $this->i());
+
+        $this->setRendering(false);
+    }
 }

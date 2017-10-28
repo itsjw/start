@@ -23,6 +23,7 @@ class DutyFormatter
             'writable' => $duty->getActivity()->isWritable(),
             'postponable' => $duty->getActivity()->isPostponable(),
             'comment' => $duty->getComment(),
+            'validation_url' => $duty->getValidationUrl(),
             'tags' => $duty->getTags() ?: []
         ];
 
