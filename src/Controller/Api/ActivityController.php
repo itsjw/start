@@ -65,15 +65,22 @@ class ActivityController extends LayoutController
 
     public function put()
     {
-        $fields = $this->f(['id', 'name', 'iframe', 'priority', 'color', 'postponing', 'closing', 'commenting']);
+        $id = (int) $this->i();
 
-        if (!$fields['id']) {
+        if (!$id) {
             $this->getExternalResponse()->setStatusCode(404);
             $this->setStatusAndExit(false);
         }
 
-        $activity = new Activity();
-        $activity->setId((int) $fields['id']);
+        $activity = ActivityQuery::create()->findPk($id);
+
+        if (!$activity) {
+            $this->getExternalResponse()->setStatusCode(404);
+            $this->setStatusAndExit(false);
+        }
+
+        $fields = $this->f(['name', 'iframe', 'priority', 'color', 'postponing', 'closing', 'commenting']);
+
         $activity->setName((string) $fields['name']);
         $activity->setIframe((string) $fields['iframe']);
         $activity->setPriority((int) $fields['priority']);

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <base href="/">
+    <title>Activities activity</title>
+
+    <link href="{{ param('perfumerlabs.start/static') }}/vendor/bulma/css/bulma.css" rel='stylesheet' type='text/css'>
+    <link href="{{ param('perfumerlabs.start/static') }}/css/activity/activities.css" rel='stylesheet' type='text/css'>
+
+    <style>
+        [v-cloak] { display: none !important; }
+    </style>
+</head>
+
+<body>
+<div id="activities" class="columns" v-cloak>
+    <div class="column">
+        <nav class="breadcrumb is-large">
+            <ul>
+                <li><a @click="cancelForm()">Список активити</a></li>
+                <li><a @click="creating = true">Создать активити</a></li>
+            </ul>
+        </nav>
+
+        <table class="table is-striped is-fullwidth" v-if="!creating">
+            <tbody>
+            <tr v-for="activity in activities">
+                <td class="name" @click="editActivity(activity)">{{ '{{ activity.name }}' }}</td>
+                <td><a class="button is-text is-pulled-right" @click="deleteActivity(activity)">Удалить</a></td>
+            </tr>
+            <tr v-if="activities.length == 0">
+                <td>Создайте активити</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div id="form" v-if="creating">
+            <div class="field">
+                <label class="label">Название</label>
+                <div class="control">
+                    <input class="input" type="text" v-model="form.name">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Iframe</label>
+                <div class="control">
+                    <input class="input" type="text" v-model="form.iframe">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Приоритет</label>
+                <div class="control">
+                    <input class="input" type="number" v-model="form.priority">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Цвет</label>
+                <div class="control">
+                    <input class="input" type="text" v-model="form.color">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" v-model="form.commenting">
+                        Кнопка "Комментировать"
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" v-model="form.postponing">
+                        Кнопка "Отложить"
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" v-model="form.closing">
+                        Кнопка "Закрыть"
+                    </label>
+                </div>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-link" @click="saveForm()">Сохранить</button>
+                </div>
+                <div class="control">
+                    <button class="button is-text" @click="cancelForm()">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+<script src="{{ param('perfumerlabs.start/static') }}/js/activity/activities.js"></script>
+</body>
+</html>

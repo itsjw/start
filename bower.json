@@ -2,6 +2,7 @@
     "name": "perfumerlabs/start",
     "dependencies": {
         "normalize-css": "5.0.0",
-        "buzz": "1.2.0"
+        "buzz": "1.2.0",
+        "bulma": "0.6.0"
     }
 }

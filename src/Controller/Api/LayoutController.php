@@ -2,12 +2,12 @@
 
 namespace Perfumerlabs\Start\Controller\Api;
 
-use Perfumer\Framework\Controller\PlainController;
+use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
 
-class LayoutController extends PlainController
+class LayoutController extends ViewController
 {
     use DefaultRouterControllerHelpers;
     use StatusViewControllerHelpers;

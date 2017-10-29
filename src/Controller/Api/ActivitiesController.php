@@ -18,6 +18,12 @@ class ActivitiesController extends LayoutController
             $content[] = [
                 'id' => $activity->getId(),
                 'name' => $activity->getName(),
+                'iframe' => $activity->getIframe(),
+                'priority' => $activity->getPriority(),
+                'color' => $activity->getColor(),
+                'postponing' => $activity->getPostponable(),
+                'closing' => $activity->getReadonly(),
+                'commenting' => $activity->getWritable(),
             ];
         }
 

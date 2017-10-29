@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACE,uBAAY;EAAE,aAAa,EAAE,CAAC;AAC9B,wBAAa;EAAE,MAAM,EAAE,OAAO",
+"sources": ["../../../app/scss/activity/activities.scss"],
+"names": [],
+"file": "activities.css"
+}
