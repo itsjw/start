@@ -47,8 +47,19 @@ var dashboard = new Vue({
             }
 
             $this = this;
+            var have_ids = [];
 
-            $this.$http.get('/extra').then(function(response) {
+            for (i = 0; i < $this.duties.length; i++) {
+                have_ids.push($this.duties[i].id);
+            }
+
+            var url = '/extra';
+
+            if (have_ids.length > 0) {
+                url += '?have_ids=' + have_ids.join(',');
+            }
+
+            $this.$http.get(url).then(function(response) {
                 if (response.body.content) {
                     for (i = 0; i < response.body.content.length; i++) {
                         var process = (function (duty) {

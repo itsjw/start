@@ -4,6 +4,7 @@ namespace Perfumerlabs\Start\Controller;
 
 use App\Model\UserQuery;
 use Perfumer\Framework\Controller\ViewController;
+use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
 use Perfumerlabs\Start\Model\Duty;
@@ -14,9 +15,15 @@ use Propel\Runtime\ActiveQuery\Criteria;
 class ExtraController extends ViewController
 {
     use StatusViewControllerHelpers;
+    use DefaultRouterControllerHelpers;
 
     public function get()
     {
+        $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
+        $user->setOnlineAt(new \DateTime());
+        $user->save();
+
         $picked_duties = DutyQuery::create()
             ->joinWith('Activity')
             ->filterByUserId((int) $this->getAuth()->getData())
@@ -24,6 +31,8 @@ class ExtraController extends ViewController
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
             ->find();
 
+        $have_ids = explode(',', $this->f('have_ids'));
+        $missing_duties = [];
         $highest_priority = 0;
 
         foreach ($picked_duties as $duty) {
@@ -33,12 +42,21 @@ class ExtraController extends ViewController
             if ($duty_priority > $highest_priority) {
                 $highest_priority = $duty_priority;
             }
+
+            if (!in_array($duty->getId(), $have_ids)) {
+                $missing_duties[] = $duty;
+            }
         }
 
-        $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+        if (count($missing_duties) > 0) {
+            $content = [];
 
-        $user->setOnlineAt(new \DateTime());
-        $user->save();
+            foreach ($missing_duties as $duty) {
+                $content[] = $this->s('perfumerlabs.duty_formatter')->format($duty, $user);
+            }
+
+            $this->setContentAndExit($content);
+        }
 
         $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($user);
 
