@@ -275,10 +275,6 @@ var navbar = new Vue({
     el: '#navbar',
     methods: {
         createDuty: function (activity_id) {
-            if (!confirm('Создать задачу?')) {
-                return;
-            }
-
             this.$http.post('/duty/create', {activity_id: activity_id}).then(function(response) {
                 var duty = dashboard.appendDuty(response.body.content);
                 dashboard.openDutyBySticker(duty);

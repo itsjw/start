@@ -24,13 +24,23 @@
         </nav>
 
         <table class="table is-striped is-fullwidth" v-if="!creating">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Название</th>
+                <th>Приоритет</th>
+                <th></th>
+            </tr>
+            </thead>
             <tbody>
-            <tr v-for="activity in activities">
+            <tr v-for="(activity, index) in activities">
+                <td>{{ '{{ index + 1 }}' }}</td>
                 <td class="name" @click="editActivity(activity)">{{ '{{ activity.name }}' }}</td>
+                <td>{{ '{{ activity.priority }}' }}</td>
                 <td><a class="button is-text is-pulled-right" @click="deleteActivity(activity)">Удалить</a></td>
             </tr>
             <tr v-if="activities.length == 0">
-                <td>Создайте активити</td>
+                <td colspan="4">Создайте активити</td>
             </tr>
             </tbody>
         </table>

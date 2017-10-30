@@ -24,13 +24,23 @@
         </nav>
 
         <table class="table is-striped is-fullwidth" v-if="!creating">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Название</th>
+                <th>Приоритет</th>
+                <th></th>
+            </tr>
+            </thead>
             <tbody>
-            <tr v-for="nav in navs">
+            <tr v-for="(nav, index) in navs">
+                <td>{{ '{{ index + 1 }}' }}</td>
                 <td class="name" @click="editNav(nav)">{{ '{{ nav.name }}' }}</td>
+                <td>{{ '{{ nav.priority }}' }}</td>
                 <td><a class="button is-text is-pulled-right" @click="deleteNav(nav)">Удалить</a></td>
             </tr>
             <tr v-if="navs.length == 0">
-                <td>Создайте навигацию</td>
+                <td colspan="4">Создайте навигацию</td>
             </tr>
             </tbody>
         </table>
