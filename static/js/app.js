@@ -28,7 +28,7 @@ var dashboard = new Vue({
         init: function () {
             this.$http.get('/duties').then(function(response) {
                 if (response.body.content) {
-                    for (i = 0; i < response.body.content.length; i++) {
+                    for (var i = 0; i < response.body.content.length; i++) {
                         this.appendDuty(response.body.content[i]);
                     }
 
@@ -68,7 +68,7 @@ var dashboard = new Vue({
                 var content = response.body.content;
 
                 if (content) {
-                    for (i = 0; i < content.length; i++) {
+                    for (var i = 0; i < content.length; i++) {
                         if ($this.getDutyIds().indexOf(content[i].id) > -1) {
                             continue;
                         }
@@ -140,7 +140,7 @@ var dashboard = new Vue({
             this.openDuty(duty);
         },
         openDuty: function (duty) {
-            for (i = 0; i < this.duties.length; i++) {
+            for (var i = 0; i < this.duties.length; i++) {
                 var tmp = this.duties[i];
 
                 if (tmp.id === duty.id) {
@@ -164,7 +164,7 @@ var dashboard = new Vue({
             duty.tmp_comment = duty.comment;
         },
         closeDutyById: function (duty_id) {
-            for (i = 0; i < this.duties.length; i++) {
+            for (var i = 0; i < this.duties.length; i++) {
                 if (this.duties[i].id === parseInt(duty_id)) {
                     this.closeDuty(this.duties[i], false);
                 }
