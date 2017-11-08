@@ -42,7 +42,7 @@ class DutiesController extends LayoutController
             if ($user) {
                 $user_content = [
                     'id' => $user->getId(),
-                    'username' => $user->getId()
+                    'username' => $user->getUsername()
                 ];
             } else {
                 $user_content = null;

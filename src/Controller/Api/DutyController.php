@@ -48,6 +48,7 @@ class DutyController extends LayoutController
             $duty->setActivity($activity);
             $duty->setUserId($fields['user_id']);
             $duty->setRaisedAt((string) $fields['raised_at']);
+            $duty->setCode($fields['code']);
         }
 
         $duty->save();
@@ -60,7 +61,7 @@ class DutyController extends LayoutController
         if ($user) {
             $user_content = [
                 'id' => $user->getId(),
-                'username' => $user->getId()
+                'username' => $user->getUsername()
             ];
         } else {
             $user_content = null;
@@ -121,7 +122,7 @@ class DutyController extends LayoutController
         if ($user) {
             $user_content = [
                 'id' => $user->getId(),
-                'username' => $user->getId()
+                'username' => $user->getUsername()
             ];
         } else {
             $user_content = null;

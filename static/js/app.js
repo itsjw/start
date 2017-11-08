@@ -49,6 +49,10 @@ var dashboard = new Vue({
             document.addEventListener('Start.closeDuty', function(event) {
                 $this.closeDutyById(event.detail);
             });
+
+            window.addEventListener('message', function(event) {
+                $this.closeDutyById(event.data.closeDuty);
+            }, false);
         },
         extraDuties: function () {
             if (!this.online) {

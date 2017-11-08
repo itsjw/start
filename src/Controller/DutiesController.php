@@ -25,7 +25,9 @@ class DutiesController extends ViewController
             ->filterByUserId((int) $this->getAuth()->getData())
             ->filterByClosedAt(null, Criteria::ISNULL)
             ->filterByPickedAt(null, Criteria::ISNOTNULL)
-            ->orderByRaisedAt()
+            ->useActivityQuery()
+                ->orderByPriority(Criteria::DESC)
+            ->endUse()
             ->find();
 
         $content = [];
