@@ -22,8 +22,13 @@ class SearchController extends ViewController
         $query = (string) $this->f('query');
 
         if ($query) {
+            $user = UserQuery::create()->findPk((int) $this->getAuth()->getData());
+
+            $allowed_activities = $this->s('perfumerlabs.start')->getAllowedActivities($user);
+
             $duties = DutyQuery::create()
                 ->joinWith('Activity')
+                ->filterByActivityId($allowed_activities, Criteria::IN)
                 ->filterByDescription('%' . $query . '%', Criteria::ILIKE)
                 ->filterByClosedAt(null, Criteria::ISNULL)
                 ->filterByPickedAt(null, Criteria::ISNULL)
