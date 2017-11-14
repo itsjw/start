@@ -7,7 +7,6 @@ use Perfumer\Framework\Controller\ViewController;
 use Perfumer\Framework\Router\Http\DefaultRouterControllerHelpers;
 use Perfumer\Framework\View\StatusView;
 use Perfumer\Framework\View\StatusViewControllerHelpers;
-use Perfumerlabs\Start\Model\ActivityQuery;
 use Perfumerlabs\Start\Model\Duty;
 use Perfumerlabs\Start\Model\NavQuery;
 
@@ -22,9 +21,11 @@ class CreateController extends ViewController
 
         $nav = NavQuery::create()->findPk($nav_id);
 
+        $activity = $nav->getActivity();
+
         $duty = new Duty();
-        $duty->setActivityId($nav->getActivityId());
-        $duty->setIframeUrl($nav->getUrl());
+        $duty->setActivityId($activity->getId());
+        $duty->setIframeUrl($activity->getIframeUrl());
         $duty->setUserId((int) $this->getAuth()->getData());
         $duty->setRaisedAt(new \DateTime());
         $duty->setPickedAt(new \DateTime());
