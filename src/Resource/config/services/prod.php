@@ -2,6 +2,6 @@
 
 return [
     'cache' => [
-        'alias' => 'cache.ephemeral'
+        'alias' => 'cache.memcache'
     ],
 ];
